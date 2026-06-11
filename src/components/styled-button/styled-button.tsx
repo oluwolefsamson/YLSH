@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles'
 import { ButtonProps } from '@mui/material/Button'
 import { fontFamily } from '@/config/theme/typography'
 
-interface BaseButtonProps extends Pick<ButtonProps, 'onClick' | 'type' | 'startIcon' | 'endIcon'> {
+interface BaseButtonProps extends Pick<ButtonProps, 'onClick' | 'type' | 'startIcon' | 'endIcon' | 'disabled'> {
   variant?: 'contained' | 'outlined' | 'text'
   color?: 'default' | 'primary' | 'secondary' | 'dark' | 'light'
   size?: 'small' | 'medium' | 'large'
