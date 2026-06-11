@@ -27,7 +27,7 @@ class MyDocument extends Document<DocumentProps> {
           <meta content="#fbfbfb" name="theme-color" />
           <meta content="#fbfbfb" name="msapplication-navbutton-color" />
           <meta content="#fbfbfb" name="apple-mobile-web-app-status-bar-style" />
-          <meta content="yes" name="apple-mobile-web-app-capable" />
+          <meta content="yes" name="mobile-web-app-capable" />
 
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
@@ -107,7 +107,7 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
 
   return {
     ...initialProps,
-    emotionStyleTags,
+    emotionStylesTags: emotionStyleTags,
   }
 }
 
