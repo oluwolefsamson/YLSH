@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { useRouter } from 'next/router'
+import { useState } from 'react'
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
 import Divider from '@mui/material/Divider'
@@ -12,6 +12,7 @@ import Stack from '@mui/material/Stack'
 import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import Stepper from '@mui/material/Stepper'
+import CircularProgress from '@mui/material/CircularProgress'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined'
@@ -28,23 +29,37 @@ import AuthLink from '@/components/auth/auth-link'
 const steps = ['Verify NIN', 'Personal information', 'Account details']
 
 const SignUpPage: NextPage = () => {
+  const router = useRouter()
   const [activeStep, setActiveStep] = useState(0)
   const [isCreated, setIsCreated] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const router = useRouter()
+  const isBusy = isCreated || isSubmitting
 
-  const handleNext = (): void => setActiveStep((step) => Math.min(step + 1, steps.length - 1))
-  const handleBack = (): void => setActiveStep((step) => Math.max(step - 1, 0))
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault()
-    if (activeStep !== 2) {
+  const handleNext = (): void => {
+    if (isBusy) {
       return
     }
+
+    setActiveStep((step) => Math.min(step + 1, steps.length - 1))
+  }
+
+  const handleBack = (): void => {
+    if (isBusy) {
+      return
+    }
+
+    setActiveStep((step) => Math.max(step - 1, 0))
+  }
+  const handleSubmit = async (): Promise<void> => {
+    if (activeStep !== 2 || isBusy) {
+      return
+    }
+    setIsSubmitting(true)
     setIsCreated(true)
-    window.setTimeout(() => {
-      void router.push('/dashboard')
-    }, 1200)
+    await new Promise((resolve) => window.setTimeout(resolve, 1200))
+    await router.push('/dashboard')
   }
 
   return (
@@ -73,19 +88,10 @@ const SignUpPage: NextPage = () => {
                 backgroundColor: 'rgba(255,255,255,0.78)',
                 display: 'grid',
                 placeItems: 'center',
-                textAlign: 'center',
-                px: 3,
                 backdropFilter: 'blur(8px)',
               }}
             >
-              <Box>
-                <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
-                  Account created
-                </Typography>
-                <Typography color="text.secondary">
-                  Preparing your dashboard now.
-                </Typography>
-              </Box>
+              <CircularProgress color="primary" size={48} thickness={4} />
             </Box>
           ) : null}
 
@@ -120,6 +126,7 @@ const SignUpPage: NextPage = () => {
                 fullWidth
                 label="NIN"
                 placeholder="Enter your 11-digit NIN"
+                disabled={isBusy}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -163,6 +170,7 @@ const SignUpPage: NextPage = () => {
                   fullWidth
                   label="First name"
                   placeholder="Amina"
+                  disabled={isBusy}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -176,6 +184,7 @@ const SignUpPage: NextPage = () => {
                   fullWidth
                   label="Last name"
                   placeholder="Bello"
+                  disabled={isBusy}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -191,6 +200,7 @@ const SignUpPage: NextPage = () => {
                 fullWidth
                 label="Email address"
                 placeholder="you@example.com"
+                disabled={isBusy}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -205,6 +215,7 @@ const SignUpPage: NextPage = () => {
                 fullWidth
                 label="Phone number"
                 placeholder="+234 800 000 0000"
+                disabled={isBusy}
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
               />
 
@@ -212,13 +223,14 @@ const SignUpPage: NextPage = () => {
                 fullWidth
                 label="Organization / school"
                 placeholder="Youth Summit Club"
+                disabled={isBusy}
                 sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
               />
             </Box>
           )}
 
           {activeStep === 2 ? (
-            <Box component="form" onSubmit={handleSubmit} sx={{ display: 'grid', gap: 2.1 }}>
+            <Box sx={{ display: 'grid', gap: 2.1 }}>
               <Box>
                 <Typography sx={{ fontWeight: 700, mb: 0.5 }}>Step 3: Account details and review</Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
@@ -233,6 +245,7 @@ const SignUpPage: NextPage = () => {
                   fullWidth
                   label="Account type"
                   defaultValue="participant"
+                  disabled={isBusy}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -247,11 +260,12 @@ const SignUpPage: NextPage = () => {
                   <MenuItem value="admin">Admin</MenuItem>
                 </TextField>
                 <TextField
-                  fullWidth
-                  label="Username"
-                  placeholder="@aminab"
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-                />
+                fullWidth
+                label="Username"
+                placeholder="@aminab"
+                disabled={isBusy}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
+              />
               </Box>
 
               <TextField
@@ -259,6 +273,7 @@ const SignUpPage: NextPage = () => {
                 type={showPassword ? 'text' : 'password'}
                 label="Password"
                 placeholder="Create a strong password"
+                disabled={isBusy}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -267,7 +282,12 @@ const SignUpPage: NextPage = () => {
                   ),
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton edge="end" size="small" onClick={() => setShowPassword((value) => !value)}>
+                      <IconButton
+                        edge="end"
+                        size="small"
+                        onClick={() => setShowPassword((value) => !value)}
+                        disabled={isBusy}
+                      >
                         {showPassword ? (
                           <VisibilityOffOutlinedIcon fontSize="small" />
                         ) : (
@@ -285,6 +305,7 @@ const SignUpPage: NextPage = () => {
                 type={showConfirmPassword ? 'text' : 'password'}
                 label="Confirm password"
                 placeholder="Repeat your password"
+                disabled={isBusy}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -297,6 +318,7 @@ const SignUpPage: NextPage = () => {
                         edge="end"
                         size="small"
                         onClick={() => setShowConfirmPassword((value) => !value)}
+                        disabled={isBusy}
                       >
                         {showConfirmPassword ? (
                           <VisibilityOffOutlinedIcon fontSize="small" />
@@ -335,16 +357,24 @@ const SignUpPage: NextPage = () => {
               disableHoverEffect
               type="button"
               onClick={handleBack}
+              disabled={isBusy}
             >
               Back
             </StyledButton>
             {activeStep < steps.length - 1 ? (
-              <StyledButton size="large" color="primary" disableHoverEffect type="button" onClick={handleNext}>
+              <StyledButton
+                size="large"
+                color="primary"
+                disableHoverEffect
+                type="button"
+                onClick={handleNext}
+                disabled={isBusy}
+              >
                 Continue
               </StyledButton>
             ) : (
-              <StyledButton size="large" color="primary" disableHoverEffect type="submit">
-                Create Account
+              <StyledButton size="large" color="primary" disableHoverEffect type="button" onClick={handleSubmit} disabled={isBusy}>
+                {isSubmitting ? 'Creating...' : 'Create Account'}
               </StyledButton>
             )}
           </Box>

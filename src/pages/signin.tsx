@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
+import CircularProgress from '@mui/material/CircularProgress'
 import Divider from '@mui/material/Divider'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import IconButton from '@mui/material/IconButton'
@@ -20,7 +22,16 @@ import AuthFormCard from '@/components/auth/auth-form-card'
 import AuthLink from '@/components/auth/auth-link'
 
 const SignInPage: NextPage = () => {
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSignIn = async (): Promise<void> => {
+    if (isLoading) return
+    setIsLoading(true)
+    await new Promise((resolve) => window.setTimeout(resolve, 1200))
+    await router.push('/dashboard')
+  }
 
   return (
     <AuthShell
@@ -37,7 +48,23 @@ const SignInPage: NextPage = () => {
         title="Welcome back"
         subtitle="Use your verified credentials to continue into your personal YLSH workspace."
       >
-        <Box component="form" sx={{ display: 'grid', gap: 2.1 }}>
+        <Box sx={{ display: 'grid', gap: 2.1, position: 'relative' }}>
+          {isLoading ? (
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 2,
+                borderRadius: 4,
+                backgroundColor: 'rgba(255,255,255,0.78)',
+                display: 'grid',
+                placeItems: 'center',
+                backdropFilter: 'blur(8px)',
+              }}
+            >
+              <CircularProgress color="primary" size={48} thickness={4} />
+            </Box>
+          ) : null}
           <TextField
             fullWidth
             label="Email address"
@@ -79,7 +106,7 @@ const SignInPage: NextPage = () => {
             <AuthLink href="#">Forgot password?</AuthLink>
           </Stack>
 
-          <StyledButton size="large" color="primary" disableHoverEffect>
+          <StyledButton size="large" color="primary" disableHoverEffect disabled={isLoading} onClick={handleSignIn}>
             Sign In
           </StyledButton>
 
