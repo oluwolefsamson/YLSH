@@ -1,0 +1,86 @@
+:root {
+  --color-background: #f3f6fb;
+  --color-scrollbar: rgb(196, 205, 220);
+  --color-scrollbar-hover: #9aa8bc;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: var(--color-background);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: var(--color-background);
+  border-radius: 10px;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.06), transparent 28%),
+    radial-gradient(circle at top right, rgba(239, 68, 68, 0.05), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, #f3f6fb 100%);
+  background-attachment: fixed;
+}
+
+@-webkit-keyframes click_animation {
+  from {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  to {
+    -webkit-transform: scale(5);
+    transform: scale(5);
+    opacity: 0;
+  }
+}
+
+@keyframes click_animation {
+  from {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  to {
+    -webkit-transform: scale(5);
+    transform: scale(5);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes logo_beep {
+  0%,
+  100% {
+    transform: scale(1);
+    text-shadow: 0 0 18px rgba(18, 124, 113, 0.18);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.04);
+    text-shadow: 0 0 28px rgba(18, 124, 113, 0.4), 0 0 8px rgba(18, 124, 113, 0.28);
+    opacity: 0.96;
+  }
+}
+
+@keyframes logo_beep {
+  0%,
+  100% {
+    transform: scale(1);
+    text-shadow: 0 0 18px rgba(18, 124, 113, 0.18);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.04);
+    text-shadow: 0 0 28px rgba(18, 124, 113, 0.4), 0 0 8px rgba(18, 124, 113, 0.28);
+    opacity: 0.96;
+  }
+}
