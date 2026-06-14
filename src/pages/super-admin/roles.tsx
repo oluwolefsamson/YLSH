@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
@@ -18,14 +17,16 @@ import Typography from '@mui/material/Typography'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import EditIcon from '@mui/icons-material/Edit'
 import { AdminLayout } from '@/components/layout'
+import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 const roles = [
@@ -68,20 +69,16 @@ const RoleManagementPage: NextPageWithLayout = () => {
   const [newRole, setNewRole] = useState('')
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<AdminPanelSettingsIcon />} label="Role management" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 28, md: 38 } }}>
-            Role Management
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 680 }}>
-            View the RBAC matrix and assign or revoke roles for any user account.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Role Management"
+        title="Role Management"
+        subtitle="View the RBAC matrix and assign or revoke roles for any user account."
+        icon={<AdminPanelSettingsIcon />}
+      />
 
-        {/* RBAC matrix */}
-        <Paper sx={{ ...PAPER_SX, mb: 3 }}>
+      {/* RBAC matrix */}
+      <Paper sx={{ ...PAPER_SX, mb: 3 }}>
           <Typography variant="h5" sx={{ mb: 3, fontSize: 22 }}>RBAC Matrix</Typography>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 2 }}>
             {roles.map((role) => (
@@ -158,7 +155,7 @@ const RoleManagementPage: NextPageWithLayout = () => {
             ))}
           </Stack>
         </Paper>
-      </Container>
+
 
       {/* Edit role dialog */}
       <Dialog open={Boolean(editUser)} onClose={() => setEditUser(null)} maxWidth="xs" fullWidth>

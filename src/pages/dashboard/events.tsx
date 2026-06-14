@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
@@ -16,14 +15,16 @@ import PeopleIcon from '@mui/icons-material/People'
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import { DashboardLayout } from '@/components/layout'
+import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 const events = [
@@ -97,50 +98,26 @@ const EventsPage: NextPageWithLayout = () => {
     events.filter((e) => e.status === 'past')
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<EventAvailableIcon />} label="Events" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 28, md: 38 } }}>
-            Events & Sessions
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 680 }}>
-            Browse upcoming events, register, and track attendance. Your QR codes appear in My Registrations below.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Events"
+        title="Events & Sessions"
+        subtitle="Browse upcoming events, register, and track attendance. Your QR codes appear in My Registrations below."
+        icon={<EventAvailableIcon />}
+      />
 
-        {/* Stats */}
-        <Grid container spacing={2.5} sx={{ mb: 4 }}>
-          {[
-            { label: 'Registered', value: '2', icon: <EventAvailableIcon /> },
-            { label: 'Upcoming', value: '1', icon: <CalendarMonthIcon /> },
-            { label: 'Attended', value: '1', icon: <PeopleIcon /> },
-          ].map((s) => (
-            <Grid key={s.label} item xs={12} sm={4}>
-              <Paper sx={{ ...PAPER_SX, p: 2.5 }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      width: 42,
-                      height: 42,
-                      borderRadius: '12px',
-                      display: 'grid',
-                      placeItems: 'center',
-                      backgroundColor: 'primary.main',
-                      color: 'primary.contrastText',
-                    }}
-                  >
-                    {s.icon}
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2" color="text.secondary">{s.label}</Typography>
-                    <Typography variant="h4" sx={{ fontSize: 26, fontWeight: 700 }}>{s.value}</Typography>
-                  </Box>
-                </Stack>
-              </Paper>
-            </Grid>
-          ))}
+      {/* Stats */}
+      <Grid container spacing={2.5} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="Registered" value="2" icon={<EventAvailableIcon />} progress={50} />
         </Grid>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="Upcoming" value="1" icon={<CalendarMonthIcon />} progress={25} accent="#3b82f6" />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="Attended" value="1" icon={<PeopleIcon />} progress={25} accent="#f59e0b" />
+        </Grid>
+      </Grid>
 
         {/* Event listing */}
         <Paper sx={{ ...PAPER_SX, mb: 4 }}>
@@ -266,7 +243,6 @@ const EventsPage: NextPageWithLayout = () => {
             ))}
           </Stack>
         </Paper>
-      </Container>
     </Box>
   )
 }

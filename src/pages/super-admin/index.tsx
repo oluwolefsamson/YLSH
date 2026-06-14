@@ -2,7 +2,6 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
@@ -16,14 +15,16 @@ import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import SchoolIcon from '@mui/icons-material/School'
 import SecurityIcon from '@mui/icons-material/Security'
 import { AdminLayout } from '@/components/layout'
+import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 const stats = [
@@ -52,50 +53,23 @@ const auditLog = [
 
 const SuperAdminOverviewPage: NextPageWithLayout = () => {
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<SecurityIcon />} label="Super Admin portal" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 30, md: 40 } }}>
-            Super Admin Overview
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 760 }}>
-            Full system access — manage all users, admins, roles, events, and view platform-wide
-            audit logs.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Super Admin Portal"
+        title="Super Admin Overview"
+        subtitle="Full system access — manage all users, admins, roles, events, and view platform-wide audit logs."
+        icon={<SecurityIcon />}
+      />
 
-        {/* Stats */}
-        <Grid container spacing={2.5} sx={{ mb: 4 }}>
-          {stats.map((card) => (
-            <Grid key={card.label} item xs={12} sm={6} lg={4}>
-              <Paper sx={PAPER_SX}>
-                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 2 }}>
-                  <Box
-                    sx={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: '14px',
-                      display: 'grid',
-                      placeItems: 'center',
-                      backgroundColor: 'primary.main',
-                      color: 'primary.contrastText',
-                    }}
-                  >
-                    {card.icon}
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2" color="text.secondary">{card.label}</Typography>
-                    <Typography variant="h4" sx={{ fontSize: 26, fontWeight: 700 }}>{card.value}</Typography>
-                  </Box>
-                </Stack>
-                <LinearProgress variant="determinate" value={card.progress} sx={{ height: 7, borderRadius: 99 }} />
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-
-        <Grid container spacing={3}>
+      {/* Stats */}
+      <Grid container spacing={2.5} sx={{ mb: 4 }}>
+        {stats.map((card) => (
+          <Grid key={card.label} item xs={12} sm={6} lg={4}>
+            <StatCard label={card.label} value={card.value} icon={card.icon} progress={card.progress} />
+          </Grid>
+        ))}
+      </Grid>
+      <Grid container spacing={3}>
           {/* Admin accounts */}
           <Grid item xs={12} lg={6}>
             <Paper sx={PAPER_SX}>
@@ -181,8 +155,7 @@ const SuperAdminOverviewPage: NextPageWithLayout = () => {
               </Stack>
             </Paper>
           </Grid>
-        </Grid>
-      </Container>
+      </Grid>
     </Box>
   )
 }

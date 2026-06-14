@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
@@ -16,14 +15,16 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
 import ArticleIcon from '@mui/icons-material/Article'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { DashboardLayout } from '@/components/layout'
+import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 type ResourceType = 'video' | 'pdf' | 'article'
@@ -123,52 +124,28 @@ const LearningPage: NextPageWithLayout = () => {
   )
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<SchoolIcon />} label="Learning" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 28, md: 38 } }}>
-            Learning Resources
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 680 }}>
-            Access courses, PDFs, videos, and articles. Track your progress across all learning materials.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Learning"
+        title="Learning Resources"
+        subtitle="Access courses, PDFs, videos, and articles. Track your progress across all learning materials."
+        icon={<SchoolIcon />}
+      />
 
-        {/* Stats */}
-        <Grid container spacing={2.5} sx={{ mb: 4 }}>
-          {[
-            { label: 'Completed', value: String(completedCount), icon: <CheckCircleIcon /> },
-            { label: 'In Progress', value: String(inProgressCount), icon: <SchoolIcon /> },
-            { label: 'Overall Progress', value: `${totalProgress}%`, icon: <SchoolIcon /> },
-          ].map((s) => (
-            <Grid key={s.label} item xs={12} sm={4}>
-              <Paper sx={{ ...PAPER_SX, p: 2.5 }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      width: 42,
-                      height: 42,
-                      borderRadius: '12px',
-                      display: 'grid',
-                      placeItems: 'center',
-                      backgroundColor: 'primary.main',
-                      color: 'primary.contrastText',
-                    }}
-                  >
-                    {s.icon}
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2" color="text.secondary">{s.label}</Typography>
-                    <Typography variant="h4" sx={{ fontSize: 26, fontWeight: 700 }}>{s.value}</Typography>
-                  </Box>
-                </Stack>
-              </Paper>
-            </Grid>
-          ))}
+      {/* Stats */}
+      <Grid container spacing={2.5} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="Completed" value={String(completedCount)} icon={<CheckCircleIcon />} progress={completedCount / resources.length * 100} accent="#22c55e" />
         </Grid>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="In Progress" value={String(inProgressCount)} icon={<SchoolIcon />} progress={inProgressCount / resources.length * 100} accent="#f59e0b" />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="Overall Progress" value={`${totalProgress}%`} icon={<SchoolIcon />} progress={totalProgress} />
+        </Grid>
+      </Grid>
 
-        <Paper sx={PAPER_SX}>
+      <Paper sx={PAPER_SX}>
           <Tabs
             value={tab}
             onChange={(_, v) => setTab(v)}
@@ -261,8 +238,7 @@ const LearningPage: NextPageWithLayout = () => {
               </Box>
             )}
           </Stack>
-        </Paper>
-      </Container>
+      </Paper>
     </Box>
   )
 }

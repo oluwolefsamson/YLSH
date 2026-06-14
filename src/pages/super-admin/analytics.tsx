@@ -13,7 +13,7 @@ import EventAvailableIcon from '@mui/icons-material/EventAvailable'
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import SchoolIcon from '@mui/icons-material/School'
-import TrendingUpIcon from '@mui/icons-material/TrendingUp'
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
@@ -33,14 +33,14 @@ const kpis = [
   { label: 'Events hosted', value: '28', change: '+4 this quarter', icon: <EventAvailableIcon />, pct: 70 },
   { label: 'Certificates issued', value: '3,104', change: '+87 this month', icon: <WorkspacePremiumIcon />, pct: 62 },
   { label: 'Mentorship sessions', value: '891', change: '+43 this month', icon: <SchoolIcon />, pct: 55 },
-  { label: 'Attendance rate', value: '78%', change: 'Across all events', icon: <TrendingUpIcon />, pct: 78 },
+  { label: 'Admin accounts', value: '6', change: '1 Super Admin · 5 Admins', icon: <AdminPanelSettingsIcon />, pct: 30 },
 ]
 
-const topEvents = [
-  { title: 'Youth Leadership Summit 2025', attendees: 468, capacity: 500, certificates: 462 },
-  { title: 'Digital Skills Bootcamp', attendees: 148, capacity: 150, certificates: 148 },
-  { title: 'Entrepreneurship Masterclass', attendees: 289, capacity: 300, certificates: 280 },
-  { title: 'Climate Action Workshop', attendees: 175, capacity: 200, certificates: 170 },
+const roleDistribution = [
+  { role: 'Participant', count: 4727, pct: 98 },
+  { role: 'Mentor', count: 47, pct: 1 },
+  { role: 'Admin', count: 5, pct: 0.1 },
+  { role: 'Super Admin', count: 1, pct: 0.02 },
 ]
 
 const userGrowth = [
@@ -52,35 +52,34 @@ const userGrowth = [
   { month: 'Jun 2026', count: 4821 },
 ]
 
-const AdminAnalyticsPage: NextPageWithLayout = () => {
+const topStates = [
+  { state: 'Lagos', users: 1241 },
+  { state: 'Abuja (FCT)', users: 892 },
+  { state: 'Kano', users: 634 },
+  { state: 'Rivers', users: 521 },
+  { state: 'Kaduna', users: 488 },
+]
+
+const SuperAdminAnalyticsPage: NextPageWithLayout = () => {
   const maxCount = Math.max(...userGrowth.map((d) => d.count))
+  const maxState = Math.max(...topStates.map((s) => s.users))
 
   return (
     <Box>
       <PageHeader
-        eyebrow="Analytics"
+        eyebrow="System Analytics"
         title="Platform Analytics"
-        subtitle="User growth, verification rate, event attendance, certificate issuance, and engagement metrics across the YLSH platform."
+        subtitle="Full system-wide metrics — user growth, role distribution, verification rates, event performance, and geographic reach."
         icon={<BarChartIcon />}
       />
 
-      {/* KPI grid */}
+      {/* KPIs */}
       <Grid container spacing={2.5} sx={{ mb: 4 }}>
           {kpis.map((kpi) => (
             <Grid key={kpi.label} item xs={12} sm={6} lg={4}>
               <Paper sx={PAPER_SX}>
                 <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 2 }}>
-                  <Box
-                    sx={{
-                      width: 42,
-                      height: 42,
-                      borderRadius: '12px',
-                      display: 'grid',
-                      placeItems: 'center',
-                      backgroundColor: 'primary.main',
-                      color: 'primary.contrastText',
-                    }}
-                  >
+                  <Box sx={{ width: 42, height: 42, borderRadius: '12px', display: 'grid', placeItems: 'center', backgroundColor: 'primary.main', color: 'primary.contrastText' }}>
                     {kpi.icon}
                   </Box>
                   <Box>
@@ -96,8 +95,8 @@ const AdminAnalyticsPage: NextPageWithLayout = () => {
         </Grid>
 
         <Grid container spacing={3}>
-          {/* User growth chart (bar) */}
-          <Grid item xs={12} md={6}>
+          {/* User growth */}
+          <Grid item xs={12} md={4}>
             <Paper sx={PAPER_SX}>
               <Typography variant="h5" sx={{ mb: 3, fontSize: 20 }}>User Growth (2026)</Typography>
               <Stack spacing={1.5}>
@@ -105,50 +104,53 @@ const AdminAnalyticsPage: NextPageWithLayout = () => {
                   <Box key={row.month}>
                     <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
                       <Typography variant="body2" color="text.secondary">{row.month}</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                        {row.count.toLocaleString()}
-                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }}>{row.count.toLocaleString()}</Typography>
                     </Stack>
-                    <LinearProgress
-                      variant="determinate"
-                      value={(row.count / maxCount) * 100}
-                      sx={{ height: 10, borderRadius: 99 }}
-                    />
+                    <LinearProgress variant="determinate" value={(row.count / maxCount) * 100} sx={{ height: 8, borderRadius: 99 }} />
                   </Box>
                 ))}
               </Stack>
             </Paper>
           </Grid>
 
-          {/* Top events */}
-          <Grid item xs={12} md={6}>
+          {/* Role distribution */}
+          <Grid item xs={12} md={4}>
             <Paper sx={PAPER_SX}>
-              <Typography variant="h5" sx={{ mb: 3, fontSize: 20 }}>Top Events by Attendance</Typography>
+              <Typography variant="h5" sx={{ mb: 3, fontSize: 20 }}>Role Distribution</Typography>
               <Stack spacing={2.5}>
-                {topEvents.map((event) => (
-                  <Box key={event.title}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
-                      <Typography sx={{ fontWeight: 600, fontSize: 14, flex: 1, pr: 2 }}>
-                        {event.title}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
-                        {event.attendees}/{event.capacity}
-                      </Typography>
+                {roleDistribution.map((r) => (
+                  <Box key={r.role}>
+                    <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>{r.role}</Typography>
+                      <Typography variant="body2" color="text.secondary">{r.count.toLocaleString()}</Typography>
+                    </Stack>
+                    <LinearProgress variant="determinate" value={Math.max(r.pct, 2)} sx={{ height: 8, borderRadius: 99 }} />
+                    <Divider sx={{ mt: 1.5 }} />
+                  </Box>
+                ))}
+              </Stack>
+            </Paper>
+          </Grid>
+
+          {/* Geographic reach */}
+          <Grid item xs={12} md={4}>
+            <Paper sx={{ ...PAPER_SX, background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.98) 100%)', color: 'common.white' }}>
+              <Typography variant="h5" sx={{ mb: 3, fontSize: 20 }}>Top States</Typography>
+              <Stack spacing={2}>
+                {topStates.map((s, i) => (
+                  <Box key={s.state}>
+                    <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.75 }}>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)', minWidth: 20 }}>#{i + 1}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{s.state}</Typography>
+                      </Stack>
+                      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)' }}>{s.users.toLocaleString()}</Typography>
                     </Stack>
                     <LinearProgress
                       variant="determinate"
-                      value={(event.attendees / event.capacity) * 100}
-                      sx={{ height: 8, borderRadius: 99, mb: 0.5 }}
+                      value={(s.users / maxState) * 100}
+                      sx={{ height: 5, borderRadius: 99, backgroundColor: 'rgba(255,255,255,0.15)', '& .MuiLinearProgress-bar': { backgroundColor: 'rgba(134,239,172,0.8)' } }}
                     />
-                    <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="caption" color="text.secondary">
-                        {Math.round((event.attendees / event.capacity) * 100)}% attendance
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {event.certificates} certificates issued
-                      </Typography>
-                    </Stack>
-                    <Divider sx={{ mt: 1.5 }} />
                   </Box>
                 ))}
               </Stack>
@@ -160,6 +162,6 @@ const AdminAnalyticsPage: NextPageWithLayout = () => {
   )
 }
 
-AdminAnalyticsPage.getLayout = (page) => <AdminLayout>{page}</AdminLayout>
+SuperAdminAnalyticsPage.getLayout = (page) => <AdminLayout superAdmin>{page}</AdminLayout>
 
-export default AdminAnalyticsPage
+export default SuperAdminAnalyticsPage

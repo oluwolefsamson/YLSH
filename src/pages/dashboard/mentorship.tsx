@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
 import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
@@ -20,14 +19,16 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
 import StarIcon from '@mui/icons-material/Star'
 import WorkIcon from '@mui/icons-material/Work'
 import { DashboardLayout } from '@/components/layout'
+import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 interface Mentor {
@@ -136,58 +137,33 @@ const MentorshipPage: NextPageWithLayout = () => {
   const completedCount = mySessions.filter((s) => s.status === 'completed').length
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<PeopleIcon />} label="Mentorship" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 28, md: 38 } }}>
-            Mentorship
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 680 }}>
-            Discover mentors, book one-on-one sessions, and track your mentorship journey across
-            career, entrepreneurship, policy, and more.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Mentorship"
+        title="Mentorship"
+        subtitle="Discover mentors, book one-on-one sessions, and track your mentorship journey across career, entrepreneurship, policy, and more."
+        icon={<PeopleIcon />}
+      />
 
-        {/* Stats */}
-        <Grid container spacing={2.5} sx={{ mb: 4 }}>
-          {[
-            { label: 'Total Sessions', value: String(mySessions.length), icon: <PeopleIcon /> },
-            { label: 'Upcoming', value: String(upcomingCount), icon: <CalendarMonthIcon /> },
-            { label: 'Completed', value: String(completedCount), icon: <CheckCircleIcon /> },
-          ].map((s) => (
-            <Grid key={s.label} item xs={12} sm={4}>
-              <Paper sx={{ ...PAPER_SX, p: 2.5 }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      width: 42,
-                      height: 42,
-                      borderRadius: '12px',
-                      display: 'grid',
-                      placeItems: 'center',
-                      backgroundColor: 'primary.main',
-                      color: 'primary.contrastText',
-                    }}
-                  >
-                    {s.icon}
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2" color="text.secondary">{s.label}</Typography>
-                    <Typography variant="h4" sx={{ fontSize: 26, fontWeight: 700 }}>{s.value}</Typography>
-                  </Box>
-                </Stack>
-              </Paper>
-            </Grid>
-          ))}
+      {/* Stats */}
+      <Grid container spacing={2.5} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="Total Sessions" value={String(mySessions.length)} icon={<PeopleIcon />} progress={100} />
         </Grid>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="Upcoming" value={String(upcomingCount)} icon={<CalendarMonthIcon />} progress={upcomingCount / mySessions.length * 100} accent="#3b82f6" />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="Completed" value={String(completedCount)} icon={<CheckCircleIcon />} progress={completedCount / mySessions.length * 100} accent="#22c55e" />
+        </Grid>
+      </Grid>
 
-        {/* My Sessions */}
-        <Paper sx={{ ...PAPER_SX, mb: 4 }}>
-          <Typography variant="h5" sx={{ mb: 2.5, fontSize: 22 }}>
-            My Sessions
-          </Typography>
-          <Stack spacing={2}>
+      {/* My Sessions */}
+      <Paper sx={{ ...PAPER_SX, mb: 4 }}>
+        <Typography variant="h5" sx={{ mb: 2.5, fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em' }}>
+          My Sessions
+        </Typography>
+        <Stack spacing={2}>
             {mySessions.map((session) => (
               <Box
                 key={session.id}
@@ -358,7 +334,6 @@ const MentorshipPage: NextPageWithLayout = () => {
               ))}
           </Grid>
         </Paper>
-      </Container>
     </Box>
   )
 }

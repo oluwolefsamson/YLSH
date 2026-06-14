@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Rating from '@mui/material/Rating'
@@ -13,14 +12,16 @@ import PeopleIcon from '@mui/icons-material/People'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import MessageIcon from '@mui/icons-material/Message'
 import { MentorLayout } from '@/components/layout'
+import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 const mentees = [
@@ -33,19 +34,15 @@ const mentees = [
 
 const MenteesPage: NextPageWithLayout = () => {
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<PeopleIcon />} label="Mentees" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 28, md: 38 } }}>
-            My Mentees
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 680 }}>
-            View all participants you have mentored and track their progress.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Mentees"
+        title="My Mentees"
+        subtitle="View all participants you have mentored and track their progress."
+        icon={<PeopleIcon />}
+      />
 
-        <Grid container spacing={2.5}>
+      <Grid container spacing={2.5}>
           {mentees.map((mentee) => (
             <Grid key={mentee.id} item xs={12} md={6}>
               <Paper sx={{ ...PAPER_SX, p: 2.5, display: 'flex', flexDirection: 'column' }}>
@@ -103,8 +100,7 @@ const MenteesPage: NextPageWithLayout = () => {
               </Paper>
             </Grid>
           ))}
-        </Grid>
-      </Container>
+      </Grid>
     </Box>
   )
 }

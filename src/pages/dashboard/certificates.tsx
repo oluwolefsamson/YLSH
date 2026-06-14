@@ -2,7 +2,6 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
@@ -13,14 +12,16 @@ import VerifiedIcon from '@mui/icons-material/Verified'
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
 import { DashboardLayout } from '@/components/layout'
+import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 const certificates = [
@@ -63,55 +64,30 @@ const CertificatesPage: NextPageWithLayout = () => {
   const pendingCount = certificates.filter((c) => c.status === 'pending').length
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<WorkspacePremiumIcon />} label="Certificates" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 28, md: 38 } }}>
-            My Certificates
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 680 }}>
-            Download PDF certificates and share QR-verified links. Certificates are generated asynchronously
-            after events conclude.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Certificates"
+        title="My Certificates"
+        subtitle="Download PDF certificates and share QR-verified links. Certificates are generated after events conclude."
+        icon={<WorkspacePremiumIcon />}
+      />
 
-        {/* Stats */}
-        <Grid container spacing={2.5} sx={{ mb: 4 }}>
-          {[
-            { label: 'Total Issued', value: String(issuedCount), icon: <WorkspacePremiumIcon /> },
-            { label: 'Verified', value: String(issuedCount), icon: <VerifiedIcon /> },
-            { label: 'Pending', value: String(pendingCount), icon: <HourglassEmptyIcon /> },
-          ].map((s) => (
-            <Grid key={s.label} item xs={12} sm={4}>
-              <Paper sx={{ ...PAPER_SX, p: 2.5 }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      width: 42,
-                      height: 42,
-                      borderRadius: '12px',
-                      display: 'grid',
-                      placeItems: 'center',
-                      backgroundColor: 'primary.main',
-                      color: 'primary.contrastText',
-                    }}
-                  >
-                    {s.icon}
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2" color="text.secondary">{s.label}</Typography>
-                    <Typography variant="h4" sx={{ fontSize: 26, fontWeight: 700 }}>{s.value}</Typography>
-                  </Box>
-                </Stack>
-              </Paper>
-            </Grid>
-          ))}
+      {/* Stats */}
+      <Grid container spacing={2.5} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="Total Issued" value={String(issuedCount)} icon={<WorkspacePremiumIcon />} progress={75} />
         </Grid>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="Verified" value={String(issuedCount)} icon={<VerifiedIcon />} progress={75} accent="#22c55e" />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <StatCard label="Pending" value={String(pendingCount)} icon={<HourglassEmptyIcon />} progress={25} accent="#f59e0b" />
+        </Grid>
+      </Grid>
 
-        {/* Certificate cards */}
-        <Grid container spacing={2.5}>
-          {certificates.map((cert) => (
+      {/* Certificate cards */}
+      <Grid container spacing={2.5}>
+        {certificates.map((cert) => (
             <Grid key={cert.id} item xs={12} md={6}>
               <Paper
                 sx={{
@@ -197,8 +173,7 @@ const CertificatesPage: NextPageWithLayout = () => {
               </Paper>
             </Grid>
           ))}
-        </Grid>
-      </Container>
+      </Grid>
     </Box>
   )
 }

@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Tab from '@mui/material/Tab'
@@ -15,14 +14,16 @@ import VideocamIcon from '@mui/icons-material/Videocam'
 import CancelIcon from '@mui/icons-material/Cancel'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import { MentorLayout } from '@/components/layout'
+import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 const sessions = [
@@ -44,19 +45,15 @@ const MentorSessionsPage: NextPageWithLayout = () => {
     sessions.filter((s) => s.status === 'cancelled')
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<CalendarMonthIcon />} label="Sessions" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 28, md: 38 } }}>
-            My Sessions
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 680 }}>
-            View, join, and record outcomes for all your mentorship sessions.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Sessions"
+        title="My Sessions"
+        subtitle="View, join, and record outcomes for all your mentorship sessions."
+        icon={<CalendarMonthIcon />}
+      />
 
-        <Paper sx={PAPER_SX}>
+      <Paper sx={PAPER_SX}>
           <Tabs
             value={tab}
             onChange={(_, v) => setTab(v)}
@@ -172,8 +169,7 @@ const MentorSessionsPage: NextPageWithLayout = () => {
               </Box>
             ))}
           </Stack>
-        </Paper>
-      </Container>
+      </Paper>
     </Box>
   )
 }

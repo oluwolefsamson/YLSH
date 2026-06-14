@@ -1,9 +1,7 @@
 import React from 'react'
 import Box from '@mui/material/Box'
-import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
+import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
-import LinearProgress from '@mui/material/LinearProgress'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
@@ -13,16 +11,18 @@ import StarIcon from '@mui/icons-material/Star'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import VideocamIcon from '@mui/icons-material/Videocam'
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
-import Button from '@mui/material/Button'
+import DashboardIcon from '@mui/icons-material/Dashboard'
 import { MentorLayout } from '@/components/layout'
+import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 const stats = [
@@ -47,54 +47,29 @@ const recentActivity = [
 
 const MentorOverviewPage: NextPageWithLayout = () => {
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<PeopleIcon />} label="Mentor portal" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 30, md: 40 } }}>
-            Welcome back, Dr. Ngozi
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 760 }}>
-            Manage your mentee sessions, availability, and impact from your mentor portal.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Mentor Portal"
+        title="Welcome back, Dr. Ngozi!"
+        subtitle="Manage your mentee sessions, availability, and impact from your mentor portal."
+        icon={<DashboardIcon />}
+      />
 
-        {/* Stat cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          {stats.map((card) => (
-            <Grid key={card.label} item xs={12} sm={6} lg={3}>
-              <Paper sx={PAPER_SX}>
-                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 2 }}>
-                  <Box
-                    sx={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: '14px',
-                      display: 'grid',
-                      placeItems: 'center',
-                      backgroundColor: 'primary.main',
-                      color: 'primary.contrastText',
-                    }}
-                  >
-                    {card.icon}
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2" color="text.secondary">{card.label}</Typography>
-                    <Typography variant="h4" sx={{ fontSize: 28, fontWeight: 700 }}>{card.value}</Typography>
-                  </Box>
-                </Stack>
-                <LinearProgress variant="determinate" value={card.progress} sx={{ height: 8, borderRadius: 99 }} />
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+      {/* Stat cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {stats.map((card) => (
+          <Grid key={card.label} item xs={12} sm={6} lg={3}>
+            <StatCard label={card.label} value={card.value} icon={card.icon} progress={card.progress} />
+          </Grid>
+        ))}
+      </Grid>
 
-        <Grid container spacing={3}>
-          {/* Upcoming sessions */}
-          <Grid item xs={12} lg={7}>
-            <Paper sx={PAPER_SX}>
-              <Typography variant="h5" sx={{ mb: 2.5, fontSize: 22 }}>
-                Upcoming Sessions
+      <Grid container spacing={3}>
+        {/* Upcoming sessions */}
+        <Grid item xs={12} lg={7}>
+          <Paper sx={PAPER_SX}>
+            <Typography variant="h5" sx={{ mb: 2.5, fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em' }}>
+              Upcoming Sessions
               </Typography>
               <Stack spacing={1.5}>
                 {upcomingSessions.map((session) => (
@@ -171,8 +146,7 @@ const MentorOverviewPage: NextPageWithLayout = () => {
               </Stack>
             </Paper>
           </Grid>
-        </Grid>
-      </Container>
+      </Grid>
     </Box>
   )
 }

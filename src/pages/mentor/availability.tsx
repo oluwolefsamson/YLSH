@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
@@ -13,14 +12,16 @@ import Typography from '@mui/material/Typography'
 import EventAvailableIcon from '@mui/icons-material/EventAvailable'
 import SaveIcon from '@mui/icons-material/Save'
 import { MentorLayout } from '@/components/layout'
+import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -45,20 +46,15 @@ const AvailabilityPage: NextPageWithLayout = () => {
     setAvailability((prev) => ({ ...prev, [day]: !prev[day] }))
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<EventAvailableIcon />} label="Availability" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 28, md: 38 } }}>
-            Availability Settings
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 680 }}>
-            Set the days and hours you are available for mentorship sessions. Mentees will only be
-            able to book slots within your configured availability.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Availability"
+        title="Availability Settings"
+        subtitle="Set the days and hours you are available. Mentees will only be able to book slots within your configured availability."
+        icon={<EventAvailableIcon />}
+      />
 
-        <Grid container spacing={3}>
+      <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Paper sx={PAPER_SX}>
               <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
@@ -200,8 +196,7 @@ const AvailabilityPage: NextPageWithLayout = () => {
               </Paper>
             </Stack>
           </Grid>
-        </Grid>
-      </Container>
+      </Grid>
     </Box>
   )
 }

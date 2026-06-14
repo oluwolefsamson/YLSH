@@ -1,15 +1,17 @@
 import React, { FC, ReactNode, useState } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
+import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
 import Container from '@mui/material/Container'
-import Divider from '@mui/material/Divider'
-import Drawer from '@mui/material/Drawer'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
+import Divider from '@mui/material/Divider'
+import Drawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
@@ -28,23 +30,22 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import PeopleIcon from '@mui/icons-material/People'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import LogoutIcon from '@mui/icons-material/Logout'
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import { StyledButton } from '@/components/styled-button'
 import { Logo } from '@/components/logo'
 
-interface Props {
-  children: ReactNode
-}
+interface Props { children: ReactNode }
 
-const drawerWidth = 280
+const drawerWidth = 288
 
 const navItems = [
-  { label: 'Overview', href: '/dashboard', icon: <DashboardIcon /> },
-  { label: 'Events', href: '/dashboard/events', icon: <EventAvailableIcon /> },
-  { label: 'Certificates', href: '/dashboard/certificates', icon: <WorkspacePremiumIcon /> },
-  { label: 'Learning', href: '/dashboard/learning', icon: <SchoolIcon /> },
-  { label: 'Opportunities', href: '/dashboard/opportunities', icon: <EmojiEventsIcon /> },
-  { label: 'Mentorship', href: '/dashboard/mentorship', icon: <PeopleIcon /> },
-  { label: 'Profile', href: '/dashboard/profile', icon: <AccountCircleIcon /> },
+  { label: 'Overview', href: '/dashboard', icon: <DashboardIcon fontSize="small" /> },
+  { label: 'Events', href: '/dashboard/events', icon: <EventAvailableIcon fontSize="small" /> },
+  { label: 'Certificates', href: '/dashboard/certificates', icon: <WorkspacePremiumIcon fontSize="small" /> },
+  { label: 'Learning', href: '/dashboard/learning', icon: <SchoolIcon fontSize="small" /> },
+  { label: 'Opportunities', href: '/dashboard/opportunities', icon: <EmojiEventsIcon fontSize="small" /> },
+  { label: 'Mentorship', href: '/dashboard/mentorship', icon: <PeopleIcon fontSize="small" /> },
+  { label: 'Profile', href: '/dashboard/profile', icon: <AccountCircleIcon fontSize="small" /> },
 ]
 
 const DashboardLayout: FC<Props> = ({ children }) => {
@@ -61,129 +62,152 @@ const DashboardLayout: FC<Props> = ({ children }) => {
   }
 
   const sidebar = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', py: 3 }}>
-      <Box sx={{ px: 3, mb: 3 }}>
-        <Logo />
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      {/* Gradient header */}
+      <Box
+        sx={{
+          p: 3,
+          background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.97) 100%)',
+          position: 'relative',
+          overflow: 'hidden',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: -30,
+            right: -30,
+            width: 100,
+            height: 100,
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.06)',
+          },
+        }}
+      >
+        <Box sx={{ mb: 2.5, position: 'relative', zIndex: 1 }}>
+          <Logo />
+        </Box>
+        <Stack direction="row" spacing={1.5} alignItems="center" sx={{ position: 'relative', zIndex: 1 }}>
+          <Avatar sx={{ width: 40, height: 40, background: 'rgba(255,255,255,0.18)', color: 'white', fontWeight: 700, fontSize: 15, border: '2px solid rgba(255,255,255,0.25)' }}>
+            AB
+          </Avatar>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography sx={{ color: 'white', fontWeight: 700, fontSize: 14, lineHeight: 1.3 }}>
+              Amina Bello
+            </Typography>
+            <Stack direction="row" spacing={0.75} alignItems="center">
+              <VerifiedUserIcon sx={{ fontSize: 11, color: 'rgba(159,241,210,0.9)' }} />
+              <Typography sx={{ color: 'rgba(159,241,210,0.9)', fontSize: 11, fontWeight: 600 }}>
+                Verified Participant
+              </Typography>
+            </Stack>
+          </Box>
+        </Stack>
       </Box>
-      <Box sx={{ px: 3, mb: 2 }}>
-        <Typography variant="overline" color="text.secondary">
-          Participant dashboard
+
+      {/* Nav */}
+      <Box sx={{ px: 1.5, pt: 2, pb: 1, flex: 1, overflowY: 'auto' }}>
+        <Typography variant="overline" sx={{ px: 1.5, color: 'text.disabled', fontSize: 10, letterSpacing: 1, fontWeight: 700 }}>
+          Navigation
         </Typography>
-        <Typography variant="h6" sx={{ fontWeight: 700 }}>
-          YLSH account
-        </Typography>
+        <List sx={{ mt: 0.5 }}>
+          {navItems.map((item) => {
+            const active = router.pathname === item.href
+            return (
+              <NextLink key={item.label} href={item.href} passHref>
+                <ListItemButton
+                  component="a"
+                  sx={{
+                    mb: 0.5,
+                    borderRadius: 3,
+                    px: 1.5,
+                    py: 1,
+                    position: 'relative',
+                    transition: 'all 0.15s ease',
+                    ...(active ? {
+                      background: 'linear-gradient(90deg, rgba(18,124,113,0.13) 0%, rgba(18,124,113,0.04) 100%)',
+                      borderLeft: '3px solid #127C71',
+                      pl: '9px',
+                      '& .MuiListItemIcon-root': { color: '#127C71' },
+                      '& .MuiListItemText-primary': { color: '#127C71', fontWeight: 700 },
+                    } : {
+                      '&:hover': {
+                        background: 'rgba(18,124,113,0.06)',
+                        '& .MuiListItemIcon-root': { color: '#127C71' },
+                      },
+                    }),
+                    '& .MuiListItemIcon-root': { minWidth: 36, color: active ? '#127C71' : 'text.secondary' },
+                  }}
+                >
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText
+                    primary={item.label}
+                    primaryTypographyProps={{ fontSize: 14, fontWeight: active ? 700 : 500 }}
+                  />
+                  {active && (
+                    <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#127C71', flexShrink: 0 }} />
+                  )}
+                </ListItemButton>
+              </NextLink>
+            )
+          })}
+        </List>
       </Box>
-      <Divider />
-      <List sx={{ px: 1.5, py: 2, flex: 1 }}>
-        {navItems.map((item) => (
-          <NextLink key={item.label} href={item.href} passHref>
-            <ListItemButton
-              component="a"
-              selected={router.pathname === item.href}
-              sx={{
-                mb: 0.5,
-                borderRadius: 3,
-                mx: 1,
-                '& .MuiListItemIcon-root': { minWidth: 40 },
-                '&.Mui-selected': {
-                  backgroundColor: 'primary.main',
-                  color: 'primary.contrastText',
-                  '& .MuiListItemIcon-root': { color: 'primary.contrastText' },
-                  '&:hover': { backgroundColor: 'primary.dark' },
-                },
-              }}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.label} />
-            </ListItemButton>
-          </NextLink>
-        ))}
-      </List>
-      <Box sx={{ px: 2 }}>
+
+      {/* Footer */}
+      <Box sx={{ p: 1.5 }}>
+        <Divider sx={{ mb: 1.5 }} />
         <ListItemButton
           onClick={() => setSignOutOpen(true)}
           sx={{
             borderRadius: 3,
-            mx: 1,
+            px: 1.5,
             color: 'text.secondary',
-            '& .MuiListItemIcon-root': { minWidth: 40, color: 'inherit' },
+            '&:hover': { color: 'error.main', backgroundColor: 'rgba(239,68,68,0.06)' },
+            '& .MuiListItemIcon-root': { minWidth: 36, color: 'inherit' },
           }}
         >
-          <ListItemIcon>
-            <LogoutIcon />
-          </ListItemIcon>
-          <ListItemText primary="Sign out" />
+          <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
+          <ListItemText primary="Sign out" primaryTypographyProps={{ fontSize: 14, fontWeight: 500 }} />
         </ListItemButton>
       </Box>
 
       <Dialog open={signOutOpen} onClose={() => setSignOutOpen(false)} maxWidth="xs" fullWidth>
         <DialogTitle>Sign out of YLSH?</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            You will be taken back to the login page. Make sure you have saved any changes before continuing.
-          </DialogContentText>
+          <DialogContentText>You will be taken back to the sign-in page.</DialogContentText>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3 }}>
-          <StyledButton type="button" variant="outlined" color="dark" disableHoverEffect onClick={() => setSignOutOpen(false)}>
-            Cancel
-          </StyledButton>
-          <StyledButton type="button" color="primary" disableHoverEffect onClick={handleConfirmSignOut}>
-            Confirm
-          </StyledButton>
+          <StyledButton type="button" variant="outlined" color="dark" disableHoverEffect onClick={() => setSignOutOpen(false)}>Cancel</StyledButton>
+          <StyledButton type="button" color="primary" disableHoverEffect onClick={handleConfirmSignOut}>Sign out</StyledButton>
         </DialogActions>
       </Dialog>
     </Box>
   )
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      {!isDesktop ? (
-        <Drawer open={mobileOpen} onClose={() => setMobileOpen(false)} PaperProps={{ sx: { width: drawerWidth } }}>
+    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f7f6 0%, #f3f6fb 100%)' }}>
+      {!isDesktop && (
+        <Drawer open={mobileOpen} onClose={() => setMobileOpen(false)} PaperProps={{ sx: { width: drawerWidth, border: 'none', boxShadow: '4px 0 24px rgba(15,23,42,0.1)' } }}>
           {sidebar}
         </Drawer>
-      ) : null}
-
+      )}
       <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-        {isDesktop ? (
-          <Box
-            sx={{
-              width: drawerWidth,
-              flexShrink: 0,
-              borderRight: '1px solid rgba(148,163,184,0.18)',
-              backgroundColor: 'rgba(255,255,255,0.88)',
-              backdropFilter: 'blur(18px)',
-            }}
-          >
+        {isDesktop && (
+          <Box sx={{ width: drawerWidth, flexShrink: 0, borderRight: '1px solid rgba(148,163,184,0.14)', backgroundColor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', position: 'sticky', top: 0, height: '100vh', overflowY: 'auto' }}>
             {sidebar}
           </Box>
-        ) : null}
-
+        )}
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          {!isDesktop ? (
-            <Box
-              sx={{
-                px: 2,
-                py: 2,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                borderBottom: '1px solid rgba(148,163,184,0.18)',
-                backgroundColor: 'rgba(255,255,255,0.9)',
-                backdropFilter: 'blur(18px)',
-                position: 'sticky',
-                top: 0,
-                zIndex: theme.zIndex.appBar,
-              }}
-            >
+          {!isDesktop && (
+            <Box sx={{ px: 2, py: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'linear-gradient(135deg, rgba(8,47,73,0.97) 0%, rgba(18,124,113,0.97) 100%)', position: 'sticky', top: 0, zIndex: theme.zIndex.appBar }}>
               <Stack direction="row" spacing={1.5} alignItems="center">
-                <IconButton onClick={() => setMobileOpen(true)}>
+                <IconButton onClick={() => setMobileOpen(true)} sx={{ color: 'white' }}>
                   <MenuIcon />
                 </IconButton>
                 <Logo />
               </Stack>
+              <Chip label="Participant" size="small" sx={{ backgroundColor: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }} />
             </Box>
-          ) : null}
-
+          )}
           <Container maxWidth={false} sx={{ py: { xs: 3, md: 4 }, px: { xs: 2, md: 4 } }}>
             {children}
           </Container>

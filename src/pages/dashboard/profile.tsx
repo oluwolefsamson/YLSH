@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
 import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -20,14 +19,16 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
 import BadgeIcon from '@mui/icons-material/Badge'
 import { DashboardLayout } from '@/components/layout'
+import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 const completionItems = [
@@ -60,19 +61,15 @@ const ProfilePage: NextPageWithLayout = () => {
   }
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<AccountCircleIcon />} label="Profile" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 28, md: 38 } }}>
-            My Profile
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 680 }}>
-            Manage your personal information, identity verification, and account security.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Profile"
+        title="My Profile"
+        subtitle="Manage your personal information, identity verification, and account security."
+        icon={<AccountCircleIcon />}
+      />
 
-        <Grid container spacing={3}>
+      <Grid container spacing={3}>
           {/* Left column */}
           <Grid item xs={12} md={4}>
             <Stack spacing={3}>
@@ -300,8 +297,7 @@ const ProfilePage: NextPageWithLayout = () => {
               </Paper>
             </Stack>
           </Grid>
-        </Grid>
-      </Container>
+      </Grid>
     </Box>
   )
 }

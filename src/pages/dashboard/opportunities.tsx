@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
@@ -21,14 +20,16 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import { DashboardLayout } from '@/components/layout'
+import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {
   p: { xs: 2.5, md: 3 },
   borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.82)',
-  border: '1px solid rgba(148,163,184,0.18)',
-  boxShadow: '0 16px 40px rgba(15, 23, 42, 0.06)',
+  backgroundColor: 'rgba(255,255,255,0.88)',
+  backdropFilter: 'blur(12px)',
+  border: '1px solid rgba(148,163,184,0.16)',
+  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
 }
 
 type OppType = 'job' | 'internship' | 'grant' | 'scholarship'
@@ -146,22 +147,17 @@ const OpportunitiesPage: NextPageWithLayout = () => {
   const appliedIds = new Set(myApplications.map((a) => a.id))
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
-      <Container maxWidth="lg">
-        <Stack spacing={1.5} sx={{ mb: 4 }}>
-          <Chip icon={<EmojiEventsIcon />} label="Opportunities" sx={{ width: 'fit-content' }} />
-          <Typography variant="h3" sx={{ fontSize: { xs: 28, md: 38 } }}>
-            Opportunities
-          </Typography>
-          <Typography color="text.secondary" sx={{ maxWidth: 680 }}>
-            Discover jobs, internships, grants, and scholarships. Apply directly and track your
-            application status.
-          </Typography>
-        </Stack>
+    <Box>
+      <PageHeader
+        eyebrow="Opportunities"
+        title="Opportunities"
+        subtitle="Discover jobs, internships, grants, and scholarships. Apply directly and track your application status."
+        icon={<EmojiEventsIcon />}
+      />
 
-        {/* My applications tracker */}
-        {myApplications.length > 0 && (
-          <Paper sx={{ ...PAPER_SX, mb: 4 }}>
+      {/* My applications tracker */}
+      {myApplications.length > 0 && (
+        <Paper sx={{ ...PAPER_SX, mb: 4 }}>
             <Typography variant="h5" sx={{ mb: 2.5, fontSize: 20 }}>
               My Applications
             </Typography>
@@ -313,7 +309,6 @@ const OpportunitiesPage: NextPageWithLayout = () => {
             ))}
           </Grid>
         </Paper>
-      </Container>
     </Box>
   )
 }
