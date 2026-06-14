@@ -58,7 +58,6 @@ const AdminUsersPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
   const [search, setSearch] = useState('')
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null)
-  const [selectedUser, setSelectedUser] = useState<number | null>(null)
 
   const filtered = allUsers
     .filter((u) => {
@@ -165,7 +164,7 @@ const AdminUsersPage: NextPageWithLayout = () => {
                   />
                   <IconButton
                     size="small"
-                    onClick={(e) => { setMenuAnchor(e.currentTarget); setSelectedUser(user.id) }}
+                    onClick={(e) => { setMenuAnchor(e.currentTarget) }}
                   >
                     <MoreVertIcon fontSize="small" />
                   </IconButton>
@@ -184,7 +183,7 @@ const AdminUsersPage: NextPageWithLayout = () => {
         <Menu
           anchorEl={menuAnchor}
           open={Boolean(menuAnchor)}
-          onClose={() => { setMenuAnchor(null); setSelectedUser(null) }}
+          onClose={() => { setMenuAnchor(null) }}
         >
           <MenuItem onClick={() => setMenuAnchor(null)}>View profile</MenuItem>
           <MenuItem onClick={() => setMenuAnchor(null)}>Edit role</MenuItem>

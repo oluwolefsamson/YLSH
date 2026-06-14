@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import type { NextPage } from 'next'
-import { useRouter } from 'next/router'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
 import Chip from '@mui/material/Chip'
@@ -59,11 +58,10 @@ const portals = [
 
 const SignInPage: NextPage = () => {
   const router = useRouter()
-  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [showPortals, setShowPortals] = useState(false)
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = (e: React.FormEvent): void => {
     e.preventDefault()
     setShowPortals(true)
   }

@@ -16,7 +16,6 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 import HomeIcon from '@mui/icons-material/Home'
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
-import { MainLayout } from '@/components/layout'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 // Simulated certificate registry — in production this is a DB lookup

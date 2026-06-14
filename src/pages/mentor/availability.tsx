@@ -41,7 +41,7 @@ const AvailabilityPage: NextPageWithLayout = () => {
   const [maxPerWeek, setMaxPerWeek] = useState('5')
   const [accepting, setAccepting] = useState(true)
 
-  const toggle = (day: string) =>
+  const toggle = (day: string): void =>
     setAvailability((prev) => ({ ...prev, [day]: !prev[day] }))
 
   return (

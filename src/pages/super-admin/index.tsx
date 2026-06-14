@@ -15,7 +15,6 @@ import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import SchoolIcon from '@mui/icons-material/School'
 import SecurityIcon from '@mui/icons-material/Security'
-import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import { AdminLayout } from '@/components/layout'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
