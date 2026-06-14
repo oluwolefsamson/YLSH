@@ -3,13 +3,13 @@ import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
-import Divider from '@mui/material/Divider'
-import Drawer from '@mui/material/Drawer'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
+import Divider from '@mui/material/Divider'
+import Drawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
@@ -21,38 +21,47 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 import MenuIcon from '@mui/icons-material/Menu'
 import DashboardIcon from '@mui/icons-material/Dashboard'
-import EventAvailableIcon from '@mui/icons-material/EventAvailable'
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
-import SchoolIcon from '@mui/icons-material/School'
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import PeopleIcon from '@mui/icons-material/People'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import EventAvailableIcon from '@mui/icons-material/EventAvailable'
+import BarChartIcon from '@mui/icons-material/BarChart'
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import LogoutIcon from '@mui/icons-material/Logout'
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import { StyledButton } from '@/components/styled-button'
 import { Logo } from '@/components/logo'
 
 interface Props {
   children: ReactNode
+  superAdmin?: boolean
 }
 
 const drawerWidth = 280
 
-const navItems = [
-  { label: 'Overview', href: '/dashboard', icon: <DashboardIcon /> },
-  { label: 'Events', href: '/dashboard/events', icon: <EventAvailableIcon /> },
-  { label: 'Certificates', href: '/dashboard/certificates', icon: <WorkspacePremiumIcon /> },
-  { label: 'Learning', href: '/dashboard/learning', icon: <SchoolIcon /> },
-  { label: 'Opportunities', href: '/dashboard/opportunities', icon: <EmojiEventsIcon /> },
-  { label: 'Mentorship', href: '/dashboard/mentorship', icon: <PeopleIcon /> },
-  { label: 'Profile', href: '/dashboard/profile', icon: <AccountCircleIcon /> },
+const adminNavItems = [
+  { label: 'Overview', href: '/admin', icon: <DashboardIcon /> },
+  { label: 'Users', href: '/admin/users', icon: <PeopleIcon /> },
+  { label: 'Events', href: '/admin/events', icon: <EventAvailableIcon /> },
+  { label: 'Verifications', href: '/admin/verifications', icon: <VerifiedUserIcon /> },
+  { label: 'Analytics', href: '/admin/analytics', icon: <BarChartIcon /> },
 ]
 
-const DashboardLayout: FC<Props> = ({ children }) => {
+const superAdminNavItems = [
+  { label: 'Overview', href: '/super-admin', icon: <DashboardIcon /> },
+  { label: 'Users', href: '/super-admin/users', icon: <PeopleIcon /> },
+  { label: 'Events', href: '/super-admin/events', icon: <EventAvailableIcon /> },
+  { label: 'Role Management', href: '/super-admin/roles', icon: <AdminPanelSettingsIcon /> },
+  { label: 'Analytics', href: '/super-admin/analytics', icon: <BarChartIcon /> },
+]
+
+const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
   const router = useRouter()
   const theme = useTheme()
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
   const [mobileOpen, setMobileOpen] = useState(false)
   const [signOutOpen, setSignOutOpen] = useState(false)
+
+  const navItems = superAdmin ? superAdminNavItems : adminNavItems
+  const portalLabel = superAdmin ? 'Super Admin' : 'Admin'
 
   const handleConfirmSignOut = (): void => {
     setSignOutOpen(false)
@@ -67,10 +76,10 @@ const DashboardLayout: FC<Props> = ({ children }) => {
       </Box>
       <Box sx={{ px: 3, mb: 2 }}>
         <Typography variant="overline" color="text.secondary">
-          Participant dashboard
+          {portalLabel} portal
         </Typography>
         <Typography variant="h6" sx={{ fontWeight: 700 }}>
-          YLSH account
+          YLSH {portalLabel}
         </Typography>
       </Box>
       <Divider />
@@ -119,9 +128,7 @@ const DashboardLayout: FC<Props> = ({ children }) => {
       <Dialog open={signOutOpen} onClose={() => setSignOutOpen(false)} maxWidth="xs" fullWidth>
         <DialogTitle>Sign out of YLSH?</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            You will be taken back to the login page. Make sure you have saved any changes before continuing.
-          </DialogContentText>
+          <DialogContentText>You will be taken back to the login page.</DialogContentText>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 3 }}>
           <StyledButton type="button" variant="outlined" color="dark" disableHoverEffect onClick={() => setSignOutOpen(false)}>
@@ -137,14 +144,13 @@ const DashboardLayout: FC<Props> = ({ children }) => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      {!isDesktop ? (
+      {!isDesktop && (
         <Drawer open={mobileOpen} onClose={() => setMobileOpen(false)} PaperProps={{ sx: { width: drawerWidth } }}>
           {sidebar}
         </Drawer>
-      ) : null}
-
+      )}
       <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-        {isDesktop ? (
+        {isDesktop && (
           <Box
             sx={{
               width: drawerWidth,
@@ -156,17 +162,15 @@ const DashboardLayout: FC<Props> = ({ children }) => {
           >
             {sidebar}
           </Box>
-        ) : null}
-
+        )}
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          {!isDesktop ? (
+          {!isDesktop && (
             <Box
               sx={{
                 px: 2,
                 py: 2,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
                 borderBottom: '1px solid rgba(148,163,184,0.18)',
                 backgroundColor: 'rgba(255,255,255,0.9)',
                 backdropFilter: 'blur(18px)',
@@ -175,15 +179,12 @@ const DashboardLayout: FC<Props> = ({ children }) => {
                 zIndex: theme.zIndex.appBar,
               }}
             >
-              <Stack direction="row" spacing={1.5} alignItems="center">
-                <IconButton onClick={() => setMobileOpen(true)}>
-                  <MenuIcon />
-                </IconButton>
-                <Logo />
-              </Stack>
+              <IconButton onClick={() => setMobileOpen(true)} sx={{ mr: 1.5 }}>
+                <MenuIcon />
+              </IconButton>
+              <Logo />
             </Box>
-          ) : null}
-
+          )}
           <Container maxWidth={false} sx={{ py: { xs: 3, md: 4 }, px: { xs: 2, md: 4 } }}>
             {children}
           </Container>
@@ -193,4 +194,4 @@ const DashboardLayout: FC<Props> = ({ children }) => {
   )
 }
 
-export default DashboardLayout
+export default AdminLayout
