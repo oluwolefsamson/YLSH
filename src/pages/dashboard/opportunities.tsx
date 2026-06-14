@@ -20,7 +20,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import { DashboardLayout } from '@/components/layout'
-import { PageHeader, StatCard } from '@/components/dashboard'
+import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
 const PAPER_SX = {

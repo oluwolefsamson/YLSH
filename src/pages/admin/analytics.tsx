@@ -1,6 +1,5 @@
 import React from 'react'
 import Box from '@mui/material/Box'
-import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
 import Grid from '@mui/material/Grid'
 import LinearProgress from '@mui/material/LinearProgress'

@@ -15,15 +15,6 @@ import { DashboardLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
-const PAPER_SX = {
-  p: { xs: 2.5, md: 3 },
-  borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.88)',
-  backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(148,163,184,0.16)',
-  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
-}
-
 const certificates = [
   {
     id: 1,

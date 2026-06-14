@@ -20,9 +20,9 @@ const AuthShell: FC<Props> = ({ eyebrow, title, description, children, footer })
     <Box
       sx={{
         minHeight: '100vh',
-        py: { xs: 3, md: 4 },
+        py: { xs: 3, md: 5 },
         background:
-          'radial-gradient(circle at top left, rgba(18,124,113,0.18), transparent 28%), radial-gradient(circle at bottom right, rgba(15,23,42,0.08), transparent 26%), linear-gradient(180deg, #f7fbff 0%, #edf3f8 100%)',
+          'radial-gradient(circle at top left, rgba(18,124,113,0.14), transparent 30%), radial-gradient(circle at bottom right, rgba(8,47,73,0.08), transparent 28%), linear-gradient(180deg, #f0f7f6 0%, #f3f6fb 100%)',
       }}
     >
       <Container maxWidth="lg">
@@ -30,103 +30,149 @@ const AuthShell: FC<Props> = ({ eyebrow, title, description, children, footer })
           <Logo />
         </Box>
 
+        {/* Two-column card with rounded corners */}
         <Box
           sx={{
+            borderRadius: { xs: 3, md: 4 },
+            overflow: 'hidden',
+            boxShadow: '0 40px 80px rgba(15,23,42,0.14)',
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1fr 0.88fr' },
-            gap: { xs: 2.5, md: 3.5 },
-            alignItems: 'stretch',
+            gridTemplateColumns: { xs: '1fr', md: '1fr 0.9fr' },
           }}
         >
+          {/* Left — gradient brand panel */}
           <Box
             sx={{
-              p: { xs: 3, md: 5.5 },
-              borderRadius: 0,
-              background: 'linear-gradient(145deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.96) 55%, rgba(14,116,144,0.92) 100%)',
+              p: { xs: 4, md: 6 },
+              background:
+                'linear-gradient(145deg, rgba(8,47,73,0.99) 0%, rgba(18,124,113,0.97) 55%, rgba(14,116,144,0.93) 100%)',
               color: 'common.white',
-              boxShadow: '0 30px 70px rgba(15, 23, 42, 0.2)',
               position: 'relative',
               overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '-80px',
+                right: '-80px',
+                width: 320,
+                height: 320,
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.055)',
+                pointerEvents: 'none',
+              },
               '&::after': {
                 content: '""',
                 position: 'absolute',
-                inset: 0,
-                background:
-                  'radial-gradient(circle at top right, rgba(255,255,255,0.18), transparent 22%), radial-gradient(circle at bottom left, rgba(255,255,255,0.08), transparent 24%)',
+                bottom: '-60px',
+                left: '-60px',
+                width: 240,
+                height: 240,
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.04)',
                 pointerEvents: 'none',
               },
             }}
           >
-            <Chip
-              label={eyebrow}
-              sx={{
-                mb: 2.5,
-                backgroundColor: 'rgba(255,255,255,0.1)',
-                color: 'common.white',
-                border: '1px solid rgba(255,255,255,0.16)',
-                fontWeight: 700,
-                letterSpacing: 0.8,
-              }}
-            />
-            <Typography
-              component="h1"
-              sx={{ fontSize: { xs: 34, md: 54 }, lineHeight: 1.02, fontWeight: 700, mb: 2, maxWidth: 560 }}
-            >
-              {title}
-            </Typography>
-            <Typography sx={{ color: 'rgba(255,255,255,0.88)', maxWidth: 580, lineHeight: 1.75 }}>
-              {description}
-            </Typography>
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Chip
+                label={eyebrow}
+                sx={{
+                  mb: 3,
+                  backgroundColor: 'rgba(255,255,255,0.12)',
+                  color: 'common.white',
+                  border: '1px solid rgba(255,255,255,0.18)',
+                  fontWeight: 700,
+                  letterSpacing: 0.8,
+                  fontSize: 11,
+                  textTransform: 'uppercase',
+                }}
+              />
+              <Typography
+                component="h1"
+                sx={{
+                  fontSize: { xs: 32, md: 50 },
+                  lineHeight: 1.05,
+                  fontWeight: 700,
+                  mb: 2.5,
+                  maxWidth: 520,
+                }}
+              >
+                {title}
+              </Typography>
+              <Typography
+                sx={{
+                  color: 'rgba(255,255,255,0.82)',
+                  maxWidth: 560,
+                  lineHeight: 1.8,
+                  fontSize: { xs: 14, md: 15 },
+                }}
+              >
+                {description}
+              </Typography>
 
-            <Box
-              sx={{
-                mt: { xs: 4, md: 6.5 },
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
-                gap: 1.5,
-                position: 'relative',
-                zIndex: 1,
-              }}
-            >
-              {[
-                { label: 'RBAC', value: 'Protected access' },
-                { label: 'NIN', value: 'Identity verified' },
-                { label: 'QR', value: 'Attendance ready' },
-              ].map((item) => (
-                <Box
-                  key={item.label}
-                  sx={{
-                    borderRadius: 4,
-                    p: 2.2,
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    border: '1px solid rgba(255,255,255,0.14)',
-                    backdropFilter: 'blur(14px)',
-                  }}
-                >
-                  <Typography sx={{ fontSize: 12, letterSpacing: 1.4, opacity: 0.72, mb: 1 }}>
-                    {item.label}
-                  </Typography>
-                  <Typography sx={{ fontWeight: 700, fontSize: 15 }}>{item.value}</Typography>
-                </Box>
-              ))}
+              <Box
+                sx={{
+                  mt: { xs: 5, md: 7 },
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
+                  gap: 1.5,
+                }}
+              >
+                {[
+                  { label: 'RBAC', value: 'Protected access' },
+                  { label: 'NIN', value: 'Identity verified' },
+                  { label: 'QR', value: 'Attendance ready' },
+                ].map((item) => (
+                  <Box
+                    key={item.label}
+                    sx={{
+                      borderRadius: 3,
+                      p: 2.2,
+                      backgroundColor: 'rgba(255,255,255,0.09)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      backdropFilter: 'blur(10px)',
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: 11,
+                        letterSpacing: 1.6,
+                        opacity: 0.68,
+                        mb: 0.75,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                    <Typography sx={{ fontWeight: 700, fontSize: 14 }}>{item.value}</Typography>
+                  </Box>
+                ))}
+              </Box>
             </Box>
           </Box>
 
+          {/* Right — glassmorphism form panel */}
           <Box
             sx={{
-              p: { xs: 2.5, md: 3.5 },
-              borderRadius: 0,
-              backgroundColor: 'rgba(255,255,255,0.86)',
-              border: '1px solid rgba(148,163,184,0.18)',
-              boxShadow: '0 22px 60px rgba(15, 23, 42, 0.08)',
-              backdropFilter: 'blur(18px)',
+              p: { xs: 3, md: 4.5 },
+              backgroundColor: 'rgba(255,255,255,0.96)',
+              backdropFilter: 'blur(20px)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
             }}
           >
-            <Stack spacing={2} sx={{ mb: 2.5 }}>
-              <Typography variant="subtitle2" sx={{ letterSpacing: 1.2, color: 'text.secondary', fontWeight: 700 }}>
+            <Stack spacing={1.5} sx={{ mb: 3 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  letterSpacing: 1.4,
+                  color: '#127C71',
+                  fontWeight: 700,
+                  fontSize: 11,
+                  textTransform: 'uppercase',
+                }}
+              >
                 YLSH ACCESS
               </Typography>
               <Divider />
