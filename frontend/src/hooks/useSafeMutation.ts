@@ -22,18 +22,18 @@ export function useSafeMutation<TData, TError extends Error = Error, TVariables 
 
   const mutation = useMutation<TData, TError, TVariables>({
     ...rest,
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data, variables, context, mutation) => {
       startTransition(() => {
         invalidateQueries?.forEach((key) =>
           queryClient.invalidateQueries({ queryKey: key as unknown[] }),
         )
         if (successMessage) toast.success(successMessage)
       })
-      onSuccess?.(data, variables, context)
+      onSuccess?.(data, variables, context, mutation)
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables, context, mutation) => {
       toast.error(errorMessage ?? error.message)
-      onError?.(error, variables, context)
+      onError?.(error, variables, context, mutation)
     },
   })
 
