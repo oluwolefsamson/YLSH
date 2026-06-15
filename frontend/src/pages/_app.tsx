@@ -4,8 +4,10 @@ import type { AppProps } from 'next/app'
 import { CssBaseline } from '@mui/material'
 import { EmotionCache } from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
+import { Toaster } from 'sonner'
 import { createEmotionCache } from '@/utils'
 import { MUIProvider } from '@/providers'
+import ReactQueryProvider from '@/providers/react-query-provider'
 import 'slick-carousel/slick/slick.css'
 import '@/styles/globals.css'
 import '@/styles/react-slick.css'
@@ -32,11 +34,13 @@ const App: FC<AppPropsWithLayout> = (props: AppPropsWithLayout) => {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
         <title>YLSH Enterprise</title>
       </Head>
-      <MUIProvider>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <CssBaseline />
-        {getLayout(<Component {...pageProps} />)}
-      </MUIProvider>
+      <ReactQueryProvider>
+        <MUIProvider>
+          <CssBaseline />
+          {getLayout(<Component {...pageProps} />)}
+          <Toaster richColors position="top-right" />
+        </MUIProvider>
+      </ReactQueryProvider>
     </CacheProvider>
   )
 }
