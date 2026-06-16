@@ -1,62 +1,33 @@
 import React, { FC } from 'react'
-import Box from '@mui/material/Box'
 import { Link as ScrollLink } from 'react-scroll'
 import { navigations } from './navigation.data'
 
 const Navigation: FC = () => {
   return (
-    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
+    <nav className="flex flex-col md:flex-row">
       {navigations.map(({ path: destination, label }) => (
-        <Box
-          component={ScrollLink}
+        <ScrollLink
           key={destination}
           activeClass="current"
           to={destination}
           spy={true}
           smooth={true}
           duration={350}
-          sx={{
-            position: 'relative',
-            color: 'text.disabled',
-            cursor: 'pointer',
-            fontWeight: 600,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            px: { xs: 0, md: 3 },
-            mb: { xs: 3, md: 0 },
-            fontSize: { xs: '1.2rem', md: 'inherit' },
-            ...(destination === '/' && {
-              color: 'primary.main',
-            }),
-
-            '& > div': { display: 'none' },
-
-            '&.current>div': { display: 'block' },
-
-            '&:hover': {
-              color: 'primary.main',
-              '&>div': {
-                display: 'block',
-              },
-            },
-          }}
+          className="relative text-muted-foreground font-semibold cursor-pointer inline-flex items-center justify-center
+            px-0 md:px-5 mb-6 md:mb-0 text-lg md:text-base
+            hover:text-primary transition-colors [&.current]:text-primary group"
         >
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 12,
-              transform: 'rotate(3deg)',
-              '& img': { width: 44, height: 'auto' },
-            }}
+          <span
+            className="absolute top-3 opacity-0 group-hover:opacity-100 [.current_&]:opacity-100 transition-opacity"
+            style={{ transform: 'rotate(3deg)' }}
           >
             {/* eslint-disable-next-line */}
-            <img src="/images/headline-curve.svg" alt="Headline curve" />
-          </Box>
+            <img src="/images/headline-curve.svg" alt="" className="w-11 h-auto" />
+          </span>
           {label}
-        </Box>
+        </ScrollLink>
       ))}
-    </Box>
+    </nav>
   )
 }
 

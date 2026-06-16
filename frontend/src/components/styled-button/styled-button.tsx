@@ -1,192 +1,75 @@
 import React, { FC, ReactNode } from 'react'
-import Box from '@mui/material/Box'
-import { Theme } from '@mui/material'
-import { styled } from '@mui/material/styles'
-import { ButtonProps } from '@mui/material/Button'
-import { fontFamily } from '@/config/theme/typography'
+import { cn } from '@/utils'
 
-interface BaseButtonProps extends Pick<ButtonProps, 'onClick' | 'type' | 'startIcon' | 'endIcon' | 'disabled'> {
+interface Props {
+  children: ReactNode
+  onClick?: () => void
+  type?: 'button' | 'submit' | 'reset'
   variant?: 'contained' | 'outlined' | 'text'
   color?: 'default' | 'primary' | 'secondary' | 'dark' | 'light'
   size?: 'small' | 'medium' | 'large'
   disableHoverEffect?: boolean
-}
-interface StyledButtonRootProps extends BaseButtonProps {
-  theme?: Theme
-}
-
-const StyledButtonRoot = styled('button', {
-  shouldForwardProp: (prop) =>
-    prop !== 'variant' && prop !== 'color' && prop !== 'size' && prop !== 'disableHoverEffect',
-})<StyledButtonRootProps>(({ theme, color, variant, size, disableHoverEffect }) => ({
-  fontFamily,
-  cursor: 'pointer',
-  minWidth: 40,
-  fontSize: 14,
-  fontWeight: 500,
-  lineHeight: 1.5,
-  letterSpacing: 1,
-  borderRadius: Number(theme.shape.borderRadius) * 3,
-
-  display: 'inline-flex',
-  alignItems: 'center',
-  userSelect: 'none',
-  transform: 'unset',
-  position: 'relative',
-  overflow: 'hidden',
-  border: 'none',
-  whiteSpace: 'nowrap',
-  WebkitTapHighlightColor: 'transparent',
-  verticalAlign: 'middle',
-  outline: 'none !important',
-  transition: theme.transitions.create(['transform']),
-
-  // hover
-  '&:hover': {
-    ...(!disableHoverEffect && {
-      transform: 'translateY(-3px)',
-    }),
-  },
-
-  '& svg': {
-    fontSize: 20,
-  },
-
-  // sizes and variants
-  ...(size === 'small' &&
-    variant === 'outlined' && {
-      padding: '4px 10px',
-    }),
-  ...(size === 'medium' &&
-    variant === 'outlined' && {
-      padding: '6px 14px',
-    }),
-  ...(size === 'large' &&
-    variant === 'outlined' && {
-      padding: '10px 18px',
-      fontSize: 15,
-    }),
-
-  ...(size === 'small' &&
-    variant !== 'outlined' && {
-      padding: '6px 12px',
-    }),
-  ...(size === 'medium' &&
-    variant !== 'outlined' && {
-      padding: '8px 16px',
-    }),
-  ...(size === 'large' &&
-    variant !== 'outlined' && {
-      padding: '12px 20px',
-      fontSize: 15,
-    }),
-
-  // variants
-  ...(variant !== 'contained' && {
-    backgroundColor: 'transparent',
-    boxShadow: 'none !important',
-  }),
-
-  // colors & varians
-  ...(color === 'default' &&
-    variant === 'contained' && {
-      backgroundColor: theme.palette.text.primary,
-      color: theme.palette.primary.contrastText,
-    }),
-  ...(color === 'primary' &&
-    variant === 'contained' && {
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.primary.contrastText,
-      boxShadow: '0 6px 22px 0 rgb(18 124 113 / 12%)',
-    }),
-  ...(color === 'secondary' &&
-    variant === 'contained' && {
-      backgroundColor: theme.palette.secondary.main,
-      color: theme.palette.primary.contrastText,
-    }),
-  ...(color === 'dark' &&
-    variant === 'contained' && {
-      backgroundColor: '#313d56',
-      color: theme.palette.primary.contrastText,
-    }),
-  ...(color === 'light' &&
-    variant === 'contained' && {
-      backgroundColor: theme.palette.primary.contrastText,
-      color: theme.palette.text.primary,
-    }),
-
-  ...(color === 'primary' &&
-    variant === 'outlined' && {
-      border: `2px solid ${theme.palette.primary.main}`,
-      color: theme.palette.primary.main,
-    }),
-  ...(color === 'secondary' &&
-    variant === 'outlined' && {
-      border: `2px solid ${theme.palette.secondary.main}`,
-      color: theme.palette.secondary.main,
-    }),
-  ...(color === 'dark' &&
-    variant === 'outlined' && {
-      border: `2px solid #313d56`,
-      color: '#313d56',
-    }),
-  ...(color === 'light' &&
-    variant === 'outlined' && {
-      border: `2px solid #313d56`,
-      color: `#313d56`,
-    }),
-
-  ...(color === 'primary' &&
-    variant === 'text' && {
-      color: theme.palette.primary.main,
-    }),
-  ...(color === 'secondary' &&
-    variant === 'text' && {
-      color: theme.palette.secondary.main,
-    }),
-  ...(color === 'dark' &&
-    variant === 'text' && {
-      color: '#313d56',
-    }),
-  ...(color === 'light' &&
-    variant === 'text' && {
-      color: theme.palette.primary.contrastText,
-    }),
-}))
-
-interface Props extends BaseButtonProps {
-  children: ReactNode
+  disabled?: boolean
+  startIcon?: ReactNode
+  endIcon?: ReactNode
 }
 
-const StyledButton: FC<Props> = (props: Props) => {
-  const { children, onClick, disableHoverEffect, startIcon, endIcon, type, ...rest } = props
+const StyledButton: FC<Props> = ({
+  children,
+  onClick,
+  type = 'button',
+  variant = 'contained',
+  color = 'primary',
+  size = 'medium',
+  disableHoverEffect = false,
+  disabled,
+  startIcon,
+  endIcon,
+}) => {
+  const base =
+    'inline-flex items-center justify-center font-medium tracking-wide rounded-full transition-all cursor-pointer select-none whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:opacity-50 disabled:pointer-events-none'
+
+  const sizeClass =
+    size === 'small' ? 'px-3 py-1.5 text-xs' : size === 'large' ? 'px-5 py-3 text-[15px]' : 'px-4 py-2 text-sm'
+
+  const colorVariant: Record<string, Record<string, string>> = {
+    contained: {
+      primary: 'bg-primary text-white hover:bg-[#0d5c54] shadow-[0_6px_22px_rgb(18_124_113/12%)]',
+      secondary: 'bg-[#082F49] text-white hover:bg-[#0a3d61]',
+      default: 'bg-foreground text-white hover:opacity-90',
+      dark: 'bg-[#313d56] text-white hover:opacity-90',
+      light: 'bg-white text-foreground hover:bg-slate-50',
+    },
+    outlined: {
+      primary: 'border-2 border-primary text-primary bg-transparent hover:bg-primary/6',
+      secondary: 'border-2 border-[#082F49] text-[#082F49] bg-transparent hover:bg-[#082F49]/6',
+      default: 'border-2 border-foreground text-foreground bg-transparent hover:bg-muted',
+      dark: 'border-2 border-[#313d56] text-[#313d56] bg-transparent hover:bg-slate-100',
+      light: 'border-2 border-[#313d56] text-[#313d56] bg-transparent hover:bg-slate-100',
+    },
+    text: {
+      primary: 'bg-transparent text-primary hover:bg-primary/8',
+      secondary: 'bg-transparent text-[#082F49] hover:bg-[#082F49]/8',
+      default: 'bg-transparent text-foreground hover:bg-muted',
+      dark: 'bg-transparent text-[#313d56] hover:bg-slate-100',
+      light: 'bg-transparent text-white hover:bg-white/10',
+    },
+  }
+
+  const hoverLift = !disableHoverEffect ? 'hover:-translate-y-0.5' : ''
+
   return (
-    <StyledButtonRoot
+    <button
+      type={type}
       onClick={onClick}
-      type={type ?? 'button'}
-      disableHoverEffect={disableHoverEffect}
-      {...rest}
+      disabled={disabled}
+      className={cn(base, sizeClass, colorVariant[variant]?.[color] ?? '', hoverLift)}
     >
-      {startIcon && (
-        <Box component="span" sx={{ display: 'inherit', mr: 1, ml: -0.5 }}>
-          {startIcon}
-        </Box>
-      )}
-      <Box component="span">{children}</Box>
-      {endIcon && (
-        <Box component="span" sx={{ display: 'inherit', ml: 1, mr: -0.5 }}>
-          {endIcon}
-        </Box>
-      )}
-    </StyledButtonRoot>
+      {startIcon && <span className="mr-1.5 -ml-0.5 flex items-center">{startIcon}</span>}
+      <span>{children}</span>
+      {endIcon && <span className="ml-1.5 -mr-0.5 flex items-center">{endIcon}</span>}
+    </button>
   )
-}
-
-StyledButton.defaultProps = {
-  color: 'primary',
-  variant: 'contained',
-  size: 'medium',
-  disableHoverEffect: false,
 }
 
 export default StyledButton

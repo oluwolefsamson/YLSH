@@ -1,26 +1,17 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import type { NextPage } from 'next'
-import Box from '@mui/material/Box'
-import Checkbox from '@mui/material/Checkbox'
-import Chip from '@mui/material/Chip'
-import Divider from '@mui/material/Divider'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import IconButton from '@mui/material/IconButton'
-import InputAdornment from '@mui/material/InputAdornment'
-import Stack from '@mui/material/Stack'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
-import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
-import DashboardIcon from '@mui/icons-material/Dashboard'
-import PeopleIcon from '@mui/icons-material/People'
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
-import SecurityIcon from '@mui/icons-material/Security'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import { StyledButton } from '@/components/styled-button'
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  LayoutDashboard,
+  Users,
+  ShieldCheck,
+  Shield,
+  ArrowRight,
+} from 'lucide-react'
 import AuthShell from '@/components/auth/auth-shell'
 import AuthFormCard from '@/components/auth/auth-form-card'
 import AuthLink from '@/components/auth/auth-link'
@@ -30,28 +21,28 @@ const portals = [
     label: 'Participant',
     description: 'Events, certificates, learning & opportunities',
     href: '/dashboard',
-    icon: <DashboardIcon />,
+    icon: <LayoutDashboard size={20} />,
     color: '#127C71',
   },
   {
     label: 'Mentor',
     description: 'Sessions, mentees & availability',
     href: '/mentor',
-    icon: <PeopleIcon />,
+    icon: <Users size={20} />,
     color: '#082F49',
   },
   {
     label: 'Admin',
     description: 'User & event management, analytics',
     href: '/admin',
-    icon: <AdminPanelSettingsIcon />,
+    icon: <ShieldCheck size={20} />,
     color: '#7C3AED',
   },
   {
     label: 'Super Admin',
     description: 'Full system access, roles & audit logs',
     href: '/super-admin',
-    icon: <SecurityIcon />,
+    icon: <Shield size={20} />,
     color: '#B91C1C',
   },
 ]
@@ -72,9 +63,9 @@ const SignInPage: NextPage = () => {
       title="Sign in to your YLSH account"
       description="Access your events, attendance records, certificates, mentorship, and learning resources through a clean participant dashboard."
       footer={
-        <Typography color="text.secondary" sx={{ textAlign: 'center' }}>
+        <p className="text-center text-muted-foreground">
           New here? <AuthLink href="/signup">Create an account</AuthLink>
-        </Typography>
+        </p>
       }
     >
       <AuthFormCard
@@ -82,122 +73,100 @@ const SignInPage: NextPage = () => {
         subtitle="Use your verified credentials to continue into your personal YLSH workspace."
       >
         {!showPortals ? (
-          <Box component="form" onSubmit={handleSignIn} sx={{ display: 'grid', gap: 2.1 }}>
-            <TextField
-              fullWidth
-              label="Email address"
-              placeholder="you@example.com"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EmailOutlinedIcon fontSize="small" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-            />
+          <form onSubmit={handleSignIn} className="flex flex-col gap-4">
+            {/* Email field */}
+            <div className="relative">
+              <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="email"
+                placeholder="you@example.com"
+                className="w-full h-11 pl-9 pr-4 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+              />
+            </div>
 
-            <TextField
-              fullWidth
-              type={showPassword ? 'text' : 'password'}
-              label="Password"
-              placeholder="Enter your password"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlinedIcon fontSize="small" />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton edge="end" size="small" onClick={() => setShowPassword((v) => !v)}>
-                      {showPassword
-                        ? <VisibilityOffOutlinedIcon fontSize="small" />
-                        : <VisibilityOutlinedIcon fontSize="small" />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-            />
+            {/* Password field */}
+            <div className="relative">
+              <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Enter your password"
+                className="w-full h-11 pl-9 pr-10 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
 
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
-              <FormControlLabel control={<Checkbox defaultChecked />} label="Remember this device" />
+            <div className="flex items-center justify-between gap-4">
+              <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+                <input type="checkbox" defaultChecked className="accent-primary" />
+                Remember this device
+              </label>
               <AuthLink href="#">Forgot password?</AuthLink>
-            </Stack>
+            </div>
 
-            <StyledButton type="submit" size="large" color="primary" disableHoverEffect>
+            <button
+              type="submit"
+              className="w-full h-11 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#0d5c54] transition-colors"
+            >
               Sign In
-            </StyledButton>
-          </Box>
+            </button>
+          </form>
         ) : (
-          <Box>
-            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2.5 }}>
-              <Chip label="Signed in" color="success" size="small" />
-              <Typography variant="body2" color="text.secondary">
-                Choose a portal to enter
-              </Typography>
-            </Stack>
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-bold">
+                Signed in
+              </span>
+              <p className="text-sm text-muted-foreground">Choose a portal to enter</p>
+            </div>
 
-            <Divider sx={{ mb: 2.5 }} />
+            <hr className="border-border mb-4" />
 
-            <Stack spacing={1.5}>
+            <div className="flex flex-col gap-2">
               {portals.map((portal) => (
-                <Box
+                <button
                   key={portal.label}
                   onClick={() => void router.push(portal.href)}
-                  sx={{
-                    p: 2,
-                    borderRadius: 3,
-                    border: '1px solid rgba(148,163,184,0.22)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 2,
-                    transition: 'all 0.18s ease',
-                    '&:hover': {
-                      borderColor: portal.color,
-                      backgroundColor: `${portal.color}0d`,
-                      transform: 'translateX(4px)',
-                    },
+                  className="w-full flex items-center gap-4 p-3 rounded-xl border border-slate-200/22 text-left transition-all duration-150 hover:translate-x-1 group"
+                  style={{ '--portal-color': portal.color } as React.CSSProperties}
+                  onMouseEnter={(e) => {
+                    ;(e.currentTarget as HTMLElement).style.borderColor = portal.color
+                    ;(e.currentTarget as HTMLElement).style.backgroundColor = `${portal.color}0d`
+                  }}
+                  onMouseLeave={(e) => {
+                    ;(e.currentTarget as HTMLElement).style.borderColor = ''
+                    ;(e.currentTarget as HTMLElement).style.backgroundColor = ''
                   }}
                 >
-                  <Box
-                    sx={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: '12px',
-                      display: 'grid',
-                      placeItems: 'center',
-                      backgroundColor: portal.color,
-                      color: 'white',
-                      flexShrink: 0,
-                    }}
+                  <div
+                    className="w-11 h-11 rounded-xl flex items-center justify-center text-white flex-shrink-0"
+                    style={{ backgroundColor: portal.color }}
                   >
                     {portal.icon}
-                  </Box>
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography sx={{ fontWeight: 700 }}>{portal.label} Dashboard</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {portal.description}
-                    </Typography>
-                  </Box>
-                  <ArrowForwardIcon sx={{ color: 'text.disabled', flexShrink: 0 }} />
-                </Box>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm">{portal.label} Dashboard</p>
+                    <p className="text-xs text-muted-foreground">{portal.description}</p>
+                  </div>
+                  <ArrowRight size={16} className="text-muted-foreground flex-shrink-0" />
+                </button>
               ))}
-            </Stack>
+            </div>
 
-            <Divider sx={{ my: 2.5 }} />
+            <hr className="border-border my-4" />
 
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ textAlign: 'center', cursor: 'pointer', '&:hover': { color: 'primary.main' } }}
+            <button
               onClick={() => setShowPortals(false)}
+              className="w-full text-center text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               ← Back to sign in
-            </Typography>
-          </Box>
+            </button>
+          </div>
         )}
       </AuthFormCard>
     </AuthShell>

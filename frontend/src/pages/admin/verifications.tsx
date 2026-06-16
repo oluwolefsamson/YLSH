@@ -1,34 +1,12 @@
-import React, { useState } from 'react'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import Grid from '@mui/material/Grid'
-import InputAdornment from '@mui/material/InputAdornment'
-import Paper from '@mui/material/Paper'
-import Stack from '@mui/material/Stack'
-import Tab from '@mui/material/Tab'
-import Tabs from '@mui/material/Tabs'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
-import SearchIcon from '@mui/icons-material/Search'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
-import CancelIcon from '@mui/icons-material/Cancel'
-import BadgeIcon from '@mui/icons-material/Badge'
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
+﻿import React, { useState } from 'react'
+import { ShieldCheck, Search, CheckCircle, Clock, XCircle, CreditCard, Calendar } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
+import { cn } from '@/utils'
 
-const PAPER_SX = {
-  p: { xs: 2.5, md: 3 },
-  borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.88)',
-  backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(148,163,184,0.16)',
-  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
-}
+const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
+const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const verifications = [
   { id: 1, name: 'Amina Bello', email: 'amina.bello@example.com', ninRef: 'NIN-REF-****8821', submittedDate: 'Jun 14, 2026', status: 'verified' },
@@ -40,15 +18,10 @@ const verifications = [
   { id: 7, name: 'Tunde Adeyemi', email: 'tunde@example.com', ninRef: 'NIN-REF-****9945', submittedDate: 'Jun 8, 2026', status: 'pending' },
 ]
 
-const statusColor: Record<string, 'success' | 'warning' | 'error'> = {
-  verified: 'success', pending: 'warning', rejected: 'error',
-}
+const statusStyles: Record<string, string> = { verified: 'bg-green-100 text-green-700', pending: 'bg-amber-100 text-amber-700', rejected: 'bg-red-100 text-red-700' }
+const statusIcon: Record<string, React.ReactNode> = { verified: <CheckCircle size={11} />, pending: <Clock size={11} />, rejected: <XCircle size={11} /> }
 
-const statusIcon: Record<string, React.ReactNode> = {
-  verified: <CheckCircleIcon />,
-  pending: <HourglassEmptyIcon />,
-  rejected: <CancelIcon />,
-}
+const TABS = ['All', 'Pending', 'Verified', 'Rejected']
 
 const AdminVerificationsPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
@@ -58,95 +31,68 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
     .filter((v) => tab === 0 ? true : tab === 1 ? v.status === 'pending' : tab === 2 ? v.status === 'verified' : v.status === 'rejected')
     .filter((v) => search === '' || v.name.toLowerCase().includes(search.toLowerCase()) || v.email.toLowerCase().includes(search.toLowerCase()))
 
+  const tabCounts = [verifications.length, verifications.filter((v) => v.status === 'pending').length, verifications.filter((v) => v.status === 'verified').length, verifications.filter((v) => v.status === 'rejected').length]
+
   return (
-    <Box>
-      <PageHeader
-        eyebrow="Verifications"
-        title="NIN Verifications"
-        subtitle="Review and action NIN identity verification submissions. Raw NIN values are never stored — only encrypted references."
-        icon={<VerifiedUserIcon />}
-      />
+    <div>
+      <PageHeader eyebrow="Verifications" title="NIN Verifications" subtitle="Review and action NIN identity verification submissions. Raw NIN values are never stored — only encrypted references." icon={<ShieldCheck size={14} />} />
 
-      {/* Stats */}
-      <Grid container spacing={2.5} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={4}>
-          <StatCard label="Total submissions" value={String(verifications.length)} icon={<BadgeIcon />} progress={100} />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <StatCard label="Pending review" value={String(verifications.filter((v) => v.status === 'pending').length)} icon={<HourglassEmptyIcon />} progress={33} accent="#f59e0b" />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <StatCard label="Verified" value={String(verifications.filter((v) => v.status === 'verified').length)} icon={<CheckCircleIcon />} progress={55} accent="#22c55e" />
-        </Grid>
-      </Grid>
-      <Paper sx={PAPER_SX}>
-          <TextField
-            placeholder="Search by name or email…"
-            size="small"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ mb: 3, maxWidth: 360, '& .MuiOutlinedInput-root': { borderRadius: 99 } }}
-          />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <StatCard label="Total submissions" value={String(verifications.length)} icon={<CreditCard size={20} />} progress={100} />
+        <StatCard label="Pending review" value={String(verifications.filter((v) => v.status === 'pending').length)} icon={<Clock size={20} />} progress={33} accent="#f59e0b" />
+        <StatCard label="Verified" value={String(verifications.filter((v) => v.status === 'verified').length)} icon={<CheckCircle size={20} />} progress={55} accent="#22c55e" />
+      </div>
 
-          <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 3, borderBottom: '1px solid rgba(148,163,184,0.18)' }}>
-            <Tab label={`All (${verifications.length})`} />
-            <Tab label={`Pending (${verifications.filter((v) => v.status === 'pending').length})`} />
-            <Tab label={`Verified (${verifications.filter((v) => v.status === 'verified').length})`} />
-            <Tab label={`Rejected (${verifications.filter((v) => v.status === 'rejected').length})`} />
-          </Tabs>
+      <div className={CARD} style={CARD_STYLE}>
+        <div className="relative mb-5 max-w-sm">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or email…" className="w-full h-10 pl-9 pr-4 rounded-full border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors" />
+        </div>
 
-          <Stack spacing={1.5}>
-            {filtered.map((v) => (
-              <Box key={v.id} sx={{ p: 2.5, borderRadius: 3, border: '1px solid rgba(148,163,184,0.18)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontWeight: 700 }}>{v.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">{v.email}</Typography>
-                  <Stack direction="row" spacing={2} sx={{ mt: 0.75 }}>
-                    <Stack direction="row" spacing={0.75} alignItems="center">
-                      <BadgeIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-                      <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>{v.ninRef}</Typography>
-                    </Stack>
-                    <Stack direction="row" spacing={0.75} alignItems="center">
-                      <CalendarMonthIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-                      <Typography variant="caption" color="text.secondary">{v.submittedDate}</Typography>
-                    </Stack>
-                  </Stack>
-                </Box>
-                <Stack direction="row" spacing={1.5} alignItems="center">
-                  <Chip
-                    icon={statusIcon[v.status] as React.ReactElement}
-                    label={v.status.charAt(0).toUpperCase() + v.status.slice(1)}
-                    color={statusColor[v.status]}
-                    size="small"
-                  />
-                  {v.status === 'pending' && (
-                    <Stack direction="row" spacing={1}>
-                      <Button size="small" variant="contained" sx={{ borderRadius: 99, textTransform: 'none', fontWeight: 700 }}>Approve</Button>
-                      <Button size="small" variant="outlined" color="error" sx={{ borderRadius: 99, textTransform: 'none' }}>Reject</Button>
-                    </Stack>
-                  )}
-                </Stack>
-              </Box>
-            ))}
-            {filtered.length === 0 && (
-              <Box sx={{ py: 6, textAlign: 'center' }}>
-                <Typography color="text.secondary">No records match your search.</Typography>
-              </Box>
-            )}
-          </Stack>
-        </Paper>
+        <div className="flex gap-1 border-b border-slate-200/18 mb-5">
+          {TABS.map((label, i) => (
+            <button key={label} onClick={() => setTab(i)} className={cn('px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors whitespace-nowrap', tab === i ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
+              {label} ({tabCounts[i]})
+            </button>
+          ))}
+        </div>
 
-    </Box>
+        <div className="flex flex-col gap-3">
+          {filtered.map((v) => (
+            <div key={v.id} className="flex items-center justify-between gap-4 p-4 rounded-xl border border-slate-200/18 flex-wrap">
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-sm">{v.name}</p>
+                <p className="text-sm text-muted-foreground">{v.email}</p>
+                <div className="flex gap-4 mt-1.5 flex-wrap">
+                  <div className="flex items-center gap-1.5">
+                    <CreditCard size={13} className="text-muted-foreground" />
+                    <span className="font-mono text-xs text-muted-foreground">{v.ninRef}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Calendar size={13} className="text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground">{v.submittedDate}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={cn('inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold capitalize', statusStyles[v.status])}>
+                  {statusIcon[v.status]}{v.status}
+                </span>
+                {v.status === 'pending' && (
+                  <div className="flex gap-2">
+                    <button className="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-bold hover:bg-[#0d5c54] transition-colors">Approve</button>
+                    <button className="px-4 py-1.5 rounded-full border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 transition-colors">Reject</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+          {filtered.length === 0 && <div className="py-12 text-center text-muted-foreground">No records match your search.</div>}
+        </div>
+      </div>
+    </div>
   )
 }
 
 AdminVerificationsPage.getLayout = (page) => <AdminLayout>{page}</AdminLayout>
-
 export default AdminVerificationsPage

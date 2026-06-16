@@ -1,37 +1,19 @@
 import React, { FC, ReactNode, useState } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
-import Avatar from '@mui/material/Avatar'
-import Box from '@mui/material/Box'
-import Chip from '@mui/material/Chip'
-import Container from '@mui/material/Container'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
-import DialogTitle from '@mui/material/DialogTitle'
-import Divider from '@mui/material/Divider'
-import Drawer from '@mui/material/Drawer'
-import IconButton from '@mui/material/IconButton'
-import List from '@mui/material/List'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { useTheme } from '@mui/material/styles'
-import MenuIcon from '@mui/icons-material/Menu'
-import DashboardIcon from '@mui/icons-material/Dashboard'
-import PeopleIcon from '@mui/icons-material/People'
-import EventAvailableIcon from '@mui/icons-material/EventAvailable'
-import BarChartIcon from '@mui/icons-material/BarChart'
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
-import LogoutIcon from '@mui/icons-material/Logout'
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
-import ShieldIcon from '@mui/icons-material/Shield'
-import { StyledButton } from '@/components/styled-button'
+import {
+  Menu,
+  LayoutDashboard,
+  Users,
+  CalendarCheck,
+  BarChart2,
+  ShieldCheck,
+  Shield,
+  LogOut,
+  X,
+} from 'lucide-react'
 import { Logo } from '@/components/logo'
+import { cn } from '@/utils'
 
 interface Props {
   children: ReactNode
@@ -41,25 +23,23 @@ interface Props {
 const drawerWidth = 288
 
 const adminNavItems = [
-  { label: 'Overview', href: '/admin', icon: <DashboardIcon fontSize="small" /> },
-  { label: 'Users', href: '/admin/users', icon: <PeopleIcon fontSize="small" /> },
-  { label: 'Events', href: '/admin/events', icon: <EventAvailableIcon fontSize="small" /> },
-  { label: 'Verifications', href: '/admin/verifications', icon: <VerifiedUserIcon fontSize="small" /> },
-  { label: 'Analytics', href: '/admin/analytics', icon: <BarChartIcon fontSize="small" /> },
+  { label: 'Overview', href: '/admin', icon: LayoutDashboard },
+  { label: 'Users', href: '/admin/users', icon: Users },
+  { label: 'Events', href: '/admin/events', icon: CalendarCheck },
+  { label: 'Verifications', href: '/admin/verifications', icon: ShieldCheck },
+  { label: 'Analytics', href: '/admin/analytics', icon: BarChart2 },
 ]
 
 const superAdminNavItems = [
-  { label: 'Overview', href: '/super-admin', icon: <DashboardIcon fontSize="small" /> },
-  { label: 'Users', href: '/super-admin/users', icon: <PeopleIcon fontSize="small" /> },
-  { label: 'Events', href: '/super-admin/events', icon: <EventAvailableIcon fontSize="small" /> },
-  { label: 'Role Management', href: '/super-admin/roles', icon: <AdminPanelSettingsIcon fontSize="small" /> },
-  { label: 'Analytics', href: '/super-admin/analytics', icon: <BarChartIcon fontSize="small" /> },
+  { label: 'Overview', href: '/super-admin', icon: LayoutDashboard },
+  { label: 'Users', href: '/super-admin/users', icon: Users },
+  { label: 'Events', href: '/super-admin/events', icon: CalendarCheck },
+  { label: 'Role Management', href: '/super-admin/roles', icon: Shield },
+  { label: 'Analytics', href: '/super-admin/analytics', icon: BarChart2 },
 ]
 
 const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
   const router = useRouter()
-  const theme = useTheme()
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
   const [mobileOpen, setMobileOpen] = useState(false)
   const [signOutOpen, setSignOutOpen] = useState(false)
 
@@ -67,6 +47,10 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
   const portalLabel = superAdmin ? 'Super Admin' : 'Admin'
   const initials = superAdmin ? 'SA' : 'AD'
   const roleName = superAdmin ? 'System Administrator' : 'Platform Admin'
+  const activeColor = superAdmin ? '#7c3aed' : '#127C71'
+  const sidebarGradient = superAdmin
+    ? 'linear-gradient(135deg, rgba(30,10,60,0.98) 0%, rgba(90,40,140,0.97) 100%)'
+    : 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.97) 100%)'
 
   const handleConfirmSignOut = (): void => {
     setSignOutOpen(false)
@@ -75,156 +59,129 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
   }
 
   const sidebar = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box
-        sx={{
-          p: 3,
-          background: superAdmin
-            ? 'linear-gradient(135deg, rgba(30,10,60,0.98) 0%, rgba(90,40,140,0.97) 100%)'
-            : 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.97) 100%)',
-          position: 'relative',
-          overflow: 'hidden',
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            top: -30,
-            right: -30,
-            width: 100,
-            height: 100,
-            borderRadius: '50%',
-            background: 'rgba(255,255,255,0.06)',
-          },
-        }}
-      >
-        <Box sx={{ mb: 2.5, position: 'relative', zIndex: 1 }}>
+    <div className="h-full flex flex-col">
+      {/* Gradient header */}
+      <div className="p-6 relative overflow-hidden" style={{ background: sidebarGradient }}>
+        <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/6 pointer-events-none" />
+        <div className="relative z-10 mb-5">
           <Logo />
-        </Box>
-        <Stack direction="row" spacing={1.5} alignItems="center" sx={{ position: 'relative', zIndex: 1 }}>
-          <Avatar sx={{ width: 40, height: 40, background: 'rgba(255,255,255,0.18)', color: 'white', fontWeight: 700, fontSize: 15, border: '2px solid rgba(255,255,255,0.25)' }}>
+        </div>
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-[15px] border-2 border-white/25" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}>
             {initials}
-          </Avatar>
-          <Box sx={{ minWidth: 0 }}>
-            <Typography sx={{ color: 'white', fontWeight: 700, fontSize: 14, lineHeight: 1.3 }}>
-              {portalLabel}
-            </Typography>
-            <Stack direction="row" spacing={0.75} alignItems="center">
-              <ShieldIcon sx={{ fontSize: 11, color: 'rgba(196,181,253,0.9)' }} />
-              <Typography sx={{ color: 'rgba(196,181,253,0.9)', fontSize: 11, fontWeight: 600 }}>
+          </div>
+          <div className="min-w-0">
+            <p className="text-white font-bold text-sm leading-snug">{portalLabel}</p>
+            <div className="flex items-center gap-1.5">
+              <Shield size={11} style={{ color: superAdmin ? 'rgba(196,181,253,0.9)' : 'rgba(159,241,210,0.9)' }} />
+              <p className="text-[11px] font-semibold" style={{ color: superAdmin ? 'rgba(196,181,253,0.9)' : 'rgba(159,241,210,0.9)' }}>
                 {roleName}
-              </Typography>
-            </Stack>
-          </Box>
-        </Stack>
-      </Box>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <Box sx={{ px: 1.5, pt: 2, pb: 1, flex: 1, overflowY: 'auto' }}>
-        <Typography variant="overline" sx={{ px: 1.5, color: 'text.disabled', fontSize: 10, letterSpacing: 1, fontWeight: 700 }}>
-          {portalLabel} Portal
-        </Typography>
-        <List sx={{ mt: 0.5 }}>
+      {/* Nav */}
+      <div className="px-3 pt-4 pb-2 flex-1 overflow-y-auto">
+        <p className="px-3 text-[10px] font-bold uppercase tracking-[1px] text-muted-foreground mb-2">{portalLabel} Portal</p>
+        <nav className="mt-1 flex flex-col gap-0.5">
           {navItems.map((item) => {
             const active = router.pathname === item.href
-            const activeColor = superAdmin ? '#7c3aed' : '#127C71'
-            const activeBg = superAdmin
-              ? 'linear-gradient(90deg, rgba(124,58,237,0.13) 0%, rgba(124,58,237,0.04) 100%)'
-              : 'linear-gradient(90deg, rgba(18,124,113,0.13) 0%, rgba(18,124,113,0.04) 100%)'
-            const hoverBg = superAdmin ? 'rgba(124,58,237,0.06)' : 'rgba(18,124,113,0.06)'
+            const Icon = item.icon
             return (
-              <NextLink key={item.label} href={item.href} passHref>
-                <ListItemButton
-                  component="a"
-                  sx={{
-                    mb: 0.5,
-                    borderRadius: 3,
-                    px: 1.5,
-                    py: 1,
-                    transition: 'all 0.15s ease',
-                    ...(active ? {
-                      background: activeBg,
-                      borderLeft: `3px solid ${activeColor}`,
-                      pl: '9px',
-                      '& .MuiListItemIcon-root': { color: activeColor },
-                      '& .MuiListItemText-primary': { color: activeColor, fontWeight: 700 },
-                    } : {
-                      '&:hover': {
-                        background: hoverBg,
-                        '& .MuiListItemIcon-root': { color: activeColor },
-                      },
-                    }),
-                    '& .MuiListItemIcon-root': { minWidth: 36, color: active ? activeColor : 'text.secondary' },
-                  }}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14, fontWeight: active ? 700 : 500 }} />
-                  {active && <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: activeColor, flexShrink: 0 }} />}
-                </ListItemButton>
+              <NextLink
+                key={item.label}
+                href={item.href}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150',
+                  active
+                    ? 'border-l-[3px] pl-[9px] font-bold'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+                style={active
+                  ? { color: activeColor, borderLeftColor: activeColor, background: `linear-gradient(90deg, ${activeColor}21 0%, ${activeColor}0a 100%)` }
+                  : { '--hover-color': activeColor } as React.CSSProperties
+                }
+              >
+                <Icon size={16} />
+                {item.label}
+                {active && <span className="ml-auto w-1.5 h-1.5 rounded-full" style={{ backgroundColor: activeColor }} />}
               </NextLink>
             )
           })}
-        </List>
-      </Box>
+        </nav>
+      </div>
 
-      <Box sx={{ p: 1.5 }}>
-        <Divider sx={{ mb: 1.5 }} />
-        <ListItemButton
+      {/* Footer */}
+      <div className="p-3">
+        <hr className="border-border mb-3" />
+        <button
           onClick={() => setSignOutOpen(true)}
-          sx={{
-            borderRadius: 3,
-            px: 1.5,
-            color: 'text.secondary',
-            '&:hover': { color: 'error.main', backgroundColor: 'rgba(239,68,68,0.06)' },
-            '& .MuiListItemIcon-root': { minWidth: 36, color: 'inherit' },
-          }}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors"
         >
-          <ListItemIcon><LogoutIcon fontSize="small" /></ListItemIcon>
-          <ListItemText primary="Sign out" primaryTypographyProps={{ fontSize: 14, fontWeight: 500 }} />
-        </ListItemButton>
-      </Box>
-
-      <Dialog open={signOutOpen} onClose={() => setSignOutOpen(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>Sign out of YLSH?</DialogTitle>
-        <DialogContent>
-          <DialogContentText>You will be taken back to the sign-in page.</DialogContentText>
-        </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 3 }}>
-          <StyledButton type="button" variant="outlined" color="dark" disableHoverEffect onClick={() => setSignOutOpen(false)}>Cancel</StyledButton>
-          <StyledButton type="button" color="primary" disableHoverEffect onClick={handleConfirmSignOut}>Sign out</StyledButton>
-        </DialogActions>
-      </Dialog>
-    </Box>
+          <LogOut size={16} />
+          Sign out
+        </button>
+      </div>
+    </div>
   )
 
   return (
-    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f7f6 0%, #f3f6fb 100%)' }}>
-      {!isDesktop && (
-        <Drawer open={mobileOpen} onClose={() => setMobileOpen(false)} PaperProps={{ sx: { width: drawerWidth, border: 'none', boxShadow: '4px 0 24px rgba(15,23,42,0.1)' } }}>
-          {sidebar}
-        </Drawer>
-      )}
-      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-        {isDesktop && (
-          <Box sx={{ width: drawerWidth, flexShrink: 0, borderRight: '1px solid rgba(148,163,184,0.14)', backgroundColor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', position: 'sticky', top: 0, height: '100vh', overflowY: 'auto' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #f0f7f6 0%, #f3f6fb 100%)' }}>
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
+          <div className="relative z-10 bg-white/95 backdrop-blur-xl h-full overflow-y-auto" style={{ width: drawerWidth }}>
+            <button className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-muted" onClick={() => setMobileOpen(false)}>
+              <X size={18} />
+            </button>
             {sidebar}
-          </Box>
-        )}
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          {!isDesktop && (
-            <Box sx={{ px: 2, py: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'linear-gradient(135deg, rgba(8,47,73,0.97) 0%, rgba(18,124,113,0.97) 100%)', position: 'sticky', top: 0, zIndex: theme.zIndex.appBar }}>
-              <Stack direction="row" spacing={1.5} alignItems="center">
-                <IconButton onClick={() => setMobileOpen(true)} sx={{ color: 'white' }}>
-                  <MenuIcon />
-                </IconButton>
-                <Logo />
-              </Stack>
-              <Chip label={portalLabel} size="small" sx={{ backgroundColor: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }} />
-            </Box>
-          )}
-          <Container maxWidth={false} sx={{ py: { xs: 3, md: 4 }, px: { xs: 2, md: 4 } }}>
+          </div>
+        </div>
+      )}
+
+      <div className="flex min-h-screen">
+        <div className="hidden md:block flex-shrink-0 sticky top-0 h-screen overflow-y-auto border-r border-slate-200/14 bg-white/95 backdrop-blur-xl" style={{ width: drawerWidth }}>
+          {sidebar}
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div
+            className="md:hidden flex items-center justify-between px-4 py-3 sticky top-0 z-40"
+            style={{ background: sidebarGradient }}
+          >
+            <div className="flex items-center gap-3">
+              <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg text-white hover:bg-white/10">
+                <Menu size={20} />
+              </button>
+              <Logo />
+            </div>
+            <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full border border-white/20 text-white" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
+              {portalLabel}
+            </span>
+          </div>
+
+          <div className="py-6 md:py-8 px-4 md:px-8">
             {children}
-          </Container>
-        </Box>
-      </Box>
-    </Box>
+          </div>
+        </div>
+      </div>
+
+      {signOutOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setSignOutOpen(false)} />
+          <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6">
+            <h2 className="text-lg font-bold mb-2">Sign out of YLSH?</h2>
+            <p className="text-muted-foreground mb-6">You will be taken back to the sign-in page.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setSignOutOpen(false)} className="px-5 py-2 rounded-full border-2 border-slate-300 text-foreground font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
+              <button onClick={handleConfirmSignOut} className="px-5 py-2 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#0d5c54] transition-colors">Sign out</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
 

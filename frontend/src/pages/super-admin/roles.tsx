@@ -1,59 +1,19 @@
-import React, { useState } from 'react'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Paper from '@mui/material/Paper'
-import Select from '@mui/material/Select'
-import Stack from '@mui/material/Stack'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
-import EditIcon from '@mui/icons-material/Edit'
+﻿import React, { useState } from 'react'
+import { ShieldAlert, Pencil, X } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
+import { cn } from '@/utils'
 
-const PAPER_SX = {
-  p: { xs: 2.5, md: 3 },
-  borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.88)',
-  backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(148,163,184,0.16)',
-  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
-}
+const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
+const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
+const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 disabled:bg-muted transition-colors'
 
 const roles = [
-  {
-    name: 'Participant',
-    count: 4,
-    color: 'default' as const,
-    permissions: ['Register for events', 'View and download certificates', 'Access learning resources', 'Apply to opportunities', 'Book mentorship sessions'],
-  },
-  {
-    name: 'Mentor',
-    count: 47,
-    color: 'success' as const,
-    permissions: ['All Participant permissions', 'Manage mentorship sessions', 'Set availability', 'View assigned mentees'],
-  },
-  {
-    name: 'Admin',
-    count: 5,
-    color: 'primary' as const,
-    permissions: ['All Mentor permissions', 'Manage users and events', 'Issue certificates', 'View analytics', 'Handle identity verifications'],
-  },
-  {
-    name: 'Super Admin',
-    count: 1,
-    color: 'error' as const,
-    permissions: ['Full system access', 'Manage admin accounts', 'Assign/revoke roles', 'View audit logs', 'System configuration'],
-  },
+  { name: 'Participant', count: 4, color: 'bg-muted text-muted-foreground', permissions: ['Register for events', 'View and download certificates', 'Access learning resources', 'Apply to opportunities', 'Book mentorship sessions'] },
+  { name: 'Mentor', count: 47, color: 'bg-green-100 text-green-700', permissions: ['All Participant permissions', 'Manage mentorship sessions', 'Set availability', 'View assigned mentees'] },
+  { name: 'Admin', count: 5, color: 'bg-primary/10 text-primary', permissions: ['All Mentor permissions', 'Manage users and events', 'Issue certificates', 'View analytics', 'Handle identity verifications'] },
+  { name: 'Super Admin', count: 1, color: 'bg-red-100 text-red-700', permissions: ['Full system access', 'Manage admin accounts', 'Assign/revoke roles', 'View audit logs', 'System configuration'] },
 ]
 
 const users = [
@@ -64,144 +24,81 @@ const users = [
   { id: 5, name: 'Aisha Mohammed', email: 'aisha@ylsh.org', role: 'Super Admin' },
 ]
 
+const roleBadge: Record<string, string> = { 'Super Admin': 'bg-red-100 text-red-700', Admin: 'bg-primary/10 text-primary', Mentor: 'bg-green-100 text-green-700', Participant: 'bg-muted text-muted-foreground' }
+
 const RoleManagementPage: NextPageWithLayout = () => {
   const [editUser, setEditUser] = useState<typeof users[0] | null>(null)
   const [newRole, setNewRole] = useState('')
 
   return (
-    <Box>
-      <PageHeader
-        eyebrow="Role Management"
-        title="Role Management"
-        subtitle="View the RBAC matrix and assign or revoke roles for any user account."
-        icon={<AdminPanelSettingsIcon />}
-      />
+    <div>
+      <PageHeader eyebrow="Role Management" title="Role Management" subtitle="View the RBAC matrix and assign or revoke roles for any user account." icon={<ShieldAlert size={14} />} />
 
-      {/* RBAC matrix */}
-      <Paper sx={{ ...PAPER_SX, mb: 3 }}>
-          <Typography variant="h5" sx={{ mb: 3, fontSize: 22 }}>RBAC Matrix</Typography>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 2 }}>
-            {roles.map((role) => (
-              <Box
-                key={role.name}
-                sx={{
-                  p: 2.5,
-                  borderRadius: 3,
-                  border: '1px solid rgba(148,163,184,0.18)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
-                  <Chip label={role.name} color={role.color} size="small" />
-                  <Typography variant="caption" color="text.secondary">{role.count} users</Typography>
-                </Stack>
-                <Stack spacing={0.75}>
-                  {role.permissions.map((perm) => (
-                    <Typography key={perm} variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      · {perm}
-                    </Typography>
-                  ))}
-                </Stack>
-              </Box>
-            ))}
-          </Box>
-        </Paper>
-
-        {/* User role assignments */}
-        <Paper sx={PAPER_SX}>
-          <Typography variant="h5" sx={{ mb: 3, fontSize: 22 }}>User Role Assignments</Typography>
-          <Stack spacing={1.5}>
-            {users.map((user) => (
-              <Box
-                key={user.id}
-                sx={{
-                  p: 2,
-                  borderRadius: 3,
-                  border: '1px solid rgba(148,163,184,0.18)',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: 2,
-                  flexWrap: 'wrap',
-                }}
-              >
-                <Box>
-                  <Typography sx={{ fontWeight: 700 }}>{user.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">{user.email}</Typography>
-                </Box>
-                <Stack direction="row" spacing={1.5} alignItems="center">
-                  <Chip
-                    label={user.role}
-                    color={
-                      user.role === 'Super Admin' ? 'error' :
-                      user.role === 'Admin' ? 'primary' :
-                      user.role === 'Mentor' ? 'success' :
-                      'default'
-                    }
-                    size="small"
-                  />
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<EditIcon />}
-                    sx={{ borderRadius: 99, textTransform: 'none' }}
-                    onClick={() => { setEditUser(user); setNewRole(user.role) }}
-                  >
-                    Change role
-                  </Button>
-                </Stack>
-              </Box>
-            ))}
-          </Stack>
-        </Paper>
-
-
-      {/* Edit role dialog */}
-      <Dialog open={Boolean(editUser)} onClose={() => setEditUser(null)} maxWidth="xs" fullWidth>
-        <DialogTitle>Change role for {editUser?.name}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 1 }}>
-            <TextField
-              label="User"
-              value={editUser?.email ?? ''}
-              disabled
-              fullWidth
-              size="small"
-              sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-            />
-            <FormControl fullWidth size="small">
-              <InputLabel>New role</InputLabel>
-              <Select
-                value={newRole}
-                label="New role"
-                onChange={(e) => setNewRole(e.target.value)}
-                sx={{ borderRadius: 2 }}
-              >
-                {['Participant', 'Mentor', 'Admin', 'Super Admin'].map((r) => (
-                  <MenuItem key={r} value={r}>{r}</MenuItem>
+      <div className={cn(CARD, 'mb-5')} style={CARD_STYLE}>
+        <h2 className="text-xl font-bold mb-4">RBAC Matrix</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {roles.map((role) => (
+            <div key={role.name} className="flex flex-col p-4 rounded-xl border border-slate-200/18">
+              <div className="flex items-center justify-between mb-3">
+                <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', role.color)}>{role.name}</span>
+                <span className="text-xs text-muted-foreground">{role.count} users</span>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                {role.permissions.map((perm) => (
+                  <p key={perm} className="text-xs text-muted-foreground">· {perm}</p>
                 ))}
-              </Select>
-            </FormControl>
-          </Box>
-        </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 3 }}>
-          <Button variant="outlined" onClick={() => setEditUser(null)} sx={{ borderRadius: 99, textTransform: 'none' }}>
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => setEditUser(null)}
-            sx={{ borderRadius: 99, textTransform: 'none', fontWeight: 700 }}
-          >
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className={CARD} style={CARD_STYLE}>
+        <h2 className="text-xl font-bold mb-4">User Role Assignments</h2>
+        <div className="flex flex-col gap-3">
+          {users.map((user) => (
+            <div key={user.id} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 flex-wrap">
+              <div>
+                <p className="font-bold text-sm">{user.name}</p>
+                <p className="text-xs text-muted-foreground">{user.email}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', roleBadge[user.role])}>{user.role}</span>
+                <button onClick={() => { setEditUser(user); setNewRole(user.role) }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors">
+                  <Pencil size={13} /> Change role
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {editUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setEditUser(null)} />
+          <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold">Change role for {editUser.name}</h2>
+              <button onClick={() => setEditUser(null)} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X size={18} /></button>
+            </div>
+            <div className="flex flex-col gap-3 mb-6">
+              <input value={editUser.email} disabled className={INPUT} />
+              <select value={newRole} onChange={(e) => setNewRole(e.target.value)} className={INPUT}>
+                {['Participant', 'Mentor', 'Admin', 'Super Admin'].map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setEditUser(null)} className="px-5 py-2.5 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
+              <button onClick={() => setEditUser(null)} className="px-5 py-2.5 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
 
 RoleManagementPage.getLayout = (page) => <AdminLayout superAdmin>{page}</AdminLayout>
-
 export default RoleManagementPage

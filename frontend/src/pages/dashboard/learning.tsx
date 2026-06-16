@@ -1,248 +1,96 @@
-import React, { useState } from 'react'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import Grid from '@mui/material/Grid'
-import LinearProgress from '@mui/material/LinearProgress'
-import Paper from '@mui/material/Paper'
-import Stack from '@mui/material/Stack'
-import Tab from '@mui/material/Tab'
-import Tabs from '@mui/material/Tabs'
-import Typography from '@mui/material/Typography'
-import SchoolIcon from '@mui/icons-material/School'
-import PlayCircleIcon from '@mui/icons-material/PlayCircle'
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
-import ArticleIcon from '@mui/icons-material/Article'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+﻿import React, { useState } from 'react'
+import { GraduationCap, PlayCircle, FileText, CheckCircle } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
+import { cn } from '@/utils'
 
-const PAPER_SX = {
-  p: { xs: 2.5, md: 3 },
-  borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.88)',
-  backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(148,163,184,0.16)',
-  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
-}
+const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
+const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 type ResourceType = 'video' | 'pdf' | 'article'
 
-interface Resource {
-  id: number
-  title: string
-  type: ResourceType
-  category: string
-  duration: string
-  progress: number
-  completed: boolean
-}
-
-const resources: Resource[] = [
-  {
-    id: 1,
-    title: 'Introduction to Leadership Fundamentals',
-    type: 'video',
-    category: 'Leadership',
-    duration: '45 min',
-    progress: 100,
-    completed: true,
-  },
-  {
-    id: 2,
-    title: 'Digital Skills for Young Professionals',
-    type: 'video',
-    category: 'Digital Skills',
-    duration: '1 hr 20 min',
-    progress: 68,
-    completed: false,
-  },
-  {
-    id: 3,
-    title: 'Youth Entrepreneurship Handbook',
-    type: 'pdf',
-    category: 'Entrepreneurship',
-    duration: '80 pages',
-    progress: 45,
-    completed: false,
-  },
-  {
-    id: 4,
-    title: 'Grant Writing Masterclass Notes',
-    type: 'pdf',
-    category: 'Opportunities',
-    duration: '32 pages',
-    progress: 100,
-    completed: true,
-  },
-  {
-    id: 5,
-    title: 'Climate Policy and Youth Advocacy',
-    type: 'article',
-    category: 'Policy',
-    duration: '15 min read',
-    progress: 0,
-    completed: false,
-  },
-  {
-    id: 6,
-    title: 'Building Your Personal Brand Online',
-    type: 'article',
-    category: 'Digital Skills',
-    duration: '10 min read',
-    progress: 30,
-    completed: false,
-  },
+const resources = [
+  { id: 1, title: 'Introduction to Leadership Fundamentals', type: 'video' as ResourceType, category: 'Leadership', duration: '45 min', progress: 100, completed: true },
+  { id: 2, title: 'Digital Skills for Young Professionals', type: 'video' as ResourceType, category: 'Digital Skills', duration: '1 hr 20 min', progress: 68, completed: false },
+  { id: 3, title: 'Youth Entrepreneurship Handbook', type: 'pdf' as ResourceType, category: 'Entrepreneurship', duration: '80 pages', progress: 45, completed: false },
+  { id: 4, title: 'Grant Writing Masterclass Notes', type: 'pdf' as ResourceType, category: 'Opportunities', duration: '32 pages', progress: 100, completed: true },
+  { id: 5, title: 'Climate Policy and Youth Advocacy', type: 'article' as ResourceType, category: 'Policy', duration: '15 min read', progress: 0, completed: false },
+  { id: 6, title: 'Building Your Personal Brand Online', type: 'article' as ResourceType, category: 'Digital Skills', duration: '10 min read', progress: 30, completed: false },
 ]
 
 const typeIcon: Record<ResourceType, React.ReactNode> = {
-  video: <PlayCircleIcon />,
-  pdf: <PictureAsPdfIcon />,
-  article: <ArticleIcon />,
+  video: <PlayCircle size={22} />,
+  pdf: <FileText size={22} />,
+  article: <FileText size={22} />,
 }
 
-const typeColor: Record<ResourceType, string> = {
-  video: '#EF4444',
-  pdf: '#F59E0B',
-  article: '#3B82F6',
-}
+const typeColor: Record<ResourceType, string> = { video: '#EF4444', pdf: '#F59E0B', article: '#3B82F6' }
+
+const TABS = ['All', 'In Progress', 'Completed', 'Not Started']
 
 const LearningPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
-
-  const filtered =
-    tab === 0 ? resources :
-    tab === 1 ? resources.filter((r) => !r.completed && r.progress > 0) :
-    tab === 2 ? resources.filter((r) => r.completed) :
-    resources.filter((r) => r.progress === 0)
-
+  const filtered = tab === 0 ? resources : tab === 1 ? resources.filter((r) => !r.completed && r.progress > 0) : tab === 2 ? resources.filter((r) => r.completed) : resources.filter((r) => r.progress === 0)
   const completedCount = resources.filter((r) => r.completed).length
   const inProgressCount = resources.filter((r) => !r.completed && r.progress > 0).length
-  const totalProgress = Math.round(
-    resources.reduce((sum, r) => sum + r.progress, 0) / resources.length,
-  )
+  const totalProgress = Math.round(resources.reduce((sum, r) => sum + r.progress, 0) / resources.length)
 
   return (
-    <Box>
-      <PageHeader
-        eyebrow="Learning"
-        title="Learning Resources"
-        subtitle="Access courses, PDFs, videos, and articles. Track your progress across all learning materials."
-        icon={<SchoolIcon />}
-      />
+    <div>
+      <PageHeader eyebrow="Learning" title="Learning Resources" subtitle="Access courses, PDFs, videos, and articles. Track your progress across all learning materials." icon={<GraduationCap size={14} />} />
 
-      {/* Stats */}
-      <Grid container spacing={2.5} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={4}>
-          <StatCard label="Completed" value={String(completedCount)} icon={<CheckCircleIcon />} progress={completedCount / resources.length * 100} accent="#22c55e" />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <StatCard label="In Progress" value={String(inProgressCount)} icon={<SchoolIcon />} progress={inProgressCount / resources.length * 100} accent="#f59e0b" />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <StatCard label="Overall Progress" value={`${totalProgress}%`} icon={<SchoolIcon />} progress={totalProgress} />
-        </Grid>
-      </Grid>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <StatCard label="Completed" value={String(completedCount)} icon={<CheckCircle size={20} />} progress={completedCount / resources.length * 100} accent="#22c55e" />
+        <StatCard label="In Progress" value={String(inProgressCount)} icon={<GraduationCap size={20} />} progress={inProgressCount / resources.length * 100} accent="#f59e0b" />
+        <StatCard label="Overall Progress" value={`${totalProgress}%`} icon={<GraduationCap size={20} />} progress={totalProgress} />
+      </div>
 
-      <Paper sx={PAPER_SX}>
-          <Tabs
-            value={tab}
-            onChange={(_, v) => setTab(v)}
-            sx={{ mb: 3, borderBottom: '1px solid rgba(148,163,184,0.18)' }}
-          >
-            <Tab label="All" />
-            <Tab label="In Progress" />
-            <Tab label="Completed" />
-            <Tab label="Not Started" />
-          </Tabs>
+      <div className={CARD} style={CARD_STYLE}>
+        <div className="flex gap-1 border-b border-slate-200/18 mb-5 overflow-x-auto">
+          {TABS.map((label, i) => (
+            <button key={label} onClick={() => setTab(i)} className={cn('px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors whitespace-nowrap', tab === i ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
+              {label}
+            </button>
+          ))}
+        </div>
 
-          <Stack spacing={2}>
-            {filtered.map((resource) => (
-              <Box
-                key={resource.id}
-                sx={{
-                  p: 2.5,
-                  borderRadius: 3,
-                  border: '1px solid rgba(148,163,184,0.18)',
-                  display: 'flex',
-                  gap: 2,
-                  alignItems: 'flex-start',
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: '14px',
-                    display: 'grid',
-                    placeItems: 'center',
-                    backgroundColor: `${typeColor[resource.type]}18`,
-                    color: typeColor[resource.type],
-                    flexShrink: 0,
-                  }}
-                >
-                  {typeIcon[resource.type]}
-                </Box>
-
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="flex-start"
-                    spacing={1}
-                    sx={{ mb: 0.5 }}
-                  >
-                    <Typography sx={{ fontWeight: 700 }}>{resource.title}</Typography>
-                    {resource.completed && (
-                      <CheckCircleIcon sx={{ color: 'success.main', fontSize: 20, flexShrink: 0 }} />
-                    )}
-                  </Stack>
-
-                  <Stack direction="row" spacing={1} sx={{ mb: 1.5, flexWrap: 'wrap', gap: 0.75 }}>
-                    <Chip label={resource.category} size="small" />
-                    <Chip label={resource.duration} size="small" variant="outlined" />
-                    <Chip
-                      label={resource.type.toUpperCase()}
-                      size="small"
-                      variant="outlined"
-                      sx={{ color: typeColor[resource.type], borderColor: typeColor[resource.type] }}
-                    />
-                  </Stack>
-
-                  <LinearProgress
-                    variant="determinate"
-                    value={resource.progress}
-                    sx={{ height: 6, borderRadius: 99, mb: 1 }}
-                  />
-
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography variant="caption" color="text.secondary">
-                      {resource.progress}% complete
-                    </Typography>
-                    <Button
-                      size="small"
-                      variant={resource.completed ? 'outlined' : 'contained'}
-                      sx={{ borderRadius: 99, textTransform: 'none', fontWeight: 700 }}
-                    >
-                      {resource.completed ? 'Review' : resource.progress > 0 ? 'Continue' : 'Start'}
-                    </Button>
-                  </Stack>
-                </Box>
-              </Box>
-            ))}
-
-            {filtered.length === 0 && (
-              <Box sx={{ py: 6, textAlign: 'center' }}>
-                <Typography color="text.secondary">No resources in this category.</Typography>
-              </Box>
-            )}
-          </Stack>
-      </Paper>
-    </Box>
+        <div className="flex flex-col gap-3">
+          {filtered.map((resource) => (
+            <div key={resource.id} className="flex gap-4 items-start p-4 rounded-xl border border-slate-200/18">
+              <div className="w-12 h-12 rounded-[14px] grid place-items-center flex-shrink-0" style={{ backgroundColor: `${typeColor[resource.type]}18`, color: typeColor[resource.type] }}>
+                {typeIcon[resource.type]}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <p className="font-bold">{resource.title}</p>
+                  {resource.completed && <CheckCircle size={18} className="text-green-600 flex-shrink-0" />}
+                </div>
+                <div className="flex gap-2 flex-wrap mb-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground">{resource.category}</span>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-border text-muted-foreground">{resource.duration}</span>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border" style={{ color: typeColor[resource.type], borderColor: typeColor[resource.type] }}>{resource.type.toUpperCase()}</span>
+                </div>
+                <div className="h-[6px] rounded-full overflow-hidden mb-2" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }}>
+                  <div className="h-full rounded-full bg-primary" style={{ width: `${resource.progress}%` }} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">{resource.progress}% complete</span>
+                  <button className={cn('px-4 py-1 rounded-full text-xs font-bold transition-colors', resource.completed ? 'border border-border hover:bg-muted' : 'bg-primary text-white hover:bg-[#0d5c54]')}>
+                    {resource.completed ? 'Review' : resource.progress > 0 ? 'Continue' : 'Start'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+          {filtered.length === 0 && (
+            <div className="py-12 text-center text-muted-foreground">No resources in this category.</div>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
 
 LearningPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>
-
 export default LearningPage

@@ -1,76 +1,55 @@
 import React, { FC, useState } from 'react'
-import Box from '@mui/material/Box'
-import Container from '@mui/material/Container'
-import IconButton from '@mui/material/IconButton'
-import useMediaQuery from '@mui/material/useMediaQuery'
+import { Menu, X } from 'lucide-react'
 import { Logo } from '@/components/logo'
 import { Navigation, AuthNavigation } from '@/components/navigation'
-import { useTheme } from '@mui/material/styles'
-import { Menu, Close } from '@mui/icons-material'
 
 const Header: FC = () => {
-  const [visibleMenu, setVisibleMenu] = useState<boolean>(false)
-  const { breakpoints } = useTheme()
-  const matchMobileView = useMediaQuery(breakpoints.down('md'))
+  const [visibleMenu, setVisibleMenu] = useState(false)
 
   return (
-    <Box
-      sx={{
-        position: 'sticky',
-        top: 0,
-        zIndex: (theme) => theme.zIndex.appBar + 1,
-        backgroundColor: 'rgba(255, 255, 255, 0.84)',
-        backdropFilter: 'blur(18px)',
-        borderBottom: '1px solid rgba(148, 163, 184, 0.18)',
-      }}
-    >
-      <Container sx={{ py: { xs: 2, md: 3 } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div className="sticky top-0 z-50 border-b border-slate-200/18" style={{ backgroundColor: 'rgba(255,255,255,0.84)', backdropFilter: 'blur(18px)' }}>
+      <div className="container py-4 md:py-5">
+        <div className="flex items-center justify-between">
           <Logo />
-          <Box sx={{ ml: 'auto', display: { xs: 'inline-flex', md: 'none' } }}>
-            <IconButton onClick={() => setVisibleMenu(!visibleMenu)}>
-              <Menu />
-            </IconButton>
-          </Box>
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexDirection: { xs: 'column', md: 'row' },
 
-              transition: (theme) => theme.transitions.create(['top']),
-              ...(matchMobileView && {
-                py: 6,
-                backgroundColor: 'rgba(255, 255, 255, 0.96)',
-                zIndex: 'appBar',
-                position: 'fixed',
-                height: { xs: '100vh', md: 'auto' },
-                top: visibleMenu ? 0 : '-120vh',
-                left: 0,
-              }),
-            }}
+          {/* Mobile toggle */}
+          <button
+            className="md:hidden ml-auto p-2 rounded-lg hover:bg-muted transition-colors"
+            onClick={() => setVisibleMenu(!visibleMenu)}
+            aria-label="Toggle menu"
           >
-            <Box /> {/* Magic space */}
+            <Menu size={22} />
+          </button>
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center justify-between w-full ml-4">
+            <div />
             <Navigation />
             <AuthNavigation />
-            {visibleMenu && matchMobileView && (
-              <IconButton
-                sx={{
-                  position: 'fixed',
-                  top: 10,
-                  right: 10,
-                }}
-                onClick={() => setVisibleMenu(!visibleMenu)}
-              >
-                <Close />
-              </IconButton>
-            )}
-          </Box>
-        </Box>
-      </Container>
-    </Box>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile overlay menu */}
+      {visibleMenu && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+          style={{ backgroundColor: 'rgba(255,255,255,0.96)' }}
+        >
+          <button
+            className="absolute top-3 right-3 p-2 rounded-lg hover:bg-muted transition-colors"
+            onClick={() => setVisibleMenu(false)}
+            aria-label="Close menu"
+          >
+            <X size={22} />
+          </button>
+          <Navigation />
+          <div className="mt-8">
+            <AuthNavigation />
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
 

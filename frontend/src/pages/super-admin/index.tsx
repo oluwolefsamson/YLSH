@@ -1,38 +1,20 @@
-import React from 'react'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import Grid from '@mui/material/Grid'
-import Paper from '@mui/material/Paper'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
-import PeopleIcon from '@mui/icons-material/People'
-import EventAvailableIcon from '@mui/icons-material/EventAvailable'
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
-import SchoolIcon from '@mui/icons-material/School'
-import SecurityIcon from '@mui/icons-material/Security'
+﻿import React from 'react'
+import { Shield, Users, CalendarCheck, Award, ShieldCheck, GraduationCap, ShieldAlert } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
+import { cn } from '@/utils'
 
-const PAPER_SX = {
-  p: { xs: 2.5, md: 3 },
-  borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.88)',
-  backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(148,163,184,0.16)',
-  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
-}
+const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
+const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const stats = [
-  { label: 'Total users', value: '4,821', progress: 48, icon: <PeopleIcon /> },
-  { label: 'Verified', value: '3,940', progress: 82, icon: <VerifiedUserIcon /> },
-  { label: 'Events', value: '28', progress: 70, icon: <EventAvailableIcon /> },
-  { label: 'Certificates', value: '3,104', progress: 62, icon: <WorkspacePremiumIcon /> },
-  { label: 'Mentors', value: '47', progress: 55, icon: <SchoolIcon /> },
-  { label: 'Admins', value: '6', progress: 30, icon: <AdminPanelSettingsIcon /> },
+  { label: 'Total users', value: '4,821', progress: 48, icon: <Users size={20} /> },
+  { label: 'Verified', value: '3,940', progress: 82, icon: <ShieldCheck size={20} /> },
+  { label: 'Events', value: '28', progress: 70, icon: <CalendarCheck size={20} /> },
+  { label: 'Certificates', value: '3,104', progress: 62, icon: <Award size={20} /> },
+  { label: 'Mentors', value: '47', progress: 55, icon: <GraduationCap size={20} /> },
+  { label: 'Admins', value: '6', progress: 30, icon: <ShieldAlert size={20} /> },
 ]
 
 const adminAccounts = [
@@ -52,113 +34,63 @@ const auditLog = [
 
 const SuperAdminOverviewPage: NextPageWithLayout = () => {
   return (
-    <Box>
-      <PageHeader
-        eyebrow="Super Admin Portal"
-        title="Super Admin Overview"
-        subtitle="Full system access — manage all users, admins, roles, events, and view platform-wide audit logs."
-        icon={<SecurityIcon />}
-      />
+    <div>
+      <PageHeader eyebrow="Super Admin Portal" title="Super Admin Overview" subtitle="Full system access — manage all users, admins, roles, events, and view platform-wide audit logs." icon={<Shield size={14} />} />
 
-      {/* Stats */}
-      <Grid container spacing={2.5} sx={{ mb: 4 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {stats.map((card) => (
-          <Grid key={card.label} item xs={12} sm={6} lg={4}>
-            <StatCard label={card.label} value={card.value} icon={card.icon} progress={card.progress} />
-          </Grid>
+          <StatCard key={card.label} label={card.label} value={card.value} icon={card.icon} progress={card.progress} />
         ))}
-      </Grid>
-      <Grid container spacing={3}>
-          {/* Admin accounts */}
-          <Grid item xs={12} lg={6}>
-            <Paper sx={PAPER_SX}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2.5 }}>
-                <Typography variant="h5" sx={{ fontSize: 22 }}>Admin Accounts</Typography>
-                <Button variant="contained" size="small" sx={{ borderRadius: 99, textTransform: 'none', fontWeight: 700 }}>
-                  + Add admin
-                </Button>
-              </Stack>
-              <Stack spacing={1.5}>
-                {adminAccounts.map((admin) => (
-                  <Box
-                    key={admin.email}
-                    sx={{
-                      p: 2,
-                      borderRadius: 3,
-                      border: '1px solid rgba(148,163,184,0.18)',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      gap: 2,
-                      flexWrap: 'wrap',
-                    }}
-                  >
-                    <Box>
-                      <Typography sx={{ fontWeight: 700 }}>{admin.name}</Typography>
-                      <Typography variant="body2" color="text.secondary">{admin.email}</Typography>
-                      <Typography variant="caption" color="text.secondary">Last active: {admin.lastActive}</Typography>
-                    </Box>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Chip
-                        label={admin.role}
-                        color={admin.role === 'Super Admin' ? 'primary' : 'default'}
-                        size="small"
-                      />
-                      <Button size="small" variant="outlined" sx={{ borderRadius: 99, textTransform: 'none' }}>
-                        Edit
-                      </Button>
-                    </Stack>
-                  </Box>
-                ))}
-              </Stack>
-            </Paper>
-          </Grid>
+      </div>
 
-          {/* Audit log */}
-          <Grid item xs={12} lg={6}>
-            <Paper
-              sx={{
-                ...PAPER_SX,
-                background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.98) 100%)',
-                color: 'common.white',
-              }}
-            >
-              <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 2.5 }}>
-                <SecurityIcon />
-                <Typography variant="h5" sx={{ fontSize: 22 }}>Audit Log</Typography>
-              </Stack>
-              <Stack spacing={1.5}>
-                {auditLog.map((entry, i) => (
-                  <Box
-                    key={i}
-                    sx={{
-                      p: 2,
-                      borderRadius: 3,
-                      backgroundColor: 'rgba(255,255,255,0.08)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                    }}
-                  >
-                    <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
-                      {entry.action}
-                    </Typography>
-                    <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>
-                        by {entry.actor}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)' }}>
-                        {entry.time}
-                      </Typography>
-                    </Stack>
-                  </Box>
-                ))}
-              </Stack>
-            </Paper>
-          </Grid>
-      </Grid>
-    </Box>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Admin accounts */}
+        <div className={CARD} style={CARD_STYLE}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">Admin Accounts</h2>
+            <button className="px-4 py-2 rounded-full bg-primary text-white text-sm font-bold hover:bg-[#0d5c54] transition-colors">+ Add admin</button>
+          </div>
+          <div className="flex flex-col gap-3">
+            {adminAccounts.map((admin) => (
+              <div key={admin.email} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 flex-wrap">
+                <div>
+                  <p className="font-bold text-sm">{admin.name}</p>
+                  <p className="text-xs text-muted-foreground">{admin.email}</p>
+                  <p className="text-xs text-muted-foreground">Last active: {admin.lastActive}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', admin.role === 'Super Admin' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground')}>
+                    {admin.role}
+                  </span>
+                  <button className="px-3 py-1 rounded-full border border-border text-xs font-semibold hover:bg-muted transition-colors">Edit</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Audit log */}
+        <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.98) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
+          <div className="flex items-center gap-2 mb-4">
+            <Shield size={18} />
+            <h2 className="text-xl font-bold">Audit Log</h2>
+          </div>
+          <div className="flex flex-col gap-3">
+            {auditLog.map((entry, i) => (
+              <div key={i} className="p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <p className="text-sm font-semibold mb-1">{entry.action}</p>
+                <div className="flex justify-between">
+                  <span className="text-xs" style={{ color: 'rgba(255,255,255,0.6)' }}>by {entry.actor}</span>
+                  <span className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>{entry.time}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
 SuperAdminOverviewPage.getLayout = (page) => <AdminLayout superAdmin>{page}</AdminLayout>
-
 export default SuperAdminOverviewPage

@@ -1,31 +1,20 @@
 import { useState } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import Box from '@mui/material/Box'
-import Checkbox from '@mui/material/Checkbox'
-import Divider from '@mui/material/Divider'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import IconButton from '@mui/material/IconButton'
-import InputAdornment from '@mui/material/InputAdornment'
-import MenuItem from '@mui/material/MenuItem'
-import Stack from '@mui/material/Stack'
-import Step from '@mui/material/Step'
-import StepLabel from '@mui/material/StepLabel'
-import Stepper from '@mui/material/Stepper'
-import CircularProgress from '@mui/material/CircularProgress'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined'
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
-import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
-import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined'
-import { StyledButton } from '@/components/styled-button'
+import {
+  Mail,
+  Lock,
+  User,
+  BadgeCheck,
+  Eye,
+  EyeOff,
+  ShieldCheck,
+} from 'lucide-react'
 import AuthShell from '@/components/auth/auth-shell'
 import AuthFormCard from '@/components/auth/auth-form-card'
 import AuthLink from '@/components/auth/auth-link'
+import { cn } from '@/utils'
+
 const steps = ['Verify NIN', 'Personal information', 'Account details']
 
 const SignUpPage: NextPage = () => {
@@ -38,24 +27,13 @@ const SignUpPage: NextPage = () => {
   const isBusy = isCreated || isSubmitting
 
   const handleNext = (): void => {
-    if (isBusy) {
-      return
-    }
-
-    setActiveStep((step) => Math.min(step + 1, steps.length - 1))
+    if (!isBusy) setActiveStep((step) => Math.min(step + 1, steps.length - 1))
   }
-
   const handleBack = (): void => {
-    if (isBusy) {
-      return
-    }
-
-    setActiveStep((step) => Math.max(step - 1, 0))
+    if (!isBusy) setActiveStep((step) => Math.max(step - 1, 0))
   }
   const handleSubmit = async (): Promise<void> => {
-    if (activeStep !== 2 || isBusy) {
-      return
-    }
+    if (activeStep !== 2 || isBusy) return
     setIsSubmitting(true)
     setIsCreated(true)
     await new Promise((resolve) => window.setTimeout(resolve, 1200))
@@ -68,331 +46,177 @@ const SignUpPage: NextPage = () => {
       title="Join the YLSH platform"
       description="Complete onboarding in steps so identity verification happens first, then profile details, then your final account setup."
       footer={
-        <Typography color="text.secondary" sx={{ textAlign: 'center' }}>
+        <p className="text-center text-muted-foreground">
           Already have an account? <AuthLink href="/signin">Sign in</AuthLink>
-        </Typography>
+        </p>
       }
     >
       <AuthFormCard
         title="Participant onboarding"
         subtitle="Step through identity verification, personal details, and account setup before creating your account."
       >
-        <Box sx={{ display: 'grid', gap: 2.2, position: 'relative' }}>
-          {isCreated ? (
-            <Box
-              sx={{
-                position: 'absolute',
-                inset: 0,
-                zIndex: 2,
-                borderRadius: 4,
-                backgroundColor: 'rgba(255,255,255,0.78)',
-                display: 'grid',
-                placeItems: 'center',
-                backdropFilter: 'blur(8px)',
-              }}
-            >
-              <CircularProgress color="primary" size={48} thickness={4} />
-            </Box>
-          ) : null}
+        <div className="relative flex flex-col gap-5">
+          {isCreated && (
+            <div className="absolute inset-0 z-20 rounded-2xl bg-white/78 backdrop-blur-sm grid place-items-center">
+              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
 
-          <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 1 }}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
+          {/* Step indicator */}
+          <div className="flex items-center justify-between mb-1">
+            {steps.map((label, i) => (
+              <div key={label} className="flex items-center flex-1">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={cn(
+                      'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors',
+                      i < activeStep
+                        ? 'bg-primary border-primary text-white'
+                        : i === activeStep
+                        ? 'border-primary text-primary bg-primary/10'
+                        : 'border-border text-muted-foreground'
+                    )}
+                  >
+                    {i < activeStep ? '✓' : i + 1}
+                  </div>
+                  <p className={cn('text-[10px] font-medium mt-1 text-center max-w-[70px]', i === activeStep ? 'text-primary' : 'text-muted-foreground')}>
+                    {label}
+                  </p>
+                </div>
+                {i < steps.length - 1 && (
+                  <div className={cn('flex-1 h-0.5 mx-1 mb-4 rounded-full', i < activeStep ? 'bg-primary' : 'bg-border')} />
+                )}
+              </div>
             ))}
-          </Stepper>
+          </div>
 
+          {/* Step 1: NIN */}
           {activeStep === 0 && (
-            <Box
-              sx={{
-                p: 2.5,
-                borderRadius: 4,
-                backgroundColor: 'rgba(15,23,42,0.03)',
-                border: '1px solid rgba(148,163,184,0.18)',
-                display: 'grid',
-                gap: 2,
-              }}
-            >
-              <Box>
-                <Typography sx={{ fontWeight: 700, mb: 0.5 }}>Step 1: Verify your NIN</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                  Start with identity verification. YLSH uses the NIN to support secure onboarding without storing raw
-                  sensitive values.
-                </Typography>
-              </Box>
-
-              <TextField
-                fullWidth
-                label="NIN"
-                placeholder="Enter your 11-digit NIN"
-                disabled={isBusy}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <VerifiedUserOutlinedIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-              />
-
-              <Box
-                sx={{
-                  p: 2,
-                  borderRadius: 3,
-                  backgroundColor: 'rgba(18,124,113,0.07)',
-                  border: '1px solid rgba(18,124,113,0.16)',
-                }}
-              >
-                <Stack direction="row" spacing={1.5} alignItems="flex-start">
-                  <VerifiedUserOutlinedIcon color="primary" />
-                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                    Verify first so your event registrations, certificates, and attendance records remain tied to one
-                    authenticated identity.
-                  </Typography>
-                </Stack>
-              </Box>
-            </Box>
+            <div className="p-5 rounded-2xl bg-foreground/3 border border-slate-200/18 flex flex-col gap-4">
+              <div>
+                <p className="font-bold mb-1">Step 1: Verify your NIN</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Start with identity verification. YLSH uses the NIN to support secure onboarding without storing raw sensitive values.
+                </p>
+              </div>
+              <div className="relative">
+                <ShieldCheck size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Enter your 11-digit NIN"
+                  disabled={isBusy}
+                  className="w-full h-11 pl-9 pr-4 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 transition-colors"
+                />
+              </div>
+              <div className="flex gap-3 p-3 rounded-xl border border-primary/16 bg-primary/7">
+                <ShieldCheck size={18} className="text-primary flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Verify first so your event registrations, certificates, and attendance records remain tied to one authenticated identity.
+                </p>
+              </div>
+            </div>
           )}
 
+          {/* Step 2: Personal info */}
           {activeStep === 1 && (
-            <Box sx={{ display: 'grid', gap: 2.1 }}>
-              <Box>
-                <Typography sx={{ fontWeight: 700, mb: 0.5 }}>Step 2: Personal information</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+            <div className="flex flex-col gap-4">
+              <div>
+                <p className="font-bold mb-1">Step 2: Personal information</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Add the profile details needed for your participant dashboard and future event interactions.
-                </Typography>
-              </Box>
-
-              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2.1 }}>
-                <TextField
-                  fullWidth
-                  label="First name"
-                  placeholder="Amina"
-                  disabled={isBusy}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <PersonOutlineIcon fontSize="small" />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-                />
-                <TextField
-                  fullWidth
-                  label="Last name"
-                  placeholder="Bello"
-                  disabled={isBusy}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <PersonOutlineIcon fontSize="small" />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-                />
-              </Box>
-
-              <TextField
-                fullWidth
-                label="Email address"
-                placeholder="you@example.com"
-                disabled={isBusy}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <EmailOutlinedIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-              />
-
-              <TextField
-                fullWidth
-                label="Phone number"
-                placeholder="+234 800 000 0000"
-                disabled={isBusy}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-              />
-
-              <TextField
-                fullWidth
-                label="Organization / school"
-                placeholder="Youth Summit Club"
-                disabled={isBusy}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-              />
-            </Box>
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[{ placeholder: 'First name', label: 'Amina' }, { placeholder: 'Last name', label: 'Bello' }].map((f) => (
+                  <div key={f.placeholder} className="relative">
+                    <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input placeholder={f.label} disabled={isBusy} className="w-full h-11 pl-9 pr-4 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 transition-colors" />
+                  </div>
+                ))}
+              </div>
+              <div className="relative">
+                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input type="email" placeholder="you@example.com" disabled={isBusy} className="w-full h-11 pl-9 pr-4 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 transition-colors" />
+              </div>
+              <input type="tel" placeholder="+234 800 000 0000" disabled={isBusy} className="w-full h-11 px-4 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 transition-colors" />
+              <input placeholder="Organization / school" disabled={isBusy} className="w-full h-11 px-4 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 transition-colors" />
+            </div>
           )}
 
-          {activeStep === 2 ? (
-            <Box sx={{ display: 'grid', gap: 2.1 }}>
-              <Box>
-                <Typography sx={{ fontWeight: 700, mb: 0.5 }}>Step 3: Account details and review</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                  Finish by setting your role, password, and preferences. Creating your account happens only after you
-                  press Create Account on this step.
-                </Typography>
-              </Box>
+          {/* Step 3: Account details */}
+          {activeStep === 2 && (
+            <div className="flex flex-col gap-4">
+              <div>
+                <p className="font-bold mb-1">Step 3: Account details and review</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Finish by setting your role, password, and preferences.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <select disabled={isBusy} className="h-11 px-4 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 transition-colors">
+                  <option value="participant">Participant</option>
+                  <option value="mentor">Mentor</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <div className="relative">
+                  <BadgeCheck size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input placeholder="@aminab" disabled={isBusy} className="w-full h-11 pl-9 pr-4 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 transition-colors" />
+                </div>
+              </div>
+              {[
+                { key: 'pw', show: showPassword, toggle: () => setShowPassword(v => !v), placeholder: 'Create a strong password' },
+                { key: 'cpw', show: showConfirmPassword, toggle: () => setShowConfirmPassword(v => !v), placeholder: 'Repeat your password' },
+              ].map((f) => (
+                <div key={f.key} className="relative">
+                  <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input type={f.show ? 'text' : 'password'} placeholder={f.placeholder} disabled={isBusy} className="w-full h-11 pl-9 pr-10 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 transition-colors" />
+                  <button type="button" onClick={f.toggle} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+                    {f.show ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              ))}
+              <div className="p-4 rounded-2xl bg-foreground/3 border border-slate-200/20">
+                <p className="font-bold mb-1.5">Final account creation</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Use this step to review your details. The account is created only when you submit here, not on the earlier steps.
+                </p>
+              </div>
+            </div>
+          )}
 
-              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2.1 }}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Account type"
-                  defaultValue="participant"
-                  disabled={isBusy}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <BadgeOutlinedIcon fontSize="small" />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-                >
-                  <MenuItem value="participant">Participant</MenuItem>
-                  <MenuItem value="mentor">Mentor</MenuItem>
-                  <MenuItem value="admin">Admin</MenuItem>
-                </TextField>
-                <TextField
-                fullWidth
-                label="Username"
-                placeholder="@aminab"
-                disabled={isBusy}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-              />
-              </Box>
-
-              <TextField
-                fullWidth
-                type={showPassword ? 'text' : 'password'}
-                label="Password"
-                placeholder="Create a strong password"
-                disabled={isBusy}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LockOutlinedIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        edge="end"
-                        size="small"
-                        onClick={() => setShowPassword((value) => !value)}
-                        disabled={isBusy}
-                      >
-                        {showPassword ? (
-                          <VisibilityOffOutlinedIcon fontSize="small" />
-                        ) : (
-                          <VisibilityOutlinedIcon fontSize="small" />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-              />
-
-              <TextField
-                fullWidth
-                type={showConfirmPassword ? 'text' : 'password'}
-                label="Confirm password"
-                placeholder="Repeat your password"
-                disabled={isBusy}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LockOutlinedIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        edge="end"
-                        size="small"
-                        onClick={() => setShowConfirmPassword((value) => !value)}
-                        disabled={isBusy}
-                      >
-                        {showConfirmPassword ? (
-                          <VisibilityOffOutlinedIcon fontSize="small" />
-                        ) : (
-                          <VisibilityOutlinedIcon fontSize="small" />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-              />
-
-              <Box
-                sx={{
-                  p: 2.2,
-                  borderRadius: 4,
-                  backgroundColor: 'rgba(15,23,42,0.03)',
-                  border: '1px solid rgba(148,163,184,0.2)',
-                }}
-              >
-                <Typography sx={{ fontWeight: 700, mb: 1 }}>Final account creation</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-                  Use this step to review your details. The account is created only when you submit here, not on the
-                  earlier steps.
-                </Typography>
-              </Box>
-            </Box>
-          ) : null}
-
-          <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'space-between', pt: 0.5 }}>
-            <StyledButton
-              size="large"
-              color="dark"
-              variant="outlined"
-              disableHoverEffect
-              type="button"
-              onClick={handleBack}
-              disabled={isBusy}
-            >
+          {/* Navigation buttons */}
+          <div className="flex items-center justify-between gap-3 pt-1">
+            <button type="button" onClick={handleBack} disabled={isBusy} className="px-5 py-2.5 rounded-full border-2 border-slate-300 text-foreground font-semibold text-sm hover:bg-muted disabled:opacity-50 transition-colors">
               Back
-            </StyledButton>
+            </button>
             {activeStep < steps.length - 1 ? (
-              <StyledButton
-                size="large"
-                color="primary"
-                disableHoverEffect
-                type="button"
-                onClick={handleNext}
-                disabled={isBusy}
-              >
+              <button type="button" onClick={handleNext} disabled={isBusy} className="px-5 py-2.5 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#0d5c54] disabled:opacity-50 transition-colors">
                 Continue
-              </StyledButton>
+              </button>
             ) : (
-              <StyledButton size="large" color="primary" disableHoverEffect type="button" onClick={handleSubmit} disabled={isBusy}>
+              <button type="button" onClick={handleSubmit} disabled={isBusy} className="px-5 py-2.5 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#0d5c54] disabled:opacity-50 transition-colors">
                 {isSubmitting ? 'Creating...' : 'Create Account'}
-              </StyledButton>
+              </button>
             )}
-          </Box>
+          </div>
 
-          {activeStep === 2 ? (
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label="I agree to the YLSH terms and data verification policy."
-            />
-          ) : null}
+          {activeStep === 2 && (
+            <label className="flex items-start gap-2 text-sm cursor-pointer">
+              <input type="checkbox" defaultChecked className="accent-primary mt-0.5" />
+              I agree to the YLSH terms and data verification policy.
+            </label>
+          )}
 
-          <Divider sx={{ my: 0.5 }}>or</Divider>
+          <div className="flex items-center gap-3">
+            <hr className="flex-1 border-border" />
+            <span className="text-xs text-muted-foreground">or</span>
+            <hr className="flex-1 border-border" />
+          </div>
 
-          <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-            Step-based onboarding keeps NIN verification first, then profile details, then account creation at the
-            Account details step.
-          </Typography>
-        </Box>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Step-based onboarding keeps NIN verification first, then profile details, then account creation at the Account details step.
+          </p>
+        </div>
       </AuthFormCard>
     </AuthShell>
   )

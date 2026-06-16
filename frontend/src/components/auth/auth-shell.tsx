@@ -1,10 +1,4 @@
 import React, { FC, ReactNode } from 'react'
-import Box from '@mui/material/Box'
-import Container from '@mui/material/Container'
-import Divider from '@mui/material/Divider'
-import Typography from '@mui/material/Typography'
-import Stack from '@mui/material/Stack'
-import Chip from '@mui/material/Chip'
 import { Logo } from '@/components/logo'
 
 interface Props {
@@ -17,173 +11,85 @@ interface Props {
 
 const AuthShell: FC<Props> = ({ eyebrow, title, description, children, footer }) => {
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        py: { xs: 3, md: 5 },
+    <div
+      className="min-h-screen py-6 md:py-10"
+      style={{
         background:
           'radial-gradient(circle at top left, rgba(18,124,113,0.14), transparent 30%), radial-gradient(circle at bottom right, rgba(8,47,73,0.08), transparent 28%), linear-gradient(180deg, #f0f7f6 0%, #f3f6fb 100%)',
       }}
     >
-      <Container maxWidth="lg">
-        <Box sx={{ mb: { xs: 3, md: 4 } }}>
+      <div className="container max-w-7xl">
+        <div className="mb-6 md:mb-8">
           <Logo />
-        </Box>
+        </div>
 
-        {/* Two-column card with rounded corners */}
-        <Box
-          sx={{
-            borderRadius: { xs: 3, md: 4 },
-            overflow: 'hidden',
-            boxShadow: '0 40px 80px rgba(15,23,42,0.14)',
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1fr 0.9fr' },
-          }}
+        {/* Two-column card */}
+        <div
+          className="rounded-2xl md:rounded-3xl overflow-hidden grid grid-cols-1 md:grid-cols-[1fr_0.9fr]"
+          style={{ boxShadow: '0 40px 80px rgba(15,23,42,0.14)' }}
         >
           {/* Left — gradient brand panel */}
-          <Box
-            sx={{
-              p: { xs: 4, md: 6 },
+          <div
+            className="p-8 md:p-12 text-white relative overflow-hidden"
+            style={{
               background:
                 'linear-gradient(145deg, rgba(8,47,73,0.99) 0%, rgba(18,124,113,0.97) 55%, rgba(14,116,144,0.93) 100%)',
-              color: 'common.white',
-              position: 'relative',
-              overflow: 'hidden',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: '-80px',
-                right: '-80px',
-                width: 320,
-                height: 320,
-                borderRadius: '50%',
-                background: 'rgba(255,255,255,0.055)',
-                pointerEvents: 'none',
-              },
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                bottom: '-60px',
-                left: '-60px',
-                width: 240,
-                height: 240,
-                borderRadius: '50%',
-                background: 'rgba(255,255,255,0.04)',
-                pointerEvents: 'none',
-              },
             }}
           >
-            <Box sx={{ position: 'relative', zIndex: 1 }}>
-              <Chip
-                label={eyebrow}
-                sx={{
-                  mb: 3,
-                  backgroundColor: 'rgba(255,255,255,0.12)',
-                  color: 'common.white',
-                  border: '1px solid rgba(255,255,255,0.18)',
-                  fontWeight: 700,
-                  letterSpacing: 0.8,
-                  fontSize: 11,
-                  textTransform: 'uppercase',
-                }}
-              />
-              <Typography
-                component="h1"
-                sx={{
-                  fontSize: { xs: 32, md: 50 },
-                  lineHeight: 1.05,
-                  fontWeight: 700,
-                  mb: 2.5,
-                  maxWidth: 520,
-                }}
-              >
-                {title}
-              </Typography>
-              <Typography
-                sx={{
-                  color: 'rgba(255,255,255,0.82)',
-                  maxWidth: 560,
-                  lineHeight: 1.8,
-                  fontSize: { xs: 14, md: 15 },
-                }}
-              >
-                {description}
-              </Typography>
+            <div
+              className="absolute -top-20 -right-20 w-80 h-80 rounded-full pointer-events-none"
+              style={{ background: 'rgba(255,255,255,0.055)' }}
+            />
+            <div
+              className="absolute -bottom-15 -left-15 w-60 h-60 rounded-full pointer-events-none"
+              style={{ background: 'rgba(255,255,255,0.04)' }}
+            />
 
-              <Box
-                sx={{
-                  mt: { xs: 5, md: 7 },
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
-                  gap: 1.5,
-                }}
+            <div className="relative z-10">
+              <span
+                className="inline-block mb-6 px-3 py-1 rounded-full border border-white/18 text-[11px] font-bold tracking-[0.08em] uppercase"
+                style={{ backgroundColor: 'rgba(255,255,255,0.12)' }}
               >
+                {eyebrow}
+              </span>
+              <h1 className="text-[32px] md:text-[50px] leading-[1.05] font-bold mb-5 max-w-[520px]">{title}</h1>
+              <p className="text-white/82 max-w-[560px] leading-[1.8] text-sm md:text-[15px]">{description}</p>
+
+              <div className="mt-10 md:mt-14 grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
                   { label: 'RBAC', value: 'Protected access' },
                   { label: 'NIN', value: 'Identity verified' },
                   { label: 'QR', value: 'Attendance ready' },
                 ].map((item) => (
-                  <Box
+                  <div
                     key={item.label}
-                    sx={{
-                      borderRadius: 3,
-                      p: 2.2,
-                      backgroundColor: 'rgba(255,255,255,0.09)',
-                      border: '1px solid rgba(255,255,255,0.12)',
-                      backdropFilter: 'blur(10px)',
-                    }}
+                    className="rounded-2xl p-4 border border-white/12 backdrop-blur-sm"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.09)' }}
                   >
-                    <Typography
-                      sx={{
-                        fontSize: 11,
-                        letterSpacing: 1.6,
-                        opacity: 0.68,
-                        mb: 0.75,
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {item.label}
-                    </Typography>
-                    <Typography sx={{ fontWeight: 700, fontSize: 14 }}>{item.value}</Typography>
-                  </Box>
+                    <p className="text-[11px] tracking-[1.6px] opacity-68 mb-1.5 uppercase">{item.label}</p>
+                    <p className="font-bold text-sm">{item.value}</p>
+                  </div>
                 ))}
-              </Box>
-            </Box>
-          </Box>
+              </div>
+            </div>
+          </div>
 
-          {/* Right — glassmorphism form panel */}
-          <Box
-            sx={{
-              p: { xs: 3, md: 4.5 },
-              backgroundColor: 'rgba(255,255,255,0.96)',
-              backdropFilter: 'blur(20px)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}
+          {/* Right — form panel */}
+          <div
+            className="p-6 md:p-9 flex flex-col justify-center"
+            style={{ backgroundColor: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(20px)' }}
           >
-            <Stack spacing={1.5} sx={{ mb: 3 }}>
-              <Typography
-                variant="subtitle2"
-                sx={{
-                  letterSpacing: 1.4,
-                  color: '#127C71',
-                  fontWeight: 700,
-                  fontSize: 11,
-                  textTransform: 'uppercase',
-                }}
-              >
-                YLSH ACCESS
-              </Typography>
-              <Divider />
-            </Stack>
+            <div className="flex flex-col gap-3 mb-6">
+              <p className="text-[11px] tracking-[1.4px] text-primary font-bold uppercase">YLSH ACCESS</p>
+              <hr className="border-border" />
+            </div>
             {children}
-          </Box>
-        </Box>
+          </div>
+        </div>
 
-        {footer ? <Box sx={{ mt: 3 }}>{footer}</Box> : null}
-      </Container>
-    </Box>
+        {footer ? <div className="mt-4">{footer}</div> : null}
+      </div>
+    </div>
   )
 }
 

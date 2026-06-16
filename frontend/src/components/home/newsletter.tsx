@@ -1,68 +1,80 @@
 import React, { FC } from 'react'
-import Box from '@mui/material/Box'
-import InputBase from '@mui/material/InputBase'
-import Container from '@mui/material/Container'
-import Typography from '@mui/material/Typography'
-import { StyledButton } from '../styled-button'
+import Link from 'next/link'
+import { ArrowRight, ShieldCheck, Zap, Users, Award } from 'lucide-react'
+
+const perks = [
+  { icon: <ShieldCheck size={15} />, text: 'NIN Identity Verification' },
+  { icon: <Zap size={15} />, text: 'Real-time Attendance' },
+  { icon: <Award size={15} />, text: 'PDF Certificates' },
+  { icon: <Users size={15} />, text: 'Mentorship Matching' },
+]
 
 const HomeNewsLetter: FC = () => {
   return (
-    <Box sx={{ backgroundColor: 'background.paper', py: { xs: 8, md: 10 } }}>
-      <Container>
-        <Box
-          sx={{
-            background:
-              'linear-gradient(135deg, rgba(18,124,113,1) 0%, rgba(13,106,105,1) 100%)',
-            borderRadius: 6,
-            py: { xs: 4, md: 8 },
-            px: { xs: 4, md: 8 },
-            textAlign: 'center',
-            boxShadow: '0 24px 60px rgba(15, 23, 42, 0.14)',
-            border: '1px solid rgba(255,255,255,0.12)',
+    <section className="py-16 md:py-20 bg-white">
+      <div className="container">
+        <div
+          className="rounded-3xl py-14 px-8 md:px-16"
+          style={{
+            background: 'linear-gradient(135deg, #082F49 0%, #0d5c54 50%, #127C71 100%)',
+            boxShadow: '0 30px 70px rgba(18,124,113,0.22)',
           }}
         >
-          <Typography
-            variant="h1"
-            component="h2"
-            sx={{ mb: 1, fontSize: { xs: 32, md: 42 }, color: 'common.white' }}
-          >
-            Free Access. No Paywall.
-          </Typography>
-          <Typography sx={{ mb: 6, color: 'rgba(255,255,255,0.9)' }}>
-            Every module in the YLSH platform is free to access, use, and share with the community.
-          </Typography>
+          <div className="max-w-3xl mx-auto text-center">
 
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              flexDirection: { xs: 'column', md: 'row' },
-              justifyContent: 'space-around',
-              width: { xs: '100%', md: 560 },
-              mx: 'auto',
-            }}
-          >
-            <InputBase
-              sx={{
-                backgroundColor: 'background.paper',
-                borderRadius: 3,
-                width: '100%',
-                height: 48,
-                px: 2,
-                mr: { xs: 0, md: 3 },
-                mb: { xs: 2, md: 0 },
-              }}
-              placeholder="Enter your email address"
-            />
-            <Box>
-              <StyledButton disableHoverEffect size="large">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-white/15 text-white text-sm font-semibold mb-5">
+              Free Access · No Paywall
+            </span>
+
+            <h2 className="text-[32px] md:text-[50px] font-extrabold text-white mb-4 leading-tight">
+              Join YLSH today —<br className="hidden sm:block" /> it&apos;s completely free
+            </h2>
+
+            <p className="text-white/75 mb-10 text-lg max-w-xl mx-auto leading-relaxed">
+              Manage events, verify identities, issue certificates, and grow your community.
+              Every module, zero cost.
+            </p>
+
+            {/* Perk chips */}
+            <div className="flex flex-wrap justify-center gap-3 mb-10">
+              {perks.map((p, i) => (
+                <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/12 text-white text-sm font-medium">
+                  <span className="opacity-75">{p.icon}</span>
+                  {p.text}
+                </div>
+              ))}
+            </div>
+
+            {/* Email capture + CTA */}
+            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
+              <input
+                type="email"
+                placeholder="Enter your email address"
+                className="flex-1 h-12 px-5 rounded-full bg-white text-foreground placeholder:text-muted-foreground outline-none border-0 text-sm shadow-inner"
+              />
+              <button className="flex-shrink-0 inline-flex items-center justify-center gap-2 px-7 h-12 rounded-full bg-primary text-white font-bold text-sm tracking-wide hover:bg-[#0d5c54] transition-colors shadow-lg whitespace-nowrap">
                 Join Free
-              </StyledButton>
-            </Box>
-          </Box>
-        </Box>
-      </Container>
-    </Box>
+                <ArrowRight size={15} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-center gap-6">
+              <Link href="/signup">
+                <button className="text-white/80 text-sm hover:text-white underline underline-offset-2 transition-colors">
+                  Create account →
+                </button>
+              </Link>
+              <Link href="/signin">
+                <button className="text-white/80 text-sm hover:text-white underline underline-offset-2 transition-colors">
+                  Already have one? Sign in
+                </button>
+              </Link>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 

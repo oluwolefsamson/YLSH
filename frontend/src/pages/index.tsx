@@ -1,28 +1,23 @@
 import React from 'react'
-import dynamic from 'next/dynamic'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { MainLayout } from '@/components/layout'
-// import { HomeFeature, HomeHero, HomePopularCourse, HomeTestimonial, HomeOurMentors, DynamicHomeNewsLetter } from '@/components/home'
+import HomeHero from '@/components/home/hero'
+import HomePopularCourse from '@/components/home/popular-courses'
+import HomeFeature from '@/components/home/feature'
+import HomeTestimonial from '@/components/home/testimonial'
+import HomeOurMentors from '@/components/home/mentors'
+import HomeNewsLetter from '@/components/home/newsletter'
 
-const DynamicHomeHero = dynamic(() => import('../components/home/hero'))
-const DynamicHomeFeature = dynamic(() => import('../components/home/feature'))
-const DynamicHomePopularCourse = dynamic(() => import('../components/home/popular-courses'))
-const DynamicHomeTestimonial = dynamic(() => import('../components/home/testimonial'))
-const DynamicHomeOurMentors = dynamic(() => import('../components/home/mentors'))
-const DynamicHomeNewsLetter = dynamic(() => import('../components/home/newsletter'))
-
-const Home: NextPageWithLayout = () => {
-  return (
-    <>
-      <DynamicHomeHero />
-      <DynamicHomePopularCourse />
-      <DynamicHomeFeature />
-      <DynamicHomeTestimonial />
-      <DynamicHomeOurMentors />
-      <DynamicHomeNewsLetter />
-    </>
-  )
-}
+const Home: NextPageWithLayout = () => (
+  <>
+    <HomeHero />
+    <HomePopularCourse />
+    <HomeFeature />
+    <HomeTestimonial />
+    <HomeOurMentors />
+    <HomeNewsLetter />
+  </>
+)
 
 Home.getLayout = (page) => <MainLayout>{page}</MainLayout>
 

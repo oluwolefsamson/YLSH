@@ -1,7 +1,5 @@
 import React, { FC } from 'react'
 import Image from 'next/image'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import { Testimonial } from '@/interfaces/testimonial'
 
 interface Props {
@@ -10,55 +8,28 @@ interface Props {
 
 const TestimonialItem: FC<Props> = ({ item }) => {
   return (
-    <Box sx={{ padding: '30px' }}>
-      <Box sx={{ mb: 2 }}>
-        <Typography component="h2" variant="h4" sx={{ mb: 2 }}>
-          {item.title}
-        </Typography>
-        <Typography sx={{ mb: 2, color: 'text.secondary' }}>{item.content}</Typography>
-      </Box>
-      <Box
-        sx={{
-          boxShadow: 1,
-          borderRadius: 1,
-          px: 2,
-          py: 2,
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          width: 270,
-          backgroundColor: 'background.paper',
-        }}
-      >
-        <Box
-          sx={{
-            borderRadius: '50%',
-            height: 52,
-            width: 52,
-            overflow: 'hidden',
-            mr: 2,
-
-            '& img': {
-              width: '100%',
-            },
-          }}
-        >
+    <div className="px-8 py-2">
+      <div className="mb-5">
+        <h2 className="text-2xl font-bold mb-3">{item.title}</h2>
+        <p className="text-muted-foreground mb-3">{item.content}</p>
+      </div>
+      <div className="shadow-sm rounded flex items-center px-4 py-3 overflow-hidden w-[270px] bg-white border border-border">
+        <div className="rounded-full h-[52px] w-[52px] overflow-hidden mr-4 flex-shrink-0">
           <Image
             src={`/images/avatars/${item.user.photo}`}
             width={100}
             height={100}
             quality={97}
             alt={item.user.name}
+            className="w-full h-full object-cover"
           />
-        </Box>
-        <Box>
-          <Typography variant="h6">{item.user.name}</Typography>
-          <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
-            {item.user.professional}
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
+        </div>
+        <div>
+          <p className="font-semibold text-sm">{item.user.name}</p>
+          <p className="text-muted-foreground text-sm">{item.user.professional}</p>
+        </div>
+      </div>
+    </div>
   )
 }
 export default TestimonialItem

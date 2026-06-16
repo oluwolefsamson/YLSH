@@ -1,1 +1,1 @@
-export { default as MUIProvider } from './mui-provider'
+export { default as ReactQueryProvider } from './react-query-provider'

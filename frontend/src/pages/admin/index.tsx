@@ -1,37 +1,23 @@
 import React from 'react'
-import Box from '@mui/material/Box'
-import Chip from '@mui/material/Chip'
-import Grid from '@mui/material/Grid'
-import LinearProgress from '@mui/material/LinearProgress'
-import Paper from '@mui/material/Paper'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
-import PeopleIcon from '@mui/icons-material/People'
-import EventAvailableIcon from '@mui/icons-material/EventAvailable'
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
-import TrendingUpIcon from '@mui/icons-material/TrendingUp'
+import {
+  ShieldCheck,
+  Users,
+  CalendarCheck,
+  Award,
+  CheckCircle,
+  Clock,
+  TrendingUp,
+} from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
-
-const PAPER_SX = {
-  p: { xs: 2.5, md: 3 },
-  borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.88)',
-  backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(148,163,184,0.16)',
-  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
-}
+import { cn } from '@/utils'
 
 const stats = [
-  { label: 'Total users', value: '4,821', progress: 48, icon: <PeopleIcon /> },
-  { label: 'Active events', value: '12', progress: 80, icon: <EventAvailableIcon /> },
-  { label: 'Certificates issued', value: '3,104', progress: 62, icon: <WorkspacePremiumIcon /> },
-  { label: 'NIN verified users', value: '3,940', progress: 82, icon: <VerifiedUserIcon /> },
+  { label: 'Total users', value: '4,821', progress: 48, icon: <Users size={20} /> },
+  { label: 'Active events', value: '12', progress: 80, icon: <CalendarCheck size={20} /> },
+  { label: 'Certificates issued', value: '3,104', progress: 62, icon: <Award size={20} /> },
+  { label: 'NIN verified users', value: '3,940', progress: 82, icon: <ShieldCheck size={20} /> },
 ]
 
 const recentUsers = [
@@ -48,136 +34,109 @@ const recentEvents = [
   { title: 'Climate Action Workshop', date: 'May 10, 2026', registered: 185, capacity: 200, status: 'past' },
 ]
 
-const statusColor: Record<string, 'success' | 'warning' | 'error' | 'default'> = {
-  verified: 'success',
-  pending: 'warning',
-  suspended: 'error',
+const statusStyles: Record<string, string> = {
+  verified: 'bg-green-100 text-green-700',
+  pending: 'bg-amber-100 text-amber-700',
+  suspended: 'bg-red-100 text-red-700',
 }
+
+const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
+const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const AdminOverviewPage: NextPageWithLayout = () => {
   return (
-    <Box>
+    <div>
       <PageHeader
         eyebrow="Admin Portal"
         title="Admin Overview"
         subtitle="Monitor platform health, manage users, events, and certificates across the YLSH ecosystem."
-        icon={<AdminPanelSettingsIcon />}
+        icon={<ShieldCheck size={14} />}
       />
 
       {/* Stat cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {stats.map((card) => (
-          <Grid key={card.label} item xs={12} sm={6} lg={3}>
-            <StatCard label={card.label} value={card.value} icon={card.icon} progress={card.progress} />
-          </Grid>
+          <StatCard key={card.label} label={card.label} value={card.value} icon={card.icon} progress={card.progress} />
         ))}
-      </Grid>
+      </div>
 
-      <Grid container spacing={3}>
-          {/* Recent users */}
-          <Grid item xs={12} lg={7}>
-            <Paper sx={PAPER_SX}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2.5 }}>
-                <Typography variant="h5" sx={{ fontSize: 22 }}>Recent Users</Typography>
-                <Chip label="View all" variant="outlined" size="small" clickable />
-              </Stack>
-              <Stack spacing={1.5}>
-                {recentUsers.map((user) => (
-                  <Box
-                    key={user.email}
-                    sx={{
-                      p: 2,
-                      borderRadius: 3,
-                      border: '1px solid rgba(148,163,184,0.18)',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      gap: 2,
-                      flexWrap: 'wrap',
-                    }}
-                  >
-                    <Box>
-                      <Typography sx={{ fontWeight: 700 }}>{user.name}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {user.email} · {user.role}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">Joined {user.joined}</Typography>
-                    </Box>
-                    <Chip
-                      icon={user.status === 'verified' ? <CheckCircleIcon /> : user.status === 'pending' ? <HourglassEmptyIcon /> : undefined}
-                      label={user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                      color={statusColor[user.status]}
-                      size="small"
-                    />
-                  </Box>
-                ))}
-              </Stack>
-            </Paper>
-          </Grid>
-
-          {/* Events + growth */}
-          <Grid item xs={12} lg={5}>
-            <Stack spacing={3}>
-              <Paper sx={PAPER_SX}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2.5 }}>
-                  <Typography variant="h5" sx={{ fontSize: 22 }}>Events</Typography>
-                  <Chip label="Manage" variant="outlined" size="small" clickable />
-                </Stack>
-                <Stack spacing={1.5}>
-                  {recentEvents.map((event) => (
-                    <Box
-                      key={event.title}
-                      sx={{
-                        p: 2,
-                        borderRadius: 3,
-                        border: '1px solid rgba(148,163,184,0.18)',
-                      }}
-                    >
-                      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }}>
-                        <Typography sx={{ fontWeight: 700, fontSize: 14, flex: 1, pr: 1 }}>{event.title}</Typography>
-                        <Chip label={event.status} color={event.status === 'upcoming' ? 'success' : 'default'} size="small" />
-                      </Stack>
-                      <Typography variant="caption" color="text.secondary">{event.date}</Typography>
-                      <LinearProgress
-                        variant="determinate"
-                        value={(event.registered / event.capacity) * 100}
-                        sx={{ height: 5, borderRadius: 99, mt: 1 }}
-                      />
-                      <Typography variant="caption" color="text.secondary">
-                        {event.registered}/{event.capacity} registered
-                      </Typography>
-                    </Box>
-                  ))}
-                </Stack>
-              </Paper>
-
-              <Paper
-                sx={{
-                  ...PAPER_SX,
-                  background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.98) 100%)',
-                  color: 'common.white',
-                }}
+      <div className="grid grid-cols-1 lg:grid-cols-[7fr_5fr] gap-5">
+        {/* Recent users */}
+        <div className={CARD} style={CARD_STYLE}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">Recent Users</h2>
+            <button className="text-xs font-semibold px-3 py-1 rounded-full border border-border hover:bg-muted transition-colors">View all</button>
+          </div>
+          <div className="flex flex-col gap-3">
+            {recentUsers.map((user) => (
+              <div
+                key={user.email}
+                className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 flex-wrap"
               >
-                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1 }}>
-                  <TrendingUpIcon />
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>Growth this month</Typography>
-                </Stack>
-                {[
-                  { label: 'New registrations', value: '+318' },
-                  { label: 'Verifications completed', value: '+204' },
-                  { label: 'Certificates issued', value: '+87' },
-                  { label: 'Active mentorship sessions', value: '+43' },
-                ].map((row) => (
-                  <Stack key={row.label} direction="row" justifyContent="space-between" sx={{ mt: 1.5 }}>
-                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.75)' }}>{row.label}</Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 700, color: 'rgba(134,239,172,0.9)' }}>{row.value}</Typography>
-                  </Stack>
-                ))}
-              </Paper>
-            </Stack>
-          </Grid>
-      </Grid>
-    </Box>
+                <div>
+                  <p className="font-bold text-sm">{user.name}</p>
+                  <p className="text-xs text-muted-foreground">{user.email} · {user.role}</p>
+                  <p className="text-xs text-muted-foreground">Joined {user.joined}</p>
+                </div>
+                <span className={cn('inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold capitalize', statusStyles[user.status])}>
+                  {user.status === 'verified' ? <CheckCircle size={11} /> : user.status === 'pending' ? <Clock size={11} /> : null}
+                  {user.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Events + Growth */}
+        <div className="flex flex-col gap-5">
+          <div className={CARD} style={CARD_STYLE}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Events</h2>
+              <button className="text-xs font-semibold px-3 py-1 rounded-full border border-border hover:bg-muted transition-colors">Manage</button>
+            </div>
+            <div className="flex flex-col gap-3">
+              {recentEvents.map((event) => (
+                <div key={event.title} className="p-3 rounded-xl border border-slate-200/18">
+                  <div className="flex items-start justify-between gap-2 mb-1.5">
+                    <p className="font-bold text-sm flex-1 pr-2">{event.title}</p>
+                    <span className={cn('text-xs font-bold px-2 py-0.5 rounded-full', event.status === 'upcoming' ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground')}>
+                      {event.status}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-2">{event.date}</p>
+                  <div className="h-[5px] rounded-full overflow-hidden bg-slate-200/50 mb-1">
+                    <div className="h-full rounded-full bg-primary" style={{ width: `${(event.registered / event.capacity) * 100}%` }} />
+                  </div>
+                  <p className="text-xs text-muted-foreground">{event.registered}/{event.capacity} registered</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Growth card */}
+          <div
+            className="p-5 rounded-2xl text-white"
+            style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.98) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp size={18} />
+              <h2 className="font-bold text-lg">Growth this month</h2>
+            </div>
+            {[
+              { label: 'New registrations', value: '+318' },
+              { label: 'Verifications completed', value: '+204' },
+              { label: 'Certificates issued', value: '+87' },
+              { label: 'Active mentorship sessions', value: '+43' },
+            ].map((row) => (
+              <div key={row.label} className="flex justify-between mt-3">
+                <p className="text-sm text-white/75">{row.label}</p>
+                <p className="text-sm font-bold" style={{ color: 'rgba(134,239,172,0.9)' }}>{row.value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 

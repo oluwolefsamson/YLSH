@@ -1,6 +1,4 @@
 import React, { FC } from 'react'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 
 interface Props {
   name: string
@@ -8,9 +6,9 @@ interface Props {
 
 const Hello: FC<Props> = ({ name }) => {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-      <Typography>Hello {name}</Typography>
-    </Box>
+    <div className="flex items-center justify-center h-screen">
+      <p>Hello {name}</p>
+    </div>
   )
 }
 

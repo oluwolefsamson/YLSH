@@ -1,28 +1,12 @@
-import React from 'react'
-import Avatar from '@mui/material/Avatar'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import Grid from '@mui/material/Grid'
-import Paper from '@mui/material/Paper'
-import Rating from '@mui/material/Rating'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
-import PeopleIcon from '@mui/icons-material/People'
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
-import MessageIcon from '@mui/icons-material/Message'
+﻿import React from 'react'
+import { Users, Calendar, MessageSquare, Star } from 'lucide-react'
 import { MentorLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
+import { cn } from '@/utils'
 
-const PAPER_SX = {
-  p: { xs: 2.5, md: 3 },
-  borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.88)',
-  backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(148,163,184,0.16)',
-  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
-}
+const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
+const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const mentees = [
   { id: 1, name: 'Amina Bello', role: 'Student · ABU Zaria', sessions: 3, lastSession: 'Jun 14, 2026', rating: 5, status: 'active', initials: 'AB', color: '#127C71' },
@@ -32,79 +16,64 @@ const mentees = [
   { id: 5, name: 'Ngozi Eze', role: 'Developer · Remote', sessions: 2, lastSession: 'May 20, 2026', rating: 4, status: 'completed', initials: 'NE', color: '#059669' },
 ]
 
+const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
+  <div className="flex items-center gap-0.5">
+    {Array.from({ length: 5 }, (_, i) => (
+      <Star key={i} size={13} className={i < Math.floor(rating) ? 'text-amber-400 fill-amber-400' : 'text-gray-300'} />
+    ))}
+  </div>
+)
+
 const MenteesPage: NextPageWithLayout = () => {
   return (
-    <Box>
-      <PageHeader
-        eyebrow="Mentees"
-        title="My Mentees"
-        subtitle="View all participants you have mentored and track their progress."
-        icon={<PeopleIcon />}
-      />
+    <div>
+      <PageHeader eyebrow="Mentees" title="My Mentees" subtitle="View all participants you have mentored and track their progress." icon={<Users size={14} />} />
 
-      <Grid container spacing={2.5}>
-          {mentees.map((mentee) => (
-            <Grid key={mentee.id} item xs={12} md={6}>
-              <Paper sx={{ ...PAPER_SX, p: 2.5, display: 'flex', flexDirection: 'column' }}>
-                <Stack direction="row" spacing={2} alignItems="flex-start" sx={{ mb: 2 }}>
-                  <Avatar sx={{ width: 52, height: 52, backgroundColor: mentee.color, fontWeight: 700, fontSize: 18 }}>
-                    {mentee.initials}
-                  </Avatar>
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                      <Box>
-                        <Typography sx={{ fontWeight: 700 }}>{mentee.name}</Typography>
-                        <Typography variant="body2" color="text.secondary">{mentee.role}</Typography>
-                      </Box>
-                      <Chip
-                        label={mentee.status === 'active' ? 'Active' : 'Completed'}
-                        color={mentee.status === 'active' ? 'success' : 'default'}
-                        size="small"
-                      />
-                    </Stack>
-                  </Box>
-                </Stack>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {mentees.map((mentee) => (
+          <div key={mentee.id} className={cn('flex flex-col', CARD)} style={CARD_STYLE}>
+            <div className="flex items-start gap-3 mb-3">
+              <div className="rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0" style={{ width: 52, height: 52, backgroundColor: mentee.color }}>
+                {mentee.initials}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="font-bold">{mentee.name}</p>
+                    <p className="text-sm text-muted-foreground">{mentee.role}</p>
+                  </div>
+                  <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', mentee.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground')}>
+                    {mentee.status === 'active' ? 'Active' : 'Completed'}
+                  </span>
+                </div>
+              </div>
+            </div>
 
-                <Stack spacing={1} sx={{ mb: 2 }}>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <CalendarMonthIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                    <Typography variant="body2" color="text.secondary">
-                      {mentee.sessions} session{mentee.sessions !== 1 ? 's' : ''} · Last: {mentee.lastSession}
-                    </Typography>
-                  </Stack>
-                  {mentee.rating && (
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Rating value={mentee.rating} precision={0.5} size="small" readOnly />
-                      <Typography variant="caption" color="text.secondary">{mentee.rating}/5</Typography>
-                    </Stack>
-                  )}
-                </Stack>
+            <div className="flex flex-col gap-1.5 mb-3">
+              <div className="flex items-center gap-2">
+                <Calendar size={14} className="text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">{mentee.sessions} session{mentee.sessions !== 1 ? 's' : ''} · Last: {mentee.lastSession}</span>
+              </div>
+              {mentee.rating && (
+                <div className="flex items-center gap-2">
+                  <StarRating rating={mentee.rating} />
+                  <span className="text-xs text-muted-foreground">{mentee.rating}/5</span>
+                </div>
+              )}
+            </div>
 
-                <Stack direction="row" spacing={1.5} sx={{ mt: 'auto' }}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{ flex: 1, borderRadius: 99, textTransform: 'none', fontWeight: 700 }}
-                  >
-                    Book session
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<MessageIcon />}
-                    sx={{ borderRadius: 99, textTransform: 'none' }}
-                  >
-                    Message
-                  </Button>
-                </Stack>
-              </Paper>
-            </Grid>
-          ))}
-      </Grid>
-    </Box>
+            <div className="flex gap-3 mt-auto">
+              <button className="flex-1 h-9 rounded-full bg-primary text-white text-sm font-bold hover:bg-[#0d5c54] transition-colors">Book session</button>
+              <button className="flex items-center gap-1.5 h-9 px-4 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors">
+                <MessageSquare size={14} /> Message
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
 MenteesPage.getLayout = (page) => <MentorLayout>{page}</MentorLayout>
-
 export default MenteesPage

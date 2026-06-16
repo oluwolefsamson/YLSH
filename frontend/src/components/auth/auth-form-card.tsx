@@ -1,7 +1,4 @@
 import React, { FC, ReactNode } from 'react'
-import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 
 interface Props {
   title: string
@@ -11,17 +8,13 @@ interface Props {
 
 const AuthFormCard: FC<Props> = ({ title, subtitle, children }) => {
   return (
-    <Box>
-      <Stack spacing={1} sx={{ mb: 3.2 }}>
-        <Typography variant="h4" sx={{ fontSize: { xs: 26, md: 31 }, fontWeight: 700 }}>
-          {title}
-        </Typography>
-        <Typography color="text.secondary" sx={{ lineHeight: 1.75, maxWidth: 520 }}>
-          {subtitle}
-        </Typography>
-      </Stack>
+    <div>
+      <div className="flex flex-col gap-2 mb-8">
+        <h2 className="text-[26px] md:text-[31px] font-bold leading-tight">{title}</h2>
+        <p className="text-muted-foreground leading-relaxed max-w-[520px]">{subtitle}</p>
+      </div>
       {children}
-    </Box>
+    </div>
   )
 }
 

@@ -1,38 +1,19 @@
-import React from 'react'
-import Box from '@mui/material/Box'
-import Divider from '@mui/material/Divider'
-import Grid from '@mui/material/Grid'
-import LinearProgress from '@mui/material/LinearProgress'
-import Paper from '@mui/material/Paper'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
-import BarChartIcon from '@mui/icons-material/BarChart'
-import PeopleIcon from '@mui/icons-material/People'
-import EventAvailableIcon from '@mui/icons-material/EventAvailable'
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium'
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
-import SchoolIcon from '@mui/icons-material/School'
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
+﻿import React from 'react'
+import { BarChart2, Users, CalendarCheck, Award, ShieldCheck, GraduationCap, ShieldAlert } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 
-const PAPER_SX = {
-  p: { xs: 2.5, md: 3 },
-  borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.88)',
-  backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(148,163,184,0.16)',
-  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
-}
+const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
+const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const kpis = [
-  { label: 'Total users', value: '4,821', change: '+318 this month', icon: <PeopleIcon />, pct: 48 },
-  { label: 'Verified users', value: '3,940', change: '81.7% verification rate', icon: <VerifiedUserIcon />, pct: 82 },
-  { label: 'Events hosted', value: '28', change: '+4 this quarter', icon: <EventAvailableIcon />, pct: 70 },
-  { label: 'Certificates issued', value: '3,104', change: '+87 this month', icon: <WorkspacePremiumIcon />, pct: 62 },
-  { label: 'Mentorship sessions', value: '891', change: '+43 this month', icon: <SchoolIcon />, pct: 55 },
-  { label: 'Admin accounts', value: '6', change: '1 Super Admin · 5 Admins', icon: <AdminPanelSettingsIcon />, pct: 30 },
+  { label: 'Total users', value: '4,821', change: '+318 this month', icon: <Users size={20} />, pct: 48 },
+  { label: 'Verified users', value: '3,940', change: '81.7% verification rate', icon: <ShieldCheck size={20} />, pct: 82 },
+  { label: 'Events hosted', value: '28', change: '+4 this quarter', icon: <CalendarCheck size={20} />, pct: 70 },
+  { label: 'Certificates issued', value: '3,104', change: '+87 this month', icon: <Award size={20} />, pct: 62 },
+  { label: 'Mentorship sessions', value: '891', change: '+43 this month', icon: <GraduationCap size={20} />, pct: 55 },
+  { label: 'Admin accounts', value: '6', change: '1 Super Admin · 5 Admins', icon: <ShieldAlert size={20} />, pct: 30 },
 ]
 
 const roleDistribution = [
@@ -64,103 +45,86 @@ const SuperAdminAnalyticsPage: NextPageWithLayout = () => {
   const maxState = Math.max(...topStates.map((s) => s.users))
 
   return (
-    <Box>
-      <PageHeader
-        eyebrow="System Analytics"
-        title="Platform Analytics"
-        subtitle="Full system-wide metrics — user growth, role distribution, verification rates, event performance, and geographic reach."
-        icon={<BarChartIcon />}
-      />
+    <div>
+      <PageHeader eyebrow="System Analytics" title="Platform Analytics" subtitle="Full system-wide metrics — user growth, role distribution, verification rates, event performance, and geographic reach." icon={<BarChart2 size={14} />} />
 
-      {/* KPIs */}
-      <Grid container spacing={2.5} sx={{ mb: 4 }}>
-          {kpis.map((kpi) => (
-            <Grid key={kpi.label} item xs={12} sm={6} lg={4}>
-              <Paper sx={PAPER_SX}>
-                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 2 }}>
-                  <Box sx={{ width: 42, height: 42, borderRadius: '12px', display: 'grid', placeItems: 'center', backgroundColor: 'primary.main', color: 'primary.contrastText' }}>
-                    {kpi.icon}
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2" color="text.secondary">{kpi.label}</Typography>
-                    <Typography variant="h4" sx={{ fontSize: 26, fontWeight: 700 }}>{kpi.value}</Typography>
-                  </Box>
-                </Stack>
-                <LinearProgress variant="determinate" value={kpi.pct} sx={{ height: 6, borderRadius: 99, mb: 1 }} />
-                <Typography variant="caption" color="text.secondary">{kpi.change}</Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        {kpis.map((kpi) => (
+          <div key={kpi.label} className={CARD} style={CARD_STYLE}>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-11 h-11 rounded-xl grid place-items-center text-white flex-shrink-0 bg-primary">{kpi.icon}</div>
+              <div>
+                <p className="text-xs text-muted-foreground">{kpi.label}</p>
+                <p className="text-2xl font-bold">{kpi.value}</p>
+              </div>
+            </div>
+            <div className="h-[6px] rounded-full overflow-hidden mb-1.5" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }}>
+              <div className="h-full rounded-full bg-primary" style={{ width: `${kpi.pct}%` }} />
+            </div>
+            <p className="text-xs text-muted-foreground">{kpi.change}</p>
+          </div>
+        ))}
+      </div>
 
-        <Grid container spacing={3}>
-          {/* User growth */}
-          <Grid item xs={12} md={4}>
-            <Paper sx={PAPER_SX}>
-              <Typography variant="h5" sx={{ mb: 3, fontSize: 20 }}>User Growth (2026)</Typography>
-              <Stack spacing={1.5}>
-                {userGrowth.map((row) => (
-                  <Box key={row.month}>
-                    <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
-                      <Typography variant="body2" color="text.secondary">{row.month}</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>{row.count.toLocaleString()}</Typography>
-                    </Stack>
-                    <LinearProgress variant="determinate" value={(row.count / maxCount) * 100} sx={{ height: 8, borderRadius: 99 }} />
-                  </Box>
-                ))}
-              </Stack>
-            </Paper>
-          </Grid>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className={CARD} style={CARD_STYLE}>
+          <h2 className="text-xl font-bold mb-4">User Growth (2026)</h2>
+          <div className="flex flex-col gap-3">
+            {userGrowth.map((row) => (
+              <div key={row.month}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm text-muted-foreground">{row.month}</span>
+                  <span className="text-sm font-bold">{row.count.toLocaleString()}</span>
+                </div>
+                <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }}>
+                  <div className="h-full rounded-full bg-primary" style={{ width: `${(row.count / maxCount) * 100}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-          {/* Role distribution */}
-          <Grid item xs={12} md={4}>
-            <Paper sx={PAPER_SX}>
-              <Typography variant="h5" sx={{ mb: 3, fontSize: 20 }}>Role Distribution</Typography>
-              <Stack spacing={2.5}>
-                {roleDistribution.map((r) => (
-                  <Box key={r.role}>
-                    <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>{r.role}</Typography>
-                      <Typography variant="body2" color="text.secondary">{r.count.toLocaleString()}</Typography>
-                    </Stack>
-                    <LinearProgress variant="determinate" value={Math.max(r.pct, 2)} sx={{ height: 8, borderRadius: 99 }} />
-                    <Divider sx={{ mt: 1.5 }} />
-                  </Box>
-                ))}
-              </Stack>
-            </Paper>
-          </Grid>
+        <div className={CARD} style={CARD_STYLE}>
+          <h2 className="text-xl font-bold mb-4">Role Distribution</h2>
+          <div className="flex flex-col gap-4">
+            {roleDistribution.map((r, i) => (
+              <div key={r.role}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-semibold">{r.role}</span>
+                  <span className="text-sm text-muted-foreground">{r.count.toLocaleString()}</span>
+                </div>
+                <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }}>
+                  <div className="h-full rounded-full bg-primary" style={{ width: `${Math.max(r.pct, 2)}%` }} />
+                </div>
+                {i < roleDistribution.length - 1 && <hr className="border-border mt-3" />}
+              </div>
+            ))}
+          </div>
+        </div>
 
-          {/* Geographic reach */}
-          <Grid item xs={12} md={4}>
-            <Paper sx={{ ...PAPER_SX, background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.98) 100%)', color: 'common.white' }}>
-              <Typography variant="h5" sx={{ mb: 3, fontSize: 20 }}>Top States</Typography>
-              <Stack spacing={2}>
-                {topStates.map((s, i) => (
-                  <Box key={s.state}>
-                    <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.75 }}>
-                      <Stack direction="row" spacing={1} alignItems="center">
-                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)', minWidth: 20 }}>#{i + 1}</Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{s.state}</Typography>
-                      </Stack>
-                      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)' }}>{s.users.toLocaleString()}</Typography>
-                    </Stack>
-                    <LinearProgress
-                      variant="determinate"
-                      value={(s.users / maxState) * 100}
-                      sx={{ height: 5, borderRadius: 99, backgroundColor: 'rgba(255,255,255,0.15)', '& .MuiLinearProgress-bar': { backgroundColor: 'rgba(134,239,172,0.8)' } }}
-                    />
-                  </Box>
-                ))}
-              </Stack>
-            </Paper>
-          </Grid>
-        </Grid>
-
-    </Box>
+        <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.98) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
+          <h2 className="text-xl font-bold mb-4">Top States</h2>
+          <div className="flex flex-col gap-4">
+            {topStates.map((s, i) => (
+              <div key={s.state}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>#{i + 1}</span>
+                    <span className="text-sm font-semibold">{s.state}</span>
+                  </div>
+                  <span className="text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>{s.users.toLocaleString()}</span>
+                </div>
+                <div className="h-[5px] rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
+                  <div className="h-full rounded-full" style={{ width: `${(s.users / maxState) * 100}%`, backgroundColor: 'rgba(134,239,172,0.8)' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
 SuperAdminAnalyticsPage.getLayout = (page) => <AdminLayout superAdmin>{page}</AdminLayout>
-
 export default SuperAdminAnalyticsPage

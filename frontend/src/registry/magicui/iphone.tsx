@@ -1,27 +1,24 @@
-import Box from '@mui/material/Box'
-
 interface IphoneProps {
   videoSrc: string
 }
 
 export function Iphone({ videoSrc }: IphoneProps) {
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         position: 'relative',
         width: '100%',
         maxWidth: 434,
-        mx: 'auto',
+        margin: '0 auto',
         aspectRatio: '434 / 680',
-        borderRadius: '56px',
-        p: '10px',
-        background:
-          'linear-gradient(180deg, #171717 0%, #050505 22%, #111111 50%, #000000 100%)',
+        borderRadius: 56,
+        padding: 10,
+        background: 'linear-gradient(180deg, #171717 0%, #050505 22%, #111111 50%, #000000 100%)',
         boxShadow: '0 28px 80px rgba(0, 0, 0, 0.28)',
       }}
     >
-      <Box
-        sx={{
+      <div
+        style={{
           position: 'absolute',
           top: 8,
           left: '50%',
@@ -33,13 +30,13 @@ export function Iphone({ videoSrc }: IphoneProps) {
           zIndex: 2,
         }}
       />
-      <Box
-        sx={{
+      <div
+        style={{
           position: 'relative',
           width: '100%',
           height: '100%',
           overflow: 'hidden',
-          borderRadius: '38px',
+          borderRadius: 38,
           backgroundColor: '#000',
         }}
       >
@@ -60,18 +57,18 @@ export function Iphone({ videoSrc }: IphoneProps) {
             backgroundColor: '#000',
           }}
         />
-      </Box>
-      <Box
-        sx={{
+      </div>
+      <div
+        style={{
           pointerEvents: 'none',
           position: 'absolute',
           inset: 0,
-          borderRadius: '56px',
+          borderRadius: 56,
           boxShadow: 'inset 0 0 0 1px rgba(255, 255, 255, 0.08)',
         }}
       />
-      <Box
-        sx={{
+      <div
+        style={{
           position: 'absolute',
           bottom: 8,
           left: '50%',
@@ -83,6 +80,6 @@ export function Iphone({ videoSrc }: IphoneProps) {
           zIndex: 2,
         }}
       />
-    </Box>
+    </div>
   )
 }

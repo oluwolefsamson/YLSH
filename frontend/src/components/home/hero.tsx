@@ -1,224 +1,132 @@
 import React, { FC } from 'react'
 import Image from 'next/image'
-import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import Container from '@mui/material/Container'
-import Typography from '@mui/material/Typography'
-import { Link as ScrollLink } from 'react-scroll'
-import { StyledButton } from '@/components/styled-button'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
-import { Iphone } from '@/registry/magicui/iphone'
+import Link from 'next/link'
+import { ArrowRight, CheckCircle2 } from 'lucide-react'
 
-interface Exp {
-  label: string
-  value: string
-}
-interface ExpItemProps {
-  item: Exp
-}
-
-const exps: Array<Exp> = [
-  {
-    label: 'Identity Verification',
-    value: 'NIN',
-  },
-  {
-    label: 'Core Modules',
-    value: '7+',
-  },
-  {
-    label: 'Audit-Ready Workflows',
-    value: 'RBAC',
-  },
+const stats = [
+  { value: 'NIN', label: 'Identity Verification' },
+  { value: '7+', label: 'Platform Modules' },
+  { value: 'RBAC', label: 'Role-Based Access' },
+  { value: 'Free', label: 'No Paywall Ever' },
 ]
 
-const ExpItem: FC<ExpItemProps> = ({ item }) => {
-  const { value, label } = item
-  return (
-    <Box sx={{ textAlign: 'center', mb: { xs: 1, md: 0 } }}>
-      <Typography
-        sx={{ color: 'secondary.main', mb: { xs: 1, md: 2 }, fontSize: { xs: 34, md: 44 }, fontWeight: 'bold' }}
-      >
-        {value}
-      </Typography>
-      <Typography color="text.secondary" variant="h5">
-        {label}
-      </Typography>
-    </Box>
-  )
-}
+const badges = [
+  'Event Management',
+  'QR Attendance',
+  'PDF Certificates',
+  'Mentorship',
+  'Analytics',
+]
 
 const HomeHero: FC = () => {
   return (
-    <Box id="hero" sx={{ backgroundColor: 'background.paper', position: 'relative', pt: 4, pb: { xs: 8, md: 10 } }}>
-      <Container maxWidth="lg">
-        <Grid container spacing={0} sx={{ flexDirection: { xs: 'column', md: 'unset' } }}>
-          <Grid item xs={12} md={7}>
-            <Box
-              sx={{
-                textAlign: { xs: 'center', md: 'left' },
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <Box sx={{ mb: 3 }}>
-                <Typography
-                  component="h2"
-                  sx={{
-                    position: 'relative',
-                    fontSize: { xs: 40, md: 72 },
-                    letterSpacing: 1.5,
-                    fontWeight: 'bold',
-                    lineHeight: 1.3,
-                  }}
-                >
-                  <Typography
-                    component="mark"
-                    sx={{
-                      position: 'relative',
-                      color: 'primary.main',
-                      fontSize: 'inherit',
-                      fontWeight: 'inherit',
-                      backgroundColor: 'unset',
-                    }}
-                  >
-                    Build{' '}
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: { xs: 24, md: 34 },
-                        left: 2,
-                        transform: 'rotate(3deg)',
-                        '& img': { width: { xs: 118, sm: 132, md: 210 }, height: 'auto' },
-                      }}
-                    >
-                      {/* eslint-disable-next-line */}
-                      <img src="/images/headline-curve.svg" alt="Headline curve" />
-                    </Box>
-                  </Typography>
-                  a{' '}
-                  <Typography
-                    component="span"
-                    sx={{
-                      fontSize: 'inherit',
-                      fontWeight: 'inherit',
-                      position: 'relative',
-                      '& svg': {
-                        position: 'absolute',
-                        top: -16,
-                        right: -21,
-                        width: { xs: 22, md: 30 },
-                        height: 'auto',
-                      },
-                    }}
-                  >
-                    Summit
-                    <svg version="1.1" viewBox="0 0 3183 3072">
-                      <g id="Layer_x0020_1">
-                        <path
-                          fill="#127C71"
-                          d="M2600 224c0,0 0,0 0,0 236,198 259,562 52,809 -254,303 -1849,2089 -2221,1776 -301,-190 917,-1964 1363,-2496 207,-247 570,-287 806,-89z"
-                        />
-                        <path
-                          fill="#127C71"
-                          d="M3166 2190c0,0 0,0 0,0 64,210 -58,443 -270,516 -260,90 -1848,585 -1948,252 -104,-230 1262,-860 1718,-1018 212,-73 437,39 500,250z"
-                        />
-                        <path
-                          fill="#127C71"
-                          d="M566 3c0,0 0,0 0,0 -219,-26 -427,134 -462,356 -44,271 -255,1921 90,1962 245,62 628,-1392 704,-1869 36,-221 -114,-424 -332,-449z"
-                        />
-                      </g>
-                    </svg>
-                  </Typography>{' '}
-                  <br />
-                  for youth programs and events
-                </Typography>
-              </Box>
-              <Box sx={{ mb: 4, width: { xs: '100%', md: '70%' } }}>
-                <Typography sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
-                  YLSH unifies registration, identity verification, event management, attendance, certificates,
-                  mentorship, learning resources, opportunities, and analytics in one free platform.
-                </Typography>
-              </Box>
-              <Box sx={{ '& button': { mr: 2 } }}>
-                <ScrollLink to="popular-course" spy={true} smooth={true} offset={0} duration={350}>
-                  <StyledButton color="primary" size="large" variant="contained">
-                    Explore Platform
-                  </StyledButton>
-                </ScrollLink>
-                <ScrollLink to="video-section" spy={true} smooth={true} offset={0} duration={350}>
-                  <StyledButton color="primary" size="large" variant="outlined" startIcon={<PlayArrowIcon />}>
-                    View Demo Flow
-                  </StyledButton>
-                </ScrollLink>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={5} sx={{ position: 'relative' }}>
-            {/* Certificate badge */}
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: 30,
-                left: { xs: 0, md: -150 },
-                boxShadow: 1,
-                borderRadius: 3,
-                px: 2,
-                py: 1.4,
-                zIndex: 1,
-                backgroundColor: 'background.paper',
-                display: 'flex',
-                alignItems: 'flex-start',
-                width: 280,
-              }}
-            >
-              <Box
-                sx={{
-                  boxShadow: 1,
-                  borderRadius: '50%',
-                  width: 44,
-                  height: 44,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  mr: 2,
-                  '& img': { width: '32px !important', height: 'auto' },
-                }}
-              >
-                <Image src="/images/certificate.png" alt="Certificate icon" width={50} height={50} quality={97} />
-              </Box>
-              <Box>
-                <Typography
-                  component="h6"
-                  sx={{ color: 'secondary.main', fontSize: '1.1rem', fontWeight: 700, mb: 0.5 }}
-                >
-                  Certificates
-                </Typography>
-                <Typography variant="subtitle1" sx={{ color: 'text.secondary', lineHeight: 1.3 }}>
-                  PDF certificates are generated asynchronously and verified with QR links.
-                </Typography>
-              </Box>
-            </Box>
-            <Box sx={{ lineHeight: 0, mt: { xs: 4, md: 0 } }}>
-              <Iphone videoSrc="https://res.cloudinary.com/duk9xwahb/video/upload/paxe4m9wdnc2v9fq88md.mp4" />
-            </Box>
-          </Grid>
-        </Grid>
+    <section id="hero" className="pt-10 pb-16 md:pt-14 md:pb-24 overflow-hidden">
+      <div className="container">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-10 xl:gap-16 items-center">
 
-        {/* Experience */}
-        <Box sx={{ boxShadow: 2, py: 4, px: 7, borderRadius: 4 }}>
-          <Grid container spacing={2}>
-            {exps.map((item) => (
-              <Grid key={item.value} item xs={12} md={4}>
-                <ExpItem item={item} />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Container>
-    </Box>
+          {/* ── Left: text ── */}
+          <div className="text-center lg:text-left">
+
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse inline-block" />
+              Youth Platform · Free Access
+            </div>
+
+            <h1 className="text-[40px] sm:text-[54px] lg:text-[62px] font-extrabold tracking-tight leading-[1.1] mb-5 text-[#082F49]">
+              One platform for{' '}
+              <span className="text-primary relative">
+                youth programs
+                <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 300 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M2 6 C60 2, 140 2, 298 6" stroke="#127C71" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.5"/>
+                </svg>
+              </span>
+              {' '}and events
+            </h1>
+
+            <p className="text-[17px] text-muted-foreground leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+              YLSH unifies identity verification, event management, attendance, certificates,
+              mentorship, and analytics — all in one place, completely free.
+            </p>
+
+            {/* CTA buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-10">
+              <Link href="/signup">
+                <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-primary text-white font-bold text-[15px] shadow-[0_8px_24px_0_rgba(18,124,113,0.28)] hover:bg-[#0d5c54] transition-colors">
+                  Get Started Free
+                  <ArrowRight size={17} />
+                </button>
+              </Link>
+              <Link href="/signin">
+                <button className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border-2 border-primary text-primary font-bold text-[15px] hover:bg-primary/8 transition-colors">
+                  Sign In
+                </button>
+              </Link>
+            </div>
+
+            {/* Feature badge pills */}
+            <div className="flex flex-wrap gap-2 justify-center lg:justify-start mb-10">
+              {badges.map((b) => (
+                <span key={b} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-border text-sm text-muted-foreground shadow-sm">
+                  <CheckCircle2 size={13} className="text-primary" />
+                  {b}
+                </span>
+              ))}
+            </div>
+
+            {/* Stats strip */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {stats.map((s) => (
+                <div key={s.value} className="rounded-2xl bg-white border border-border p-4 text-center shadow-sm">
+                  <p className="text-[22px] font-extrabold text-[#082F49] leading-none mb-1">{s.value}</p>
+                  <p className="text-xs text-muted-foreground">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Right: image card ── */}
+          <div className="hidden lg:block relative">
+            <div className="rounded-3xl overflow-hidden shadow-2xl border border-slate-200/60 ring-1 ring-black/5">
+              <Image
+                src="/images/home-hero.png"
+                alt="YLSH Platform preview"
+                width={960}
+                height={720}
+                quality={95}
+                priority
+                className="w-full h-auto block"
+              />
+            </div>
+
+            {/* Floating cert badge */}
+            <div className="absolute -bottom-4 -left-8 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-xl border border-slate-100">
+              <Image src="/images/certificate.png" alt="Certificate" width={36} height={36} />
+              <div>
+                <p className="text-sm font-bold text-[#082F49] leading-none mb-0.5">PDF Certificates</p>
+                <p className="text-xs text-muted-foreground">QR-verified instantly</p>
+              </div>
+            </div>
+
+            {/* Floating user count badge */}
+            <div className="absolute -top-4 -right-6 flex items-center gap-2 rounded-2xl bg-[#082F49] px-4 py-2.5 shadow-xl">
+              <div className="flex -space-x-2">
+                {[1, 2, 3].map((n) => (
+                  <Image
+                    key={n}
+                    src={`/images/avatars/${n}.jpg`}
+                    alt=""
+                    width={28}
+                    height={28}
+                    className="w-7 h-7 rounded-full border-2 border-[#082F49] object-cover"
+                  />
+                ))}
+              </div>
+              <p className="text-white text-xs font-semibold">1k+ members</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 

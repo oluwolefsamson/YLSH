@@ -1,131 +1,83 @@
-import React, { FC, useRef } from 'react'
+import React, { FC } from 'react'
 import Image from 'next/image'
-import Box from '@mui/material/Box'
-import Grid from '@mui/material/Grid'
-import Slider, { Settings } from 'react-slick'
-import Container from '@mui/material/Container'
-import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
-import { styled } from '@mui/material/styles'
-import IconArrowBack from '@mui/icons-material/ArrowBack'
-import IconArrowForward from '@mui/icons-material/ArrowForward'
-
-import { TestimonialItem } from '@/components/testimonial'
+import { Quote } from 'lucide-react'
 import { data } from './testimonial.data'
 
-interface SliderArrowArrow {
-  onClick?: () => void
-  type: 'next' | 'prev'
-  className?: 'string'
-}
-
-const SliderArrow: FC<SliderArrowArrow> = (props) => {
-  const { onClick, type, className } = props
-  return (
-    <IconButton
-      sx={{
-        backgroundColor: 'background.paper',
-        color: 'primary.main',
-        '&:hover': { backgroundColor: 'primary.main', color: 'primary.contrastText' },
-        bottom: { xs: '-28px !important', md: '64px !important' },
-        left: 'unset !important',
-        right: type === 'prev' ? '90px !important' : '30px !important',
-        zIndex: 10,
-        boxShadow: 1,
-      }}
-      disableRipple
-      color="inherit"
-      onClick={onClick}
-      className={className}
-    >
-      {type === 'next' ? <IconArrowForward sx={{ fontSize: 22 }} /> : <IconArrowBack sx={{ fontSize: 22 }} />}
-    </IconButton>
-  )
-}
-
-const StyledSlickContainer = styled('div')(() => ({
-  position: 'relative',
-
-  '& .slick-list': { marginLeft: '-30px', marginBottom: '24px' },
-}))
-
 const HomeTestimonial: FC = () => {
-  const sliderRef = useRef(null)
-
-  const sliderConfig: Settings = {
-    infinite: true,
-    autoplay: true,
-    speed: 300,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    prevArrow: <SliderArrow type="prev" />,
-    nextArrow: <SliderArrow type="next" />,
-  }
-
   return (
-    <Box
-      id="testimonial"
-      sx={{
-        pb: { xs: 6, md: 10 },
-        background: 'linear-gradient(180deg, rgba(243,246,251,0.95) 0%, rgba(255,255,255,1) 100%)',
-      }}
-    >
-      <Container>
-        <Grid container spacing={5}>
-          <Grid item xs={12} md={6}>
-            <Typography
-              component="h2"
-              sx={{
-                position: 'relative',
-                fontSize: { xs: 36, md: 46 },
-                mt: { xs: 0, md: 7 },
-                mb: 4,
-                lineHeight: 1,
-                fontWeight: 'bold',
-              }}
-            >
-              Operational{' '}
-              <Typography
-                component="mark"
-                sx={{
-                  position: 'relative',
-                  color: 'primary.main',
-                  fontSize: 'inherit',
-                  fontWeight: 'inherit',
-                  backgroundColor: 'unset',
-                }}
-              >
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: { xs: 20, md: 28 },
-                    left: 2,
-                    '& img': { width: { xs: 130, md: 175 }, height: 'auto' },
-                  }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/headline-curve.svg" alt="Headline curve" />
-                </Box>
-              </Typography>
-              Feedback
-            </Typography>
+    <section id="testimonial" className="py-16 md:py-20" style={{ background: 'linear-gradient(180deg, #f3f6fb 0%, #ffffff 100%)' }}>
+      <div className="container">
 
-            <StyledSlickContainer>
-              <Slider ref={sliderRef} {...sliderConfig}>
-                {data.map((item, index) => (
-                  <TestimonialItem key={String(index)} item={item} />
-                ))}
-              </Slider>
-            </StyledSlickContainer>
-          </Grid>
-          <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
-            <Box sx={{ width: { xs: '100%', md: '90%' } }}>
-              <Image src="/images/home-testimonial.png" width={520} height={540} quality={97} alt="Testimonial img" />
-            </Box>
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
+        {/* Header */}
+        <div className="text-center mb-12">
+          <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-3">
+            Testimonials
+          </span>
+          <h2 className="text-[30px] md:text-[40px] font-bold text-[#082F49]">What the team says</h2>
+          <p className="text-muted-foreground mt-2 max-w-md mx-auto text-sm">
+            Feedback from across the program — admins, participants, engineers, and leadership.
+          </p>
+        </div>
+
+        {/* 3-column grid — no slider */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {data.slice(0, 3).map((item) => (
+            <div
+              key={item.id}
+              className="flex flex-col bg-white rounded-2xl p-6 border border-border hover:shadow-lg transition-shadow"
+            >
+              <Quote size={28} className="text-primary/25 mb-4 flex-shrink-0" />
+              <h3 className="font-bold text-[#082F49] mb-2 text-[1rem]">{item.title}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed flex-1">{item.content}</p>
+              <div className="flex items-center gap-3 pt-5 mt-5 border-t border-border">
+                <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                  <Image
+                    src={`/images/avatars/${item.user.photo}`}
+                    alt={item.user.name}
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-[#082F49] leading-none mb-0.5">{item.user.name}</p>
+                  <p className="text-xs text-muted-foreground">{item.user.professional}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Remaining 2 testimonials in a wider 2-col row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          {data.slice(3).map((item) => (
+            <div
+              key={item.id}
+              className="flex items-start gap-5 bg-white rounded-2xl p-6 border border-border hover:shadow-lg transition-shadow"
+            >
+              <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mt-1">
+                <Image
+                  src={`/images/avatars/${item.user.photo}`}
+                  alt={item.user.name}
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#082F49] mb-1 text-[0.95rem]">{item.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-3">{item.content}</p>
+                <div>
+                  <p className="text-sm font-semibold text-[#082F49] leading-none mb-0.5">{item.user.name}</p>
+                  <p className="text-xs text-muted-foreground">{item.user.professional}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </section>
   )
 }
 

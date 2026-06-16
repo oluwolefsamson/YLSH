@@ -1,36 +1,12 @@
-import React, { useState } from 'react'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import InputAdornment from '@mui/material/InputAdornment'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import Paper from '@mui/material/Paper'
-import Stack from '@mui/material/Stack'
-import Tab from '@mui/material/Tab'
-import Tabs from '@mui/material/Tabs'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import PeopleIcon from '@mui/icons-material/People'
-import SearchIcon from '@mui/icons-material/Search'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
-import BlockIcon from '@mui/icons-material/Block'
-import FilterListIcon from '@mui/icons-material/FilterList'
-import IconButton from '@mui/material/IconButton'
+﻿import React, { useState, useRef, useEffect } from 'react'
+import { Users, Search, MoreVertical, CheckCircle, Clock, Ban, Filter } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
+import { cn } from '@/utils'
 
-const PAPER_SX = {
-  p: { xs: 2.5, md: 3 },
-  borderRadius: 4,
-  backgroundColor: 'rgba(255,255,255,0.88)',
-  backdropFilter: 'blur(12px)',
-  border: '1px solid rgba(148,163,184,0.16)',
-  boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
-}
+const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
+const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const allUsers = [
   { id: 1, name: 'Amina Bello', email: 'amina.bello@example.com', role: 'Participant', status: 'verified', joined: 'Jun 14, 2026', state: 'Kaduna' },
@@ -43,154 +19,99 @@ const allUsers = [
   { id: 8, name: 'Sule Ibrahim', email: 'sule@example.com', role: 'Participant', status: 'pending', joined: 'Jun 7, 2026', state: 'Katsina' },
 ]
 
-const statusColor: Record<string, 'success' | 'warning' | 'error'> = {
-  verified: 'success',
-  pending: 'warning',
-  suspended: 'error',
+const statusStyles: Record<string, string> = {
+  verified: 'bg-green-100 text-green-700',
+  pending: 'bg-amber-100 text-amber-700',
+  suspended: 'bg-red-100 text-red-700',
 }
 
 const statusIcon: Record<string, React.ReactNode> = {
-  verified: <CheckCircleIcon />,
-  pending: <HourglassEmptyIcon />,
-  suspended: <BlockIcon />,
+  verified: <CheckCircle size={11} />,
+  pending: <Clock size={11} />,
+  suspended: <Ban size={11} />,
 }
+
+const TABS = ['All', 'Verified', 'Pending', 'Suspended']
 
 const AdminUsersPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
   const [search, setSearch] = useState('')
-  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null)
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const filtered = allUsers
-    .filter((u) => {
-      if (tab === 1) return u.status === 'verified'
-      if (tab === 2) return u.status === 'pending'
-      if (tab === 3) return u.status === 'suspended'
-      return true
-    })
-    .filter((u) =>
-      search === '' ||
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase()),
-    )
+    .filter((u) => { if (tab === 1) return u.status === 'verified'; if (tab === 2) return u.status === 'pending'; if (tab === 3) return u.status === 'suspended'; return true })
+    .filter((u) => search === '' || u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()))
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => { if (menuRef.current && !menuRef.current.contains(e.target as Node)) setOpenMenuId(null) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const tabCounts = [allUsers.length, allUsers.filter((u) => u.status === 'verified').length, allUsers.filter((u) => u.status === 'pending').length, allUsers.filter((u) => u.status === 'suspended').length]
 
   return (
-    <Box>
-      <PageHeader
-        eyebrow="User Management"
-        title="Users"
-        subtitle="Search, filter, and manage all registered users. Assign roles, update status, and view identity verification records."
-        icon={<PeopleIcon />}
-      />
+    <div>
+      <PageHeader eyebrow="User Management" title="Users" subtitle="Search, filter, and manage all registered users. Assign roles, update status, and view identity verification records." icon={<Users size={14} />} />
 
-      <Paper sx={PAPER_SX}>
-          {/* Toolbar */}
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            justifyContent="space-between"
-            alignItems={{ xs: 'stretch', sm: 'center' }}
-            spacing={2}
-            sx={{ mb: 3 }}
-          >
-            <TextField
-              placeholder="Search by name or email…"
-              size="small"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ flex: 1, maxWidth: 360, '& .MuiOutlinedInput-root': { borderRadius: 99 } }}
-            />
-            <Stack direction="row" spacing={1}>
-              <Button startIcon={<FilterListIcon />} variant="outlined" size="small" sx={{ borderRadius: 99, textTransform: 'none' }}>
-                Filter
-              </Button>
-              <Button variant="contained" size="small" sx={{ borderRadius: 99, textTransform: 'none', fontWeight: 700 }}>
-                + Invite user
-              </Button>
-            </Stack>
-          </Stack>
+      <div className={CARD} style={CARD_STYLE}>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-5">
+          <div className="relative flex-1 max-w-sm">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or email…" className="w-full h-10 pl-9 pr-4 rounded-full border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors" />
+          </div>
+          <div className="flex gap-2">
+            <button className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors"><Filter size={14} /> Filter</button>
+            <button className="px-4 py-2 rounded-full bg-primary text-white text-sm font-bold hover:bg-[#0d5c54] transition-colors">+ Invite user</button>
+          </div>
+        </div>
 
-          <Tabs
-            value={tab}
-            onChange={(_, v) => setTab(v)}
-            sx={{ mb: 3, borderBottom: '1px solid rgba(148,163,184,0.18)' }}
-          >
-            <Tab label={`All (${allUsers.length})`} />
-            <Tab label={`Verified (${allUsers.filter((u) => u.status === 'verified').length})`} />
-            <Tab label={`Pending (${allUsers.filter((u) => u.status === 'pending').length})`} />
-            <Tab label={`Suspended (${allUsers.filter((u) => u.status === 'suspended').length})`} />
-          </Tabs>
+        <div className="flex gap-1 border-b border-slate-200/18 mb-5">
+          {TABS.map((label, i) => (
+            <button key={label} onClick={() => setTab(i)} className={cn('px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors whitespace-nowrap', tab === i ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
+              {label} ({tabCounts[i]})
+            </button>
+          ))}
+        </div>
 
-          <Stack spacing={1.5}>
-            {filtered.map((user) => (
-              <Box
-                key={user.id}
-                sx={{
-                  p: 2,
-                  borderRadius: 3,
-                  border: '1px solid rgba(148,163,184,0.18)',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: 2,
-                  flexWrap: 'wrap',
-                }}
-              >
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontWeight: 700 }}>{user.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {user.email} · {user.state}
-                  </Typography>
-                  <Stack direction="row" spacing={1} sx={{ mt: 0.5 }}>
-                    <Chip label={user.role} size="small" variant="outlined" />
-                    <Typography variant="caption" color="text.secondary">Joined {user.joined}</Typography>
-                  </Stack>
-                </Box>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Chip
-                    icon={statusIcon[user.status] as React.ReactElement}
-                    label={user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                    color={statusColor[user.status]}
-                    size="small"
-                  />
-                  <IconButton
-                    size="small"
-                    onClick={(e) => { setMenuAnchor(e.currentTarget) }}
-                  >
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
-                </Stack>
-              </Box>
-            ))}
-
-            {filtered.length === 0 && (
-              <Box sx={{ py: 6, textAlign: 'center' }}>
-                <Typography color="text.secondary">No users match your search.</Typography>
-              </Box>
-            )}
-          </Stack>
-        </Paper>
-
-        <Menu
-          anchorEl={menuAnchor}
-          open={Boolean(menuAnchor)}
-          onClose={() => { setMenuAnchor(null) }}
-        >
-          <MenuItem onClick={() => setMenuAnchor(null)}>View profile</MenuItem>
-          <MenuItem onClick={() => setMenuAnchor(null)}>Edit role</MenuItem>
-          <MenuItem onClick={() => setMenuAnchor(null)}>Suspend account</MenuItem>
-          <MenuItem onClick={() => setMenuAnchor(null)} sx={{ color: 'error.main' }}>Delete account</MenuItem>
-        </Menu>
-
-    </Box>
+        <div className="flex flex-col gap-3" ref={menuRef}>
+          {filtered.map((user) => (
+            <div key={user.id} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 flex-wrap">
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-sm">{user.name}</p>
+                <p className="text-xs text-muted-foreground">{user.email} · {user.state}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs border border-border">{user.role}</span>
+                  <span className="text-xs text-muted-foreground">Joined {user.joined}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={cn('inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold capitalize', statusStyles[user.status])}>
+                  {statusIcon[user.status]} {user.status}
+                </span>
+                <div className="relative">
+                  <button onClick={() => setOpenMenuId(openMenuId === user.id ? null : user.id)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
+                    <MoreVertical size={16} className="text-muted-foreground" />
+                  </button>
+                  {openMenuId === user.id && (
+                    <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-xl shadow-lg py-1 z-50 min-w-[160px]">
+                      {['View profile', 'Edit role', 'Suspend account'].map((action) => (
+                        <button key={action} onClick={() => setOpenMenuId(null)} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">{action}</button>
+                      ))}
+                      <button onClick={() => setOpenMenuId(null)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete account</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+          {filtered.length === 0 && <div className="py-12 text-center text-muted-foreground">No users match your search.</div>}
+        </div>
+      </div>
+    </div>
   )
 }
 
 AdminUsersPage.getLayout = (page) => <AdminLayout>{page}</AdminLayout>
-
 export default AdminUsersPage

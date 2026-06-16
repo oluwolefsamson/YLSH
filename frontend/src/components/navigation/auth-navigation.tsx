@@ -1,21 +1,22 @@
 import React, { FC } from 'react'
-import Box from '@mui/material/Box'
 import NextLink from 'next/link'
-import Link from '@mui/material/Link'
-import { StyledButton } from '@/components/styled-button'
 
 const AuthNavigation: FC = () => {
   return (
-    <Box sx={{ '& button:first-child': { mr: 2 } }}>
-      <Link component={NextLink} href="/signin" underline="none">
-        <StyledButton disableHoverEffect={true} variant="outlined">
-          Sign In
-        </StyledButton>
-      </Link>
-      <Link component={NextLink} href="/signup" underline="none">
-        <StyledButton disableHoverEffect={true}>Sign Up</StyledButton>
-      </Link>
-    </Box>
+    <div className="flex gap-3">
+      <NextLink
+        href="/signin"
+        className="inline-flex items-center justify-center px-5 py-2 rounded-full border-2 border-primary text-primary font-semibold text-sm tracking-wide hover:bg-primary/10 transition-colors"
+      >
+        Sign In
+      </NextLink>
+      <NextLink
+        href="/signup"
+        className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-primary text-white font-semibold text-sm tracking-wide shadow-[0_6px_22px_0_rgb(18_124_113_/_12%)] hover:bg-[#0d5c54] transition-colors"
+      >
+        Sign Up
+      </NextLink>
+    </div>
   )
 }
 
