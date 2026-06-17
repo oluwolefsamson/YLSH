@@ -29,7 +29,7 @@ const bootstrap = async () => {
   await seedSuperAdmin()
 
   app.use(helmet())
-  app.use(cors({ origin: [process.env.CLIENT_URL || 'http://localhost:3000', 'http://localhost:3001', 'https://ylsh-ptjm.vercel.app'], credentials: true }))
+  app.use(cors({ origin: [process.env.CLIENT_URL || 'http://localhost:3000', 'http://localhost:3001', 'https://ylsh-woad.vercel.app'], credentials: true }))
   app.use(morgan('dev'))
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
