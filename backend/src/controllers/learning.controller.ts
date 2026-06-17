@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import LearningResource from '../models/LearningResource'
+import LearningResource, { ResourceType } from '../models/LearningResource'
 import UserProgress from '../models/UserProgress'
 import AuditLog from '../models/AuditLog'
 
@@ -63,12 +63,12 @@ export const getResourceById = async (req: Request, res: Response, next: NextFun
 export const createResource = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { title, type, category, duration, url, videoId, excerpt } = req.body as {
-      title: string; type: string; category: string; duration?: string
+      title: string; type: 'video' | 'pdf' | 'article'; category: string; duration?: string
       url?: string; videoId?: string; excerpt?: string
     }
 
     const resource = await LearningResource.create({
-      title, type, category, duration, url, videoId, excerpt,
+      title, type: type as ResourceType, category, duration, url, videoId, excerpt,
       createdBy: req.user!._id,
     })
 

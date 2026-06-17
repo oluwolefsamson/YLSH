@@ -73,3 +73,6 @@ export interface CreateAdminPayload {
 }
 
 export const createAdmin = (payload: CreateAdminPayload) => post<User>('/api/users/admin', payload)
+
+export const changePassword = (currentPassword: string, newPassword: string) =>
+  post<{ message: string }>('/api/users/me/change-password', { currentPassword, newPassword })

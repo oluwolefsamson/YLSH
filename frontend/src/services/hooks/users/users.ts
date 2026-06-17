@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   listUsers, getUserById, getMyProfile, updateMyProfile,
   updateUserStatus, updateUserRole, deleteUser,
-  listPendingMentors, approveMentor, declineMentor, createAdmin,
+  listPendingMentors, approveMentor, declineMentor, createAdmin, changePassword,
   type User, type PaginatedUsers, type UpdateProfilePayload, type CreateAdminPayload,
 } from '@/services/endpoints/users/users'
 
@@ -96,3 +96,8 @@ export const useCreateAdmin = () => {
     onSuccess: () => qc.invalidateQueries({ queryKey: [K.LIST] }),
   })
 }
+
+export const useChangePassword = () =>
+  useMutation<{ message: string }, Error, { currentPassword: string; newPassword: string }>({
+    mutationFn: ({ currentPassword, newPassword }) => changePassword(currentPassword, newPassword),
+  })

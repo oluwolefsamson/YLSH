@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
+import { Types } from 'mongoose'
 import Opportunity from '../models/Opportunity'
 import Application from '../models/Application'
 import AuditLog from '../models/AuditLog'
+import type { OppType } from '../models/Opportunity'
 
 // GET /api/opportunities  — public list
 export const listOpportunities = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -38,7 +40,7 @@ export const getOpportunityById = async (req: Request, res: Response, next: Next
 export const createOpportunity = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { title, organization, type, deadline, location, description, amount, requirements, link } = req.body as {
-      title: string; organization: string; type: string; deadline: string
+      title: string; organization: OppType; type: OppType; deadline: string
       location: string; description: string; amount?: string; requirements?: string; link?: string
     }
 
@@ -95,11 +97,11 @@ export const applyForOpportunity = async (req: Request, res: Response, next: Nex
     const existing = await Application.findOne({ opportunity: req.params.id, applicant: req.user!._id })
     if (existing) { res.status(409).json({ message: 'You have already applied for this opportunity' }); return }
 
-    const application = await Application.create({
-      opportunity: req.params.id,
+    const [application] = await Application.create([{
+      opportunity: new Types.ObjectId(req.params.id as string),
       applicant: req.user!._id,
       coverLetter,
-    })
+    }])
 
     await application.populate('opportunity', 'title organization type')
     res.status(201).json(application)

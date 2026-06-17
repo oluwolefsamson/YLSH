@@ -106,7 +106,7 @@ export const auditLog = async (req: Request, res: Response, next: NextFunction):
 // GET /api/analytics/role-distribution  (super-admin)
 export const roleDistribution = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const roles = ['participant', 'mentor', 'admin', 'super-admin']
+    const roles: Array<'participant' | 'mentor' | 'admin' | 'super-admin'> = ['participant', 'mentor', 'admin', 'super-admin']
     const counts = await Promise.all(
       roles.map((r) => User.countDocuments({ role: r, password: { $exists: true } }))
     )

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   getDashboardStats, getUserGrowth, getEventStats, getAuditLog,
+  getRoleDistribution, getTopStates, getSuperDashboard, listAdmins,
   type DashboardStats, type GrowthPoint, type EventStat, type AuditEntry,
 } from '@/services/endpoints/analytics/analytics'
 
@@ -31,3 +32,15 @@ export const useAuditLog = (page = 1, limit = 20) =>
     queryFn: () => getAuditLog(page, limit),
     placeholderData: (prev) => prev,
   })
+
+export const useRoleDistribution = () =>
+  useQuery({ queryKey: ['analytics-role-distribution'], queryFn: getRoleDistribution, staleTime: 60_000 })
+
+export const useTopStates = () =>
+  useQuery({ queryKey: ['analytics-top-states'], queryFn: getTopStates, staleTime: 60_000 })
+
+export const useSuperDashboard = () =>
+  useQuery({ queryKey: ['analytics-super-dashboard'], queryFn: getSuperDashboard, staleTime: 60_000 })
+
+export const useAdminList = () =>
+  useQuery({ queryKey: ['analytics-admins'], queryFn: listAdmins, staleTime: 30_000 })

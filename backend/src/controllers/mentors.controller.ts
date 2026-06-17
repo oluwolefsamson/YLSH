@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
+import { Types } from 'mongoose'
 import User from '../models/User'
 import MentorProfile from '../models/MentorProfile'
 import MentorSession from '../models/MentorSession'
@@ -184,14 +185,14 @@ export const requestSession = async (req: Request, res: Response, next: NextFunc
     if (!mentor) { res.status(404).json({ message: 'Mentor not found' }); return }
 
     const profile = await MentorProfile.findOne({ user: req.params.id })
-    const session = await MentorSession.create({
-      mentor: req.params.id,
+    const [session] = await MentorSession.create([{
+      mentor: new Types.ObjectId(req.params.id as string),
       mentee: req.user!._id,
       topic,
       scheduledAt: new Date(scheduledAt),
       duration: profile?.sessionDuration ?? 60,
       meetLink: profile?.meetLink ?? '',
-    })
+    }])
 
     await AuditLog.create({
       action: 'SESSION_REQUESTED',
