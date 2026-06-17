@@ -1,5 +1,5 @@
-﻿import React, { useState } from 'react'
-import { UserCircle, ShieldCheck, Pencil, Save, Lock, CheckCircle, Hourglass, CreditCard } from 'lucide-react'
+import React, { useRef, useState } from 'react'
+import { UserCircle, ShieldCheck, Pencil, Save, Lock, CheckCircle, Hourglass, CreditCard, X, Eye, EyeOff, Monitor, Smartphone, LogOut } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
@@ -7,7 +7,6 @@ import { cn } from '@/utils'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
-
 const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 disabled:bg-muted transition-colors'
 
 const completionItems = [
@@ -19,8 +18,14 @@ const completionItems = [
   { label: 'State of origin set', done: false },
 ]
 
+type Modal = 'password' | '2fa' | 'sessions' | 'delete' | null
+
 const ProfilePage: NextPageWithLayout = () => {
   const [editing, setEditing] = useState(false)
+  const [modal, setModal] = useState<Modal>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const [form, setForm] = useState({
     firstName: 'Amina', lastName: 'Bello', email: 'amina.bello@example.com',
     phone: '+234 803 456 7890', state: 'Kaduna',
@@ -28,14 +33,60 @@ const ProfilePage: NextPageWithLayout = () => {
     occupation: 'Student', institution: 'Ahmadu Bello University',
   })
 
+  // Password form state
+  const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' })
+  const [showPw, setShowPw] = useState({ current: false, next: false, confirm: false })
+  const [pwDone, setPwDone] = useState(false)
+
+  // 2FA state
+  const [tfaPhone, setTfaPhone] = useState('+234 803 456 7890')
+  const [tfaCode, setTfaCode] = useState('')
+  const [tfaStep, setTfaStep] = useState<'phone' | 'code' | 'done'>('phone')
+
+  // Delete confirmation
+  const [deleteConfirm, setDeleteConfirm] = useState('')
+
   const completedCount = completionItems.filter((i) => i.done).length
   const completionPct = Math.round((completedCount / completionItems.length) * 100)
+
   const handleChange = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = () => setPhotoPreview(reader.result as string)
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const closeModal = () => {
+    setModal(null)
+    setPwDone(false)
+    setPwForm({ current: '', next: '', confirm: '' })
+    setTfaStep('phone')
+    setTfaCode('')
+    setDeleteConfirm('')
+  }
+
   return (
     <div>
-      <PageHeader eyebrow="Profile" title="My Profile" subtitle="Manage your personal information, identity verification, and account security." icon={<UserCircle size={14} />} />
+      <PageHeader
+        eyebrow="Profile"
+        title="My Profile"
+        subtitle="Manage your personal information, identity verification, and account security."
+        icon={<UserCircle size={14} />}
+      />
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handlePhotoChange}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-5">
         {/* Left column */}
@@ -43,7 +94,11 @@ const ProfilePage: NextPageWithLayout = () => {
           {/* Avatar card */}
           <div className={CARD} style={CARD_STYLE}>
             <div className="flex flex-col items-center gap-3">
-              <div className="w-22 h-22 rounded-full flex items-center justify-center text-white font-bold text-3xl" style={{ width: 88, height: 88, background: 'linear-gradient(135deg, #082F49 0%, #127C71 100%)' }}>AB</div>
+              {photoPreview ? (
+                <img src={photoPreview} alt="Profile" className="rounded-full object-cover border-4 border-primary/20" style={{ width: 88, height: 88 }} />
+              ) : (
+                <div className="rounded-full flex items-center justify-center text-white font-bold text-3xl" style={{ width: 88, height: 88, background: 'linear-gradient(135deg, #082F49 0%, #127C71 100%)' }}>AB</div>
+              )}
               <div className="text-center">
                 <p className="font-bold text-lg">{form.firstName} {form.lastName}</p>
                 <p className="text-sm text-muted-foreground">{form.occupation} · {form.institution}</p>
@@ -51,7 +106,12 @@ const ProfilePage: NextPageWithLayout = () => {
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">
                 <ShieldCheck size={11} /> NIN Verified
               </span>
-              <button className="w-full h-9 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors">Upload photo</button>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full h-9 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors"
+              >
+                Upload photo
+              </button>
             </div>
           </div>
 
@@ -91,7 +151,10 @@ const ProfilePage: NextPageWithLayout = () => {
           <div className={CARD} style={CARD_STYLE}>
             <div className="flex items-center justify-between mb-5">
               <p className="font-bold text-lg">Personal Information</p>
-              <button onClick={() => setEditing((v) => !v)} className={cn('flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-colors', editing ? 'bg-primary text-white hover:bg-[#0d5c54]' : 'border border-border hover:bg-muted')}>
+              <button
+                onClick={() => setEditing((v) => !v)}
+                className={cn('flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-colors', editing ? 'bg-primary text-white hover:bg-[#0d5c54]' : 'border border-border hover:bg-muted')}
+              >
                 {editing ? <><Save size={14} /> Save changes</> : <><Pencil size={14} /> Edit</>}
               </button>
             </div>
@@ -125,9 +188,9 @@ const ProfilePage: NextPageWithLayout = () => {
             </div>
             <div className="flex flex-col gap-3">
               {[
-                { label: 'Password', value: 'Last changed 30 days ago', action: 'Change password' },
-                { label: 'Two-factor authentication', value: 'Not enabled', action: 'Enable 2FA' },
-                { label: 'Active sessions', value: '1 device · Chrome on Windows', action: 'Manage sessions' },
+                { label: 'Password', value: 'Last changed 30 days ago', action: 'Change password', onClick: () => setModal('password') },
+                { label: 'Two-factor authentication', value: 'Not enabled', action: 'Enable 2FA', onClick: () => setModal('2fa') },
+                { label: 'Active sessions', value: '1 device · Chrome on Windows', action: 'Manage sessions', onClick: () => setModal('sessions') },
               ].map((row, i, arr) => (
                 <div key={row.label}>
                   <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -135,17 +198,190 @@ const ProfilePage: NextPageWithLayout = () => {
                       <p className="font-semibold text-sm">{row.label}</p>
                       <p className="text-sm text-muted-foreground">{row.value}</p>
                     </div>
-                    <button className="px-4 py-1.5 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors flex-shrink-0">{row.action}</button>
+                    <button onClick={row.onClick} className="px-4 py-1.5 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors flex-shrink-0">{row.action}</button>
                   </div>
                   {i < arr.length - 1 && <hr className="border-border mt-3" />}
                 </div>
               ))}
               <hr className="border-border" />
-              <button className="px-4 py-1.5 rounded-full border border-red-300 text-red-600 text-sm font-semibold hover:bg-red-50 transition-colors w-fit">Delete account</button>
+              <button onClick={() => setModal('delete')} className="px-4 py-1.5 rounded-full border border-red-300 text-red-600 text-sm font-semibold hover:bg-red-50 transition-colors w-fit">Delete account</button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Change Password Modal */}
+      {modal === 'password' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={closeModal} />
+          <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            {!pwDone ? (
+              <>
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="font-bold text-lg">Change Password</h3>
+                  <button onClick={closeModal} className="p-1.5 rounded-lg hover:bg-muted"><X size={18} /></button>
+                </div>
+                <div className="flex flex-col gap-4 mb-5">
+                  {([
+                    { key: 'current' as const, label: 'Current password', show: showPw.current, toggle: () => setShowPw((p) => ({ ...p, current: !p.current })) },
+                    { key: 'next' as const, label: 'New password', show: showPw.next, toggle: () => setShowPw((p) => ({ ...p, next: !p.next })) },
+                    { key: 'confirm' as const, label: 'Confirm new password', show: showPw.confirm, toggle: () => setShowPw((p) => ({ ...p, confirm: !p.confirm })) },
+                  ]).map((f) => (
+                    <div key={f.key}>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1">{f.label}</label>
+                      <div className="relative">
+                        <input
+                          type={f.show ? 'text' : 'password'}
+                          value={pwForm[f.key]}
+                          onChange={(e) => setPwForm((p) => ({ ...p, [f.key]: e.target.value }))}
+                          className={cn(INPUT, 'pr-10')}
+                        />
+                        <button type="button" onClick={f.toggle} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                          {f.show ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={closeModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
+                  <button
+                    onClick={() => setPwDone(true)}
+                    disabled={!pwForm.current || !pwForm.next || pwForm.next !== pwForm.confirm}
+                    className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Update Password
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center text-center py-4">
+                <div className="w-16 h-16 rounded-full bg-green-100 grid place-items-center mb-4">
+                  <CheckCircle size={32} className="text-green-600" />
+                </div>
+                <h3 className="font-bold text-lg mb-1">Password Updated!</h3>
+                <p className="text-sm text-muted-foreground mb-5">Your password has been changed successfully.</p>
+                <button onClick={closeModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Done</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 2FA Modal */}
+      {modal === '2fa' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={closeModal} />
+          <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-bold text-lg">Enable Two-Factor Auth</h3>
+              <button onClick={closeModal} className="p-1.5 rounded-lg hover:bg-muted"><X size={18} /></button>
+            </div>
+            {tfaStep === 'phone' && (
+              <>
+                <p className="text-sm text-muted-foreground mb-4">Enter your phone number to receive a verification code via SMS.</p>
+                <div className="mb-4">
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">Phone number</label>
+                  <input value={tfaPhone} onChange={(e) => setTfaPhone(e.target.value)} className={INPUT} />
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={closeModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
+                  <button onClick={() => setTfaStep('code')} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Send Code</button>
+                </div>
+              </>
+            )}
+            {tfaStep === 'code' && (
+              <>
+                <p className="text-sm text-muted-foreground mb-4">Enter the 6-digit code sent to <strong>{tfaPhone}</strong>.</p>
+                <div className="mb-4">
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">Verification code</label>
+                  <input value={tfaCode} onChange={(e) => setTfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="000000" className={cn(INPUT, 'tracking-widest text-center font-mono text-lg')} />
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setTfaStep('phone')} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Back</button>
+                  <button onClick={() => setTfaStep('done')} disabled={tfaCode.length !== 6} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Verify</button>
+                </div>
+              </>
+            )}
+            {tfaStep === 'done' && (
+              <div className="flex flex-col items-center text-center py-4">
+                <div className="w-16 h-16 rounded-full bg-green-100 grid place-items-center mb-4">
+                  <ShieldCheck size={32} className="text-green-600" />
+                </div>
+                <h3 className="font-bold text-lg mb-1">2FA Enabled!</h3>
+                <p className="text-sm text-muted-foreground mb-5">Two-factor authentication is now active on your account.</p>
+                <button onClick={closeModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Done</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Manage Sessions Modal */}
+      {modal === 'sessions' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={closeModal} />
+          <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-bold text-lg">Active Sessions</h3>
+              <button onClick={closeModal} className="p-1.5 rounded-lg hover:bg-muted"><X size={18} /></button>
+            </div>
+            <div className="flex flex-col gap-3 mb-5">
+              {[
+                { device: 'Chrome on Windows', location: 'Abuja, Nigeria', time: 'Active now', icon: <Monitor size={20} />, current: true },
+                { device: 'Safari on iPhone 14', location: 'Lagos, Nigeria', time: '2 days ago', icon: <Smartphone size={20} />, current: false },
+              ].map((s, i) => (
+                <div key={i} className="flex items-center justify-between gap-4 p-4 rounded-xl border border-slate-200/18">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-muted grid place-items-center text-muted-foreground flex-shrink-0">{s.icon}</div>
+                    <div>
+                      <p className="font-semibold text-sm">{s.device}</p>
+                      <p className="text-xs text-muted-foreground">{s.location} · {s.time}</p>
+                    </div>
+                  </div>
+                  {s.current ? (
+                    <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">Current</span>
+                  ) : (
+                    <button className="flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700 transition-colors">
+                      <LogOut size={13} /> Revoke
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            <button onClick={closeModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Close</button>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Modal */}
+      {modal === 'delete' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={closeModal} />
+          <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-lg text-red-600">Delete Account</h3>
+              <button onClick={closeModal} className="p-1.5 rounded-lg hover:bg-muted"><X size={18} /></button>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              This will permanently delete your account, all certificates, and application history. <strong>This cannot be undone.</strong>
+            </p>
+            <div className="mb-4">
+              <label className="block text-xs font-medium text-muted-foreground mb-1">Type <span className="font-bold text-foreground">DELETE</span> to confirm</label>
+              <input value={deleteConfirm} onChange={(e) => setDeleteConfirm(e.target.value)} placeholder="DELETE" className={INPUT} />
+            </div>
+            <div className="flex gap-3">
+              <button onClick={closeModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
+              <button
+                disabled={deleteConfirm !== 'DELETE'}
+                className="flex-1 h-10 rounded-full bg-red-600 text-white font-bold text-sm hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

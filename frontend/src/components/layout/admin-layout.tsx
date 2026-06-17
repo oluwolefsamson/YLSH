@@ -12,7 +12,6 @@ import {
   LogOut,
   X,
 } from 'lucide-react'
-import { Logo } from '@/components/logo'
 import { cn } from '@/utils'
 
 interface Props {
@@ -48,9 +47,9 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
   const initials = superAdmin ? 'SA' : 'AD'
   const roleName = superAdmin ? 'System Administrator' : 'Platform Admin'
   const activeColor = superAdmin ? '#7c3aed' : '#127C71'
-  const sidebarGradient = superAdmin
+  const sidebarBg = superAdmin
     ? 'linear-gradient(135deg, rgba(30,10,60,0.98) 0%, rgba(90,40,140,0.97) 100%)'
-    : 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.97) 100%)'
+    : '#127C71'
 
   const handleConfirmSignOut = (): void => {
     setSignOutOpen(false)
@@ -60,12 +59,9 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
 
   const sidebar = (
     <div className="h-full flex flex-col">
-      {/* Gradient header */}
-      <div className="p-6 relative overflow-hidden" style={{ background: sidebarGradient }}>
+      {/* Header */}
+      <div className="px-6 py-5 relative overflow-hidden" style={{ background: sidebarBg }}>
         <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/6 pointer-events-none" />
-        <div className="relative z-10 mb-5">
-          <Logo />
-        </div>
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-[15px] border-2 border-white/25" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}>
             {initials}
@@ -73,10 +69,8 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
           <div className="min-w-0">
             <p className="text-white font-bold text-sm leading-snug">{portalLabel}</p>
             <div className="flex items-center gap-1.5">
-              <Shield size={11} style={{ color: superAdmin ? 'rgba(196,181,253,0.9)' : 'rgba(159,241,210,0.9)' }} />
-              <p className="text-[11px] font-semibold" style={{ color: superAdmin ? 'rgba(196,181,253,0.9)' : 'rgba(159,241,210,0.9)' }}>
-                {roleName}
-              </p>
+              <Shield size={11} className="text-white/80" />
+              <p className="text-[11px] font-semibold text-white/80">{roleName}</p>
             </div>
           </div>
         </div>
@@ -101,7 +95,7 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
                 )}
                 style={active
                   ? { color: activeColor, borderLeftColor: activeColor, background: `linear-gradient(90deg, ${activeColor}21 0%, ${activeColor}0a 100%)` }
-                  : { '--hover-color': activeColor } as React.CSSProperties
+                  : undefined
                 }
               >
                 <Icon size={16} />
@@ -128,7 +122,7 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
   )
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #f0f7f6 0%, #f3f6fb 100%)' }}>
+    <div className="min-h-screen bg-white">
       {mobileOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
@@ -149,13 +143,13 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
         <div className="flex-1 min-w-0">
           <div
             className="md:hidden flex items-center justify-between px-4 py-3 sticky top-0 z-40"
-            style={{ background: sidebarGradient }}
+            style={{ background: sidebarBg }}
           >
             <div className="flex items-center gap-3">
               <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg text-white hover:bg-white/10">
                 <Menu size={20} />
               </button>
-              <Logo />
+              <span className="text-white font-bold text-base tracking-wide">YLSH</span>
             </div>
             <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full border border-white/20 text-white" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
               {portalLabel}

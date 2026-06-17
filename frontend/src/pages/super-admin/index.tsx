@@ -1,4 +1,5 @@
 ﻿import React from 'react'
+import NextLink from 'next/link'
 import { Shield, Users, CalendarCheck, Award, ShieldCheck, GraduationCap, ShieldAlert } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
@@ -48,7 +49,7 @@ const SuperAdminOverviewPage: NextPageWithLayout = () => {
         <div className={CARD} style={CARD_STYLE}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">Admin Accounts</h2>
-            <button className="px-4 py-2 rounded-full bg-primary text-white text-sm font-bold hover:bg-[#0d5c54] transition-colors">+ Add admin</button>
+            <NextLink href="/super-admin/roles" className="px-4 py-2 rounded-full bg-primary text-white text-sm font-bold hover:bg-[#0d5c54] transition-colors">+ Add admin</NextLink>
           </div>
           <div className="flex flex-col gap-3">
             {adminAccounts.map((admin) => (
@@ -62,7 +63,7 @@ const SuperAdminOverviewPage: NextPageWithLayout = () => {
                   <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', admin.role === 'Super Admin' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground')}>
                     {admin.role}
                   </span>
-                  <button className="px-3 py-1 rounded-full border border-border text-xs font-semibold hover:bg-muted transition-colors">Edit</button>
+                  <NextLink href="/super-admin/roles" className="px-3 py-1 rounded-full border border-border text-xs font-semibold hover:bg-muted transition-colors">Edit</NextLink>
                 </div>
               </div>
             ))}

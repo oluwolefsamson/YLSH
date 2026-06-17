@@ -2,10 +2,11 @@ import React, { FC } from 'react'
 
 interface Props {
   onClick?: () => void
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'light'
 }
 
-const Logo: FC<Props> = ({ onClick }) => {
+const Logo: FC<Props> = ({ onClick, variant = 'primary' }) => {
+  const light = variant === 'light'
   return (
     <div
       onClick={onClick}
@@ -32,17 +33,13 @@ const Logo: FC<Props> = ({ onClick }) => {
       </div>
 
       <div className="flex flex-col leading-none">
-        <span className="text-[18px] font-extrabold tracking-[0.02em] text-foreground">YLSH</span>
-        <span className="mt-[3px] text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">
+        <span className={`text-[18px] font-extrabold tracking-[0.02em] ${light ? 'text-white' : 'text-foreground'}`}>YLSH</span>
+        <span className={`mt-[3px] text-[11px] font-semibold tracking-[0.16em] uppercase ${light ? 'text-white/70' : 'text-muted-foreground'}`}>
           Youth platform
         </span>
       </div>
     </div>
   )
-}
-
-Logo.defaultProps = {
-  variant: 'primary',
 }
 
 export default Logo

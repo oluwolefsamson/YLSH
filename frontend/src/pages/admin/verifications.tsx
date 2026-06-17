@@ -26,12 +26,23 @@ const TABS = ['All', 'Pending', 'Verified', 'Rejected']
 const AdminVerificationsPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
   const [search, setSearch] = useState('')
+  const [statuses, setStatuses] = useState<Record<number, string>>(() =>
+    Object.fromEntries(verifications.map((v) => [v.id, v.status]))
+  )
+
+  const approve = (id: number): void => setStatuses((prev) => ({ ...prev, [id]: 'verified' }))
+  const reject = (id: number): void => setStatuses((prev) => ({ ...prev, [id]: 'rejected' }))
 
   const filtered = verifications
-    .filter((v) => tab === 0 ? true : tab === 1 ? v.status === 'pending' : tab === 2 ? v.status === 'verified' : v.status === 'rejected')
+    .filter((v) => tab === 0 ? true : tab === 1 ? statuses[v.id] === 'pending' : tab === 2 ? statuses[v.id] === 'verified' : statuses[v.id] === 'rejected')
     .filter((v) => search === '' || v.name.toLowerCase().includes(search.toLowerCase()) || v.email.toLowerCase().includes(search.toLowerCase()))
 
-  const tabCounts = [verifications.length, verifications.filter((v) => v.status === 'pending').length, verifications.filter((v) => v.status === 'verified').length, verifications.filter((v) => v.status === 'rejected').length]
+  const tabCounts = [
+    verifications.length,
+    verifications.filter((v) => statuses[v.id] === 'pending').length,
+    verifications.filter((v) => statuses[v.id] === 'verified').length,
+    verifications.filter((v) => statuses[v.id] === 'rejected').length,
+  ]
 
   return (
     <div>
@@ -74,14 +85,14 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className={cn('inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold capitalize', statusStyles[v.status])}>
-                  {statusIcon[v.status]}{v.status}
+              <div className="flex items-center gap-3 flex-wrap justify-end">
+                <span className={cn('inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold capitalize', statusStyles[statuses[v.id]])}>
+                  {statusIcon[statuses[v.id]]}{statuses[v.id]}
                 </span>
-                {v.status === 'pending' && (
+                {statuses[v.id] === 'pending' && (
                   <div className="flex gap-2">
-                    <button className="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-bold hover:bg-[#0d5c54] transition-colors">Approve</button>
-                    <button className="px-4 py-1.5 rounded-full border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 transition-colors">Reject</button>
+                    <button onClick={() => approve(v.id)} className="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-bold hover:bg-[#0d5c54] transition-colors">Approve</button>
+                    <button onClick={() => reject(v.id)} className="px-4 py-1.5 rounded-full border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 transition-colors">Reject</button>
                   </div>
                 )}
               </div>

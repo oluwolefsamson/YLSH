@@ -10,7 +10,7 @@ const HomeFeature: FC = () => {
 
           {/* Image column */}
           <div className="relative order-2 lg:order-1">
-            <div className="rounded-3xl overflow-hidden shadow-2xl border border-slate-200/60">
+            <div className="rounded-3xl overflow-hidden">
               <Image
                 src="/images/home-feature.png"
                 alt="YLSH platform features"

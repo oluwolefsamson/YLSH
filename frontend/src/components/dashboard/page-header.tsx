@@ -13,8 +13,8 @@ const PageHeader: FC<Props> = ({ eyebrow, title, subtitle, icon, action }) => {
     <div
       className="relative overflow-hidden rounded-2xl mb-6 p-6 md:p-8"
       style={{
-        background: 'linear-gradient(135deg, rgba(8,47,73,0.97) 0%, rgba(18,124,113,0.97) 100%)',
-        boxShadow: '0 20px 60px rgba(8,47,73,0.25)',
+        background: 'linear-gradient(135deg, #127C71 0%, #0d5c54 100%)',
+        boxShadow: '0 20px 60px rgba(18,124,113,0.25)',
       }}
     >
       {/* Decorative circles */}
@@ -25,7 +25,7 @@ const PageHeader: FC<Props> = ({ eyebrow, title, subtitle, icon, action }) => {
         <div>
           <span
             className="inline-flex items-center gap-1.5 mb-3 px-2.5 py-0.5 rounded-full text-[11px] font-semibold tracking-[0.05em] border border-white/18"
-            style={{ backgroundColor: 'rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.92)' }}
+            style={{ backgroundColor: 'rgba(255,255,255,0.14)', color: 'rgba(255,255,255,1)' }}
           >
             {icon && <span className="flex text-white/90 [&>svg]:w-3.5 [&>svg]:h-3.5">{icon}</span>}
             {eyebrow}
@@ -37,7 +37,7 @@ const PageHeader: FC<Props> = ({ eyebrow, title, subtitle, icon, action }) => {
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-2 text-white/72 max-w-[560px] leading-relaxed">{subtitle}</p>
+            <p className="mt-2 text-white/90 max-w-[560px] leading-relaxed">{subtitle}</p>
           )}
         </div>
         {action && <div className="flex-shrink-0">{action}</div>}

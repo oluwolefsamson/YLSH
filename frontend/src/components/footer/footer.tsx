@@ -8,7 +8,7 @@ const Footer: FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-10">
           <div className="w-full md:w-[360px]">
             <h2 className="text-3xl font-bold mb-3">YLSH</h2>
-            <p className="text-white/80 leading-relaxed tracking-wide text-sm mb-4">
+            <p className="text-white/90 leading-relaxed tracking-wide text-sm mb-4">
               Young Leaders Summit Hub is a youth ecosystem and event operating system for identity,
               participation, certification, mentorship, learning, opportunities, and analytics.
             </p>

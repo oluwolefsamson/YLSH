@@ -56,6 +56,26 @@ const SignUpPage: NextPage = () => {
         subtitle="Step through identity verification, personal details, and account setup before creating your account."
       >
         <div className="relative flex flex-col gap-5">
+          {/* Google sign-up */}
+          <button
+            type="button"
+            className="w-full h-11 flex items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+          >
+            <svg width="18" height="18" viewBox="0 0 48 48" fill="none">
+              <path d="M47.532 24.552c0-1.636-.147-3.2-.42-4.704H24.48v8.896h12.96c-.56 3.008-2.24 5.552-4.768 7.264v6.032h7.712c4.512-4.16 7.148-10.288 7.148-17.488z" fill="#4285F4"/>
+              <path d="M24.48 48c6.48 0 11.92-2.144 15.904-5.808l-7.712-6.032c-2.144 1.44-4.88 2.288-8.192 2.288-6.304 0-11.648-4.256-13.552-9.984H3.008v6.224C6.976 42.8 15.136 48 24.48 48z" fill="#34A853"/>
+              <path d="M10.928 28.464A14.44 14.44 0 0 1 10.4 24c0-1.552.272-3.056.528-4.464V13.312H3.008A23.968 23.968 0 0 0 .48 24c0 3.872.928 7.52 2.528 10.688l7.92-6.224z" fill="#FBBC05"/>
+              <path d="M24.48 9.552c3.552 0 6.736 1.216 9.248 3.616l6.912-6.912C36.4 2.368 30.96 0 24.48 0 15.136 0 6.976 5.2 3.008 13.312l7.92 6.224c1.904-5.728 7.248-9.984 13.552-9.984z" fill="#EA4335"/>
+            </svg>
+            Sign up with Google
+          </button>
+
+          <div className="flex items-center gap-3">
+            <hr className="flex-1 border-border" />
+            <span className="text-xs text-muted-foreground">or create account with NIN</span>
+            <hr className="flex-1 border-border" />
+          </div>
+
           {isCreated && (
             <div className="absolute inset-0 z-20 rounded-2xl bg-white/78 backdrop-blur-sm grid place-items-center">
               <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -207,15 +227,6 @@ const SignUpPage: NextPage = () => {
             </label>
           )}
 
-          <div className="flex items-center gap-3">
-            <hr className="flex-1 border-border" />
-            <span className="text-xs text-muted-foreground">or</span>
-            <hr className="flex-1 border-border" />
-          </div>
-
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Step-based onboarding keeps NIN verification first, then profile details, then account creation at the Account details step.
-          </p>
         </div>
       </AuthFormCard>
     </AuthShell>

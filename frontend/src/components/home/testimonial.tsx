@@ -5,16 +5,16 @@ import { data } from './testimonial.data'
 
 const HomeTestimonial: FC = () => {
   return (
-    <section id="testimonial" className="py-16 md:py-20" style={{ background: 'linear-gradient(180deg, #f3f6fb 0%, #ffffff 100%)' }}>
+    <section id="testimonial" className="py-16 md:py-20 bg-[#127C71]">
       <div className="container">
 
         {/* Header */}
         <div className="text-center mb-12">
-          <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-3">
+          <span className="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-sm font-semibold mb-3">
             Testimonials
           </span>
-          <h2 className="text-[30px] md:text-[40px] font-bold text-[#082F49]">What the team says</h2>
-          <p className="text-muted-foreground mt-2 max-w-md mx-auto text-sm">
+          <h2 className="text-[30px] md:text-[40px] font-bold text-white">What the team says</h2>
+          <p className="text-white/85 mt-2 max-w-md mx-auto text-sm">
             Feedback from across the program — admins, participants, engineers, and leadership.
           </p>
         </div>

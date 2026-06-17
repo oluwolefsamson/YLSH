@@ -1,5 +1,5 @@
-﻿import React, { useState } from 'react'
-import { Trophy, Briefcase, Clock, DollarSign, GraduationCap, Calendar, Building, Send, CheckCircle, Hourglass, MapPin } from 'lucide-react'
+import React, { useState } from 'react'
+import { Trophy, Briefcase, Clock, DollarSign, GraduationCap, Calendar, Building, Send, CheckCircle, Hourglass, MapPin, X, User, Mail, FileText } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
@@ -7,6 +7,7 @@ import { cn } from '@/utils'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
+const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors'
 
 type OppType = 'job' | 'internship' | 'grant' | 'scholarship'
 
@@ -42,14 +43,38 @@ type TabType = OppType | 'all'
 const tabTypes: TabType[] = ['all', 'job', 'internship', 'grant', 'scholarship']
 const TABS = ['All', 'Jobs', 'Internships', 'Grants', 'Scholarships']
 
+type Opp = typeof opportunities[0]
+
 const OpportunitiesPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
+  const [applyModal, setApplyModal] = useState<Opp | null>(null)
+  const [appliedIds, setAppliedIds] = useState<Set<number>>(new Set(myApplications.map((a) => a.id)))
+  const [applyDone, setApplyDone] = useState(false)
+  const [coverLetter, setCoverLetter] = useState('')
+
   const filtered = tab === 0 ? opportunities : opportunities.filter((o) => o.type === tabTypes[tab])
-  const appliedIds = new Set(myApplications.map((a) => a.id))
+
+  const openApply = (opp: Opp) => {
+    setCoverLetter('')
+    setApplyDone(false)
+    setApplyModal(opp)
+  }
+
+  const handleSubmitApplication = () => {
+    if (applyModal) {
+      setAppliedIds((prev) => new Set(prev).add(applyModal.id))
+      setApplyDone(true)
+    }
+  }
 
   return (
     <div>
-      <PageHeader eyebrow="Opportunities" title="Opportunities" subtitle="Discover jobs, internships, grants, and scholarships. Apply directly and track your application status." icon={<Trophy size={14} />} />
+      <PageHeader
+        eyebrow="Opportunities"
+        title="Opportunities"
+        subtitle="Discover jobs, internships, grants, and scholarships. Apply directly and track your application status."
+        icon={<Trophy size={14} />}
+      />
 
       {myApplications.length > 0 && (
         <div className={cn(CARD, 'mb-5')} style={CARD_STYLE}>
@@ -109,7 +134,11 @@ const OpportunitiesPage: NextPageWithLayout = () => {
                   <span className="text-xs text-muted-foreground">{opp.location}</span>
                 </div>
               </div>
-              <button disabled={appliedIds.has(opp.id)} className={cn('w-full h-10 rounded-full font-bold text-sm transition-colors flex items-center justify-center gap-2', appliedIds.has(opp.id) ? 'border border-border text-muted-foreground cursor-default' : 'bg-primary text-white hover:bg-[#0d5c54]')}>
+              <button
+                disabled={appliedIds.has(opp.id)}
+                onClick={() => openApply(opp)}
+                className={cn('w-full h-10 rounded-full font-bold text-sm transition-colors flex items-center justify-center gap-2', appliedIds.has(opp.id) ? 'border border-border text-muted-foreground cursor-default' : 'bg-primary text-white hover:bg-[#0d5c54]')}
+              >
                 {!appliedIds.has(opp.id) && <Send size={14} />}
                 {appliedIds.has(opp.id) ? 'Applied' : 'Apply Now'}
               </button>
@@ -117,6 +146,85 @@ const OpportunitiesPage: NextPageWithLayout = () => {
           ))}
         </div>
       </div>
+
+      {/* Apply Modal */}
+      {applyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setApplyModal(null)} />
+          <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+            {!applyDone ? (
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-lg">Apply for Opportunity</h3>
+                  <button onClick={() => setApplyModal(null)} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+                    <X size={18} />
+                  </button>
+                </div>
+                <div className="p-4 rounded-xl bg-muted mb-5">
+                  <p className="font-bold">{applyModal.title}</p>
+                  <p className="text-sm text-muted-foreground">{applyModal.organization} · {applyModal.location}</p>
+                </div>
+                <div className="flex flex-col gap-4 mb-5">
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">Full name</label>
+                    <div className="relative">
+                      <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <input value="Amina Bello" readOnly className={cn(INPUT, 'pl-9 bg-muted')} />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">Email address</label>
+                    <div className="relative">
+                      <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <input value="amina.bello@example.com" readOnly className={cn(INPUT, 'pl-9 bg-muted')} />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-muted-foreground mb-1">
+                      Cover letter <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <FileText size={15} className="absolute left-3 top-3 text-muted-foreground" />
+                      <textarea
+                        value={coverLetter}
+                        onChange={(e) => setCoverLetter(e.target.value)}
+                        placeholder="Briefly describe why you're a great fit for this opportunity..."
+                        rows={5}
+                        className="w-full pl-9 pr-3 py-2 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setApplyModal(null)} className="flex-1 h-10 rounded-full border-2 border-slate-300 text-foreground font-semibold text-sm hover:bg-muted transition-colors">
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSubmitApplication}
+                    disabled={!coverLetter.trim()}
+                    className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Send size={14} /> Submit Application
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center text-center py-6">
+                <div className="w-16 h-16 rounded-full bg-green-100 grid place-items-center mb-4">
+                  <CheckCircle size={32} className="text-green-600" />
+                </div>
+                <h3 className="font-bold text-lg mb-1">Application Submitted!</h3>
+                <p className="text-sm text-muted-foreground mb-5">
+                  Your application to <strong>{applyModal.title}</strong> at {applyModal.organization} has been submitted. You'll be notified of updates.
+                </p>
+                <button onClick={() => setApplyModal(null)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">
+                  Done
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

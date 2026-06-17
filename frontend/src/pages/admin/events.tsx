@@ -1,5 +1,5 @@
 ﻿import React, { useState, useRef, useEffect } from 'react'
-import { CalendarCheck, Calendar, MapPin, Users, MoreVertical, Plus } from 'lucide-react'
+import { CalendarCheck, Calendar, MapPin, Users, MoreVertical, Plus, X } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
@@ -25,9 +25,13 @@ const categoryBadge: Record<string, string> = {
 
 const TABS = ['All', 'Upcoming', 'Past']
 
+const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors'
+
 const AdminEventsPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
   const [menuId, setMenuId] = useState<number | null>(null)
+  const [showCreate, setShowCreate] = useState(false)
+  const [createForm, setCreateForm] = useState({ title: '', date: '', venue: '', category: 'Summit', capacity: '' })
   const menuRef = useRef<HTMLDivElement>(null)
 
   const filtered = tab === 0 ? events : tab === 1 ? events.filter((e) => e.status === 'upcoming') : events.filter((e) => e.status === 'past')
@@ -48,7 +52,7 @@ const AdminEventsPage: NextPageWithLayout = () => {
         subtitle="Create, edit, and manage all YLSH events and sessions."
         icon={<CalendarCheck size={14} />}
         action={
-          <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/50 text-white text-sm font-bold hover:bg-white/10 transition-colors">
+          <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/50 text-white text-sm font-bold hover:bg-white/10 transition-colors">
             <Plus size={16} /> Create event
           </button>
         }
@@ -108,6 +112,50 @@ const AdminEventsPage: NextPageWithLayout = () => {
           ))}
         </div>
       </div>
+
+      {/* Create event modal */}
+      {showCreate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(8,47,73,0.55)', backdropFilter: 'blur(4px)' }}>
+          <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl p-6 md:p-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold">Create new event</h2>
+              <button onClick={() => setShowCreate(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
+                <X size={18} className="text-muted-foreground" />
+              </button>
+            </div>
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Event title</label>
+                <input value={createForm.title} onChange={(e) => setCreateForm((p) => ({ ...p, title: e.target.value }))} placeholder="e.g. Youth Innovation Forum 2026" className={INPUT} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5">Date</label>
+                  <input type="date" value={createForm.date} onChange={(e) => setCreateForm((p) => ({ ...p, date: e.target.value }))} className={INPUT} />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5">Capacity</label>
+                  <input type="number" value={createForm.capacity} onChange={(e) => setCreateForm((p) => ({ ...p, capacity: e.target.value }))} placeholder="e.g. 200" className={INPUT} />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Venue</label>
+                <input value={createForm.venue} onChange={(e) => setCreateForm((p) => ({ ...p, venue: e.target.value }))} placeholder="e.g. Transcorp Hilton, Abuja" className={INPUT} />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Category</label>
+                <select value={createForm.category} onChange={(e) => setCreateForm((p) => ({ ...p, category: e.target.value }))} className={INPUT}>
+                  {['Summit', 'Workshop', 'Masterclass', 'Forum'].map((c) => <option key={c}>{c}</option>)}
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button onClick={() => setShowCreate(false)} className="flex-1 h-11 rounded-full border border-border font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
+                <button onClick={() => setShowCreate(false)} className="flex-1 h-11 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Create event</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -12,7 +12,6 @@ import {
   Star,
   X,
 } from 'lucide-react'
-import { Logo } from '@/components/logo'
 import { cn } from '@/utils'
 
 interface Props { children: ReactNode }
@@ -41,13 +40,10 @@ const MentorLayout: FC<Props> = ({ children }) => {
   const sidebar = (
     <div className="h-full flex flex-col">
       <div
-        className="p-6 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.97) 100%)' }}
+        className="px-6 py-5 relative overflow-hidden"
+        style={{ background: '#127C71' }}
       >
         <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/6 pointer-events-none" />
-        <div className="relative z-10 mb-5">
-          <Logo />
-        </div>
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-[15px] border-2 border-white/25" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}>
             NA
@@ -55,8 +51,8 @@ const MentorLayout: FC<Props> = ({ children }) => {
           <div className="min-w-0">
             <p className="text-white font-bold text-sm leading-snug">Ngozi Adeyemi</p>
             <div className="flex items-center gap-1.5">
-              <Star size={11} style={{ color: 'rgba(255,210,100,0.9)' }} />
-              <p className="text-[11px] font-semibold" style={{ color: 'rgba(255,210,100,0.9)' }}>4.9 · Senior Mentor</p>
+              <Star size={11} className="text-white/80" />
+              <p className="text-[11px] font-semibold text-white/80">4.9 · Senior Mentor</p>
             </div>
           </div>
         </div>
@@ -75,13 +71,13 @@ const MentorLayout: FC<Props> = ({ children }) => {
                 className={cn(
                   'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150',
                   active
-                    ? 'bg-gradient-to-r from-primary/13 to-primary/4 border-l-[3px] border-primary pl-[9px] text-primary font-bold'
-                    : 'text-muted-foreground hover:bg-primary/6 hover:text-primary'
+                    ? 'bg-green-50 border-l-[3px] border-[#127C71] pl-[9px] text-[#127C71] font-bold'
+                    : 'text-muted-foreground hover:bg-[#127C71]/8 hover:text-[#127C71]'
                 )}
               >
                 <Icon size={16} />
                 {item.label}
-                {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />}
+                {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#127C71]" />}
               </NextLink>
             )
           })}
@@ -102,7 +98,7 @@ const MentorLayout: FC<Props> = ({ children }) => {
   )
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #f0f7f6 0%, #f3f6fb 100%)' }}>
+    <div className="min-h-screen bg-white">
       {mobileOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
@@ -123,13 +119,13 @@ const MentorLayout: FC<Props> = ({ children }) => {
         <div className="flex-1 min-w-0">
           <div
             className="md:hidden flex items-center justify-between px-4 py-3 sticky top-0 z-40"
-            style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.97) 0%, rgba(18,124,113,0.97) 100%)' }}
+            style={{ background: '#127C71' }}
           >
             <div className="flex items-center gap-3">
               <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg text-white hover:bg-white/10">
                 <Menu size={20} />
               </button>
-              <Logo />
+              <span className="text-white font-bold text-base tracking-wide">YLSH</span>
             </div>
             <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full border border-white/20 text-white" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
               Mentor

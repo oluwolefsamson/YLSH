@@ -1,4 +1,5 @@
 import React from 'react'
+import NextLink from 'next/link'
 import {
   ShieldCheck,
   Users,
@@ -65,7 +66,7 @@ const AdminOverviewPage: NextPageWithLayout = () => {
         <div className={CARD} style={CARD_STYLE}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">Recent Users</h2>
-            <button className="text-xs font-semibold px-3 py-1 rounded-full border border-border hover:bg-muted transition-colors">View all</button>
+            <NextLink href="/admin/users" className="text-xs font-semibold px-3 py-1 rounded-full border border-border hover:bg-muted transition-colors">View all</NextLink>
           </div>
           <div className="flex flex-col gap-3">
             {recentUsers.map((user) => (
@@ -92,7 +93,7 @@ const AdminOverviewPage: NextPageWithLayout = () => {
           <div className={CARD} style={CARD_STYLE}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Events</h2>
-              <button className="text-xs font-semibold px-3 py-1 rounded-full border border-border hover:bg-muted transition-colors">Manage</button>
+              <NextLink href="/admin/events" className="text-xs font-semibold px-3 py-1 rounded-full border border-border hover:bg-muted transition-colors">Manage</NextLink>
             </div>
             <div className="flex flex-col gap-3">
               {recentEvents.map((event) => (
@@ -129,7 +130,7 @@ const AdminOverviewPage: NextPageWithLayout = () => {
               { label: 'Active mentorship sessions', value: '+43' },
             ].map((row) => (
               <div key={row.label} className="flex justify-between mt-3">
-                <p className="text-sm text-white/75">{row.label}</p>
+                <p className="text-sm text-white/90">{row.label}</p>
                 <p className="text-sm font-bold" style={{ color: 'rgba(134,239,172,0.9)' }}>{row.value}</p>
               </div>
             ))}

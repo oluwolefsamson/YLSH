@@ -30,7 +30,7 @@ const HomeNewsLetter: FC = () => {
               Join YLSH today —<br className="hidden sm:block" /> it&apos;s completely free
             </h2>
 
-            <p className="text-white/75 mb-10 text-lg max-w-xl mx-auto leading-relaxed">
+            <p className="text-white/90 mb-10 text-lg max-w-xl mx-auto leading-relaxed">
               Manage events, verify identities, issue certificates, and grow your community.
               Every module, zero cost.
             </p>
@@ -60,12 +60,12 @@ const HomeNewsLetter: FC = () => {
 
             <div className="flex items-center justify-center gap-6">
               <Link href="/signup">
-                <button className="text-white/80 text-sm hover:text-white underline underline-offset-2 transition-colors">
+                <button className="text-white/90 text-sm hover:text-white underline underline-offset-2 transition-colors">
                   Create account →
                 </button>
               </Link>
               <Link href="/signin">
-                <button className="text-white/80 text-sm hover:text-white underline underline-offset-2 transition-colors">
+                <button className="text-white/90 text-sm hover:text-white underline underline-offset-2 transition-colors">
                   Already have one? Sign in
                 </button>
               </Link>

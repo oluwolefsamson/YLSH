@@ -1,4 +1,5 @@
 ﻿import React from 'react'
+import NextLink from 'next/link'
 import { Users, Calendar, Star, CheckCircle, Video, Hourglass, LayoutDashboard } from 'lucide-react'
 import { MentorLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
@@ -49,9 +50,9 @@ const MentorOverviewPage: NextPageWithLayout = () => {
                   <p className="text-sm text-muted-foreground">{session.topic}</p>
                   <p className="text-xs text-muted-foreground">{session.date} · {session.time}</p>
                 </div>
-                <button className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors flex-shrink-0">
+                <NextLink href="/mentor/sessions" className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors flex-shrink-0">
                   <Video size={14} /> Join
-                </button>
+                </NextLink>
               </div>
             ))}
           </div>

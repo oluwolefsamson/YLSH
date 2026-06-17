@@ -1,5 +1,5 @@
-﻿import React, { useState } from 'react'
-import { Users, Calendar, CheckCircle, Video, Hourglass, Star, Briefcase } from 'lucide-react'
+import React, { useState } from 'react'
+import { Users, Calendar, CheckCircle, Video, Hourglass, Star, Briefcase, X, ExternalLink } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
@@ -16,12 +16,14 @@ const mentors = [
 ]
 
 const mySessions = [
-  { id: 1, mentorName: 'Dr. Ngozi Adeyemi', topic: 'Career roadmap in software engineering', date: 'Jun 20, 2026', time: '3:00 PM', status: 'upcoming', mode: 'Video call' },
-  { id: 2, mentorName: 'Emeka Okafor', topic: 'Pitching to investors for the first time', date: 'May 28, 2026', time: '11:00 AM', status: 'completed', mode: 'Video call' },
-  { id: 3, mentorName: 'Fatima Al-Hassan', topic: 'Writing policy briefs that get noticed', date: 'May 10, 2026', time: '2:00 PM', status: 'completed', mode: 'Video call' },
+  { id: 1, mentorName: 'Dr. Ngozi Adeyemi', topic: 'Career roadmap in software engineering', date: 'Jun 20, 2026', time: '3:00 PM', status: 'upcoming', mode: 'Video call', meetLink: 'https://meet.google.com/abc-defg-hij' },
+  { id: 2, mentorName: 'Emeka Okafor', topic: 'Pitching to investors for the first time', date: 'May 28, 2026', time: '11:00 AM', status: 'completed', mode: 'Video call', meetLink: '' },
+  { id: 3, mentorName: 'Fatima Al-Hassan', topic: 'Writing policy briefs that get noticed', date: 'May 10, 2026', time: '2:00 PM', status: 'completed', mode: 'Video call', meetLink: '' },
 ]
 
 const MENTOR_TABS = ['All', 'Tech & Engineering', 'Entrepreneurship', 'Policy & Governance', 'Marketing & Growth']
+
+type Session = typeof mySessions[0]
 
 const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
   <div className="flex items-center gap-0.5">
@@ -33,6 +35,8 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
 
 const MentorshipPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
+  const [bookedIds, setBookedIds] = useState<Set<number>>(new Set())
+  const [joinModal, setJoinModal] = useState<Session | null>(null)
   const upcomingCount = mySessions.filter((s) => s.status === 'upcoming').length
   const completedCount = mySessions.filter((s) => s.status === 'completed').length
 
@@ -40,7 +44,12 @@ const MentorshipPage: NextPageWithLayout = () => {
 
   return (
     <div>
-      <PageHeader eyebrow="Mentorship" title="Mentorship" subtitle="Discover mentors, book one-on-one sessions, and track your mentorship journey across career, entrepreneurship, policy, and more." icon={<Users size={14} />} />
+      <PageHeader
+        eyebrow="Mentorship"
+        title="Mentorship"
+        subtitle="Discover mentors, book one-on-one sessions, and track your mentorship journey across career, entrepreneurship, policy, and more."
+        icon={<Users size={14} />}
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard label="Total Sessions" value={String(mySessions.length)} icon={<Users size={20} />} progress={100} />
@@ -73,7 +82,10 @@ const MentorshipPage: NextPageWithLayout = () => {
                   {session.status === 'upcoming' ? 'Upcoming' : 'Completed'}
                 </span>
                 {session.status === 'upcoming' && (
-                  <button className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-primary text-primary text-sm font-semibold hover:bg-primary/5 transition-colors">
+                  <button
+                    onClick={() => setJoinModal(session)}
+                    className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-primary text-primary text-sm font-semibold hover:bg-primary/5 transition-colors"
+                  >
                     <Video size={14} /> Join
                   </button>
                 )}
@@ -117,13 +129,57 @@ const MentorshipPage: NextPageWithLayout = () => {
                 </div>
                 <span className="text-xs text-muted-foreground">Available: {mentor.availability}</span>
               </div>
-              <button className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">
-                Book Session
+              <button
+                onClick={() => setBookedIds((prev) => { const s = new Set(prev); s.add(mentor.id); return s })}
+                disabled={bookedIds.has(mentor.id)}
+                className={cn('w-full h-10 rounded-full font-bold text-sm transition-colors flex items-center justify-center gap-2', bookedIds.has(mentor.id) ? 'bg-green-100 text-green-700 cursor-default' : 'bg-primary text-white hover:bg-[#0d5c54]')}
+              >
+                {bookedIds.has(mentor.id) ? <><CheckCircle size={16} /> Request sent</> : 'Book Session'}
               </button>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Join Session Modal */}
+      {joinModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setJoinModal(null)} />
+          <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-bold text-lg">Join Session</h3>
+              <button onClick={() => setJoinModal(null)} className="p-1.5 rounded-lg hover:bg-muted"><X size={18} /></button>
+            </div>
+            <div className="p-4 rounded-xl bg-muted mb-4">
+              <p className="font-bold">{joinModal.topic}</p>
+              <p className="text-sm text-muted-foreground">with {joinModal.mentorName}</p>
+              <div className="flex items-center gap-2 mt-2">
+                <Calendar size={13} className="text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">{joinModal.date} · {joinModal.time}</span>
+              </div>
+            </div>
+            <div className="p-4 rounded-xl border border-primary/20 mb-5" style={{ backgroundColor: 'rgba(18,124,113,0.05)' }}>
+              <div className="flex items-center gap-2 mb-2">
+                <Video size={16} className="text-primary" />
+                <p className="text-sm font-semibold text-primary">Google Meet</p>
+              </div>
+              <p className="font-mono text-sm text-muted-foreground">{joinModal.meetLink}</p>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setJoinModal(null)} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
+              <a
+                href={joinModal.meetLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setJoinModal(null)}
+                className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors flex items-center justify-center gap-2"
+              >
+                <ExternalLink size={14} /> Join Now
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
