@@ -12,7 +12,7 @@ const badges = [
 
 const HomeHero: FC = () => {
   return (
-    <section id="hero" className="relative min-h-[60vh] flex flex-col justify-center overflow-hidden bg-black">
+    <section id="hero" className="relative min-h-[50vh] md:min-h-[60vh] flex flex-col justify-center overflow-hidden bg-black">
 
       {/* Video background */}
       <video
@@ -29,7 +29,7 @@ const HomeHero: FC = () => {
       <div className="absolute inset-0 bg-black/55" />
 
       {/* Content */}
-      <div className="relative z-10 container py-24 md:py-32">
+      <div className="relative z-10 container py-12 md:py-32">
         <div className="max-w-3xl mx-auto text-center">
 
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white text-sm font-semibold mb-6">
@@ -64,7 +64,7 @@ const HomeHero: FC = () => {
           </div>
 
           {/* CTA buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-14">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8 md:mb-14">
             <Link href="/signup">
               <button className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-[#082F49] font-bold text-[15px] shadow-lg hover:bg-white/90 transition-colors">
                 Get Started Free

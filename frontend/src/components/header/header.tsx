@@ -18,7 +18,7 @@ const Header: FC = () => {
             onClick={() => setVisibleMenu(!visibleMenu)}
             aria-label="Toggle menu"
           >
-            <Menu size={22} />
+            {visibleMenu ? <X size={22} /> : <Menu size={22} />}
           </button>
 
           {/* Desktop nav */}
@@ -43,7 +43,7 @@ const Header: FC = () => {
           >
             <X size={22} />
           </button>
-          <Navigation />
+          <Navigation onSelect={() => setVisibleMenu(false)} />
           <div className="mt-8">
             <AuthNavigation />
           </div>

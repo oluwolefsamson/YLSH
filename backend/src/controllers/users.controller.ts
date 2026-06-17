@@ -260,6 +260,39 @@ export const createAdmin = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
+// POST /api/users/me/change-password  (self)
+export const changePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { currentPassword, newPassword } = req.body as { currentPassword: string; newPassword: string }
+    if (!currentPassword || !newPassword) {
+      res.status(400).json({ message: 'currentPassword and newPassword are required' }); return
+    }
+    if (newPassword.length < 6) {
+      res.status(400).json({ message: 'New password must be at least 6 characters' }); return
+    }
+
+    const user = await User.findById(req.user!._id)
+    if (!user) { res.status(404).json({ message: 'User not found' }); return }
+
+    const valid = await user.comparePassword(currentPassword)
+    if (!valid) { res.status(400).json({ message: 'Current password is incorrect' }); return }
+
+    user.password = newPassword
+    await user.save()
+
+    await AuditLog.create({
+      action: 'PASSWORD_CHANGED',
+      actor: user._id,
+      actorName: user.fullName,
+      actorEmail: user.email,
+    })
+
+    res.json({ message: 'Password updated successfully' })
+  } catch (err) {
+    next(err)
+  }
+}
+
 // DELETE /api/users/:id  (admin)
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

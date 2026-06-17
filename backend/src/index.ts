@@ -15,6 +15,10 @@ import certificateRoutes from './routes/certificates.routes'
 import analyticsRoutes from './routes/analytics.routes'
 import speakerRoutes from './routes/speakers.routes'
 import volunteerRoutes from './routes/volunteers.routes'
+import mentorRoutes from './routes/mentors.routes'
+import sessionRoutes from './routes/sessions.routes'
+import opportunityRoutes from './routes/opportunities.routes'
+import learningRoutes from './routes/learning.routes'
 
 const app = express()
 const PORT = process.env.PORT || 8000
@@ -40,6 +44,10 @@ const bootstrap = async () => {
   app.use('/api/analytics', analyticsRoutes)
   app.use('/api/speakers', speakerRoutes)
   app.use('/api/volunteers', volunteerRoutes)
+  app.use('/api/mentors', mentorRoutes)
+  app.use('/api/sessions', sessionRoutes)
+  app.use('/api/opportunities', opportunityRoutes)
+  app.use('/api/learning', learningRoutes)
 
   app.use((err: Error & { status?: number }, _req: Request, res: Response, _next: NextFunction) => {
     console.error(err.stack)

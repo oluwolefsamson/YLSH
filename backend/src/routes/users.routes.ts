@@ -8,6 +8,7 @@ const router = Router()
 // Self
 router.get('/me', auth, ctrl.getMe)
 router.put('/me', auth, ctrl.updateMe)
+router.post('/me/change-password', auth, ctrl.changePassword)
 
 // Mentor approval (admin/super-admin)
 router.get('/mentors/pending', auth, rbac('admin', 'super-admin'), ctrl.listPendingMentors)

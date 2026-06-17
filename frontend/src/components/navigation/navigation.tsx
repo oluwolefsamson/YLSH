@@ -2,7 +2,11 @@ import React, { FC } from 'react'
 import { Link as ScrollLink } from 'react-scroll'
 import { navigations } from './navigation.data'
 
-const Navigation: FC = () => {
+interface NavigationProps {
+  onSelect?: () => void
+}
+
+const Navigation: FC<NavigationProps> = ({ onSelect }) => {
   return (
     <nav className="flex flex-col md:flex-row">
       {navigations.map(({ path: destination, label }) => (
@@ -13,6 +17,7 @@ const Navigation: FC = () => {
           spy={true}
           smooth={true}
           duration={350}
+          onClick={onSelect}
           className="relative text-muted-foreground font-semibold cursor-pointer inline-flex items-center justify-center
             px-0 md:px-5 mb-6 md:mb-0 text-lg md:text-base
             hover:text-primary transition-colors [&.current]:text-primary group"
