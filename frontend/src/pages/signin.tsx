@@ -11,7 +11,7 @@ import AuthFormCard from "@/components/auth/auth-form-card"
 import AuthLink from "@/components/auth/auth-link"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 import { useAuth } from "@/contexts/AuthContext"
-import { login as apiLogin, loginVerifyOtp, type AuthUser } from "@/services/endpoints/auth/auth"
+import { login as apiLogin, loginVerifyOtp, type AuthUser, type AuthResponse } from "@/services/endpoints/auth/auth"
 
 type SigninStep = "select" | "form" | "otp"
 
@@ -118,7 +118,7 @@ const SignInPage: NextPage = () => {
         return
       }
 
-      const { token, user } = resp
+      const { token, user } = resp as AuthResponse
 
       if (user.role === "mentor" && user.approvalStatus !== "approved") {
         storeAndSetUser(token, user)
