@@ -157,7 +157,12 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       user.lastActive = new Date()
       await user.save()
 
-      await sendLoginOTP(user.email, otp)
+      try {
+        await sendLoginOTP(user.email, otp)
+      } catch {
+        res.status(500).json({ message: 'Failed to send verification email. Check email configuration.' })
+        return
+      }
       const preAuthToken = signPreAuthToken(String(user._id))
       res.json({ requiresOtp: true, preAuthToken })
       return
