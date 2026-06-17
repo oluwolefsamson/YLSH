@@ -10,7 +10,7 @@ const Logo: FC<Props> = ({ onClick }) => {
     <div
       onClick={onClick}
       className="inline-flex items-center select-none"
-      style={{ cursor: onClick ? 'pointer' : 'default' }}
+      style={{ cursor: onClick ? 'pointer' : 'inherit' }}
     >
       <img
         src="/images/yls-logo.svg"

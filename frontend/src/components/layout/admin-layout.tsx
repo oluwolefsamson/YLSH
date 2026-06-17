@@ -13,6 +13,7 @@ import {
   X,
 } from 'lucide-react'
 import { cn } from '@/utils'
+import type { NavItem } from '@/types'
 
 interface Props {
   children: ReactNode
@@ -21,7 +22,7 @@ interface Props {
 
 const drawerWidth = 288
 
-const adminNavItems = [
+const adminNavItems: NavItem[] = [
   { label: 'Overview', href: '/admin', icon: LayoutDashboard },
   { label: 'Users', href: '/admin/users', icon: Users },
   { label: 'Events', href: '/admin/events', icon: CalendarCheck },
@@ -29,7 +30,7 @@ const adminNavItems = [
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart2 },
 ]
 
-const superAdminNavItems = [
+const superAdminNavItems: NavItem[] = [
   { label: 'Overview', href: '/super-admin', icon: LayoutDashboard },
   { label: 'Users', href: '/super-admin/users', icon: Users },
   { label: 'Events', href: '/super-admin/events', icon: CalendarCheck },

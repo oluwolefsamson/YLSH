@@ -4,24 +4,25 @@ import { Users, Calendar, Star, CheckCircle, Video, Hourglass, LayoutDashboard }
 import { MentorLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
+import type { MentorStat, MentorUpcomingSession, MentorRecentActivity } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
-const stats = [
+const stats: MentorStat[] = [
   { label: 'Total mentees', value: '24', progress: 80, icon: <Users size={20} /> },
   { label: 'Sessions this month', value: '11', progress: 73, icon: <Calendar size={20} /> },
   { label: 'Average rating', value: '4.9', progress: 98, icon: <Star size={20} /> },
   { label: 'Sessions completed', value: '142', progress: 100, icon: <CheckCircle size={20} /> },
 ]
 
-const upcomingSessions = [
+const upcomingSessions: MentorUpcomingSession[] = [
   { name: 'Amina Bello', topic: 'Career roadmap in software engineering', date: 'Jun 20, 2026', time: '3:00 PM' },
   { name: 'Kelechi Obi', topic: 'Preparing for a product management role', date: 'Jun 22, 2026', time: '11:00 AM' },
   { name: 'Zahra Musa', topic: 'Transitioning from academia to industry', date: 'Jun 25, 2026', time: '5:00 PM' },
 ]
 
-const recentActivity = [
+const recentActivity: MentorRecentActivity[] = [
   { text: 'Session completed with Amina Bello', meta: '2 days ago', done: true },
   { text: 'New booking request from Tunde Adeyemi', meta: '3 days ago', done: false },
   { text: 'Session completed with Ngozi Eze', meta: '5 days ago', done: true },

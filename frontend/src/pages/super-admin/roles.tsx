@@ -4,19 +4,20 @@ import { AdminLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
+import type { RbacRole, RoleUser, UserRole } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 disabled:bg-muted transition-colors'
 
-const roles = [
+const roles: RbacRole[] = [
   { name: 'Participant', count: 4, color: 'bg-muted text-muted-foreground', permissions: ['Register for events', 'View and download certificates', 'Access learning resources', 'Apply to opportunities', 'Book mentorship sessions'] },
   { name: 'Mentor', count: 47, color: 'bg-green-100 text-green-700', permissions: ['All Participant permissions', 'Manage mentorship sessions', 'Set availability', 'View assigned mentees'] },
   { name: 'Admin', count: 5, color: 'bg-primary/10 text-primary', permissions: ['All Mentor permissions', 'Manage users and events', 'Issue certificates', 'View analytics', 'Handle identity verifications'] },
   { name: 'Super Admin', count: 1, color: 'bg-red-100 text-red-700', permissions: ['Full system access', 'Manage admin accounts', 'Assign/revoke roles', 'View audit logs', 'System configuration'] },
 ]
 
-const users = [
+const users: RoleUser[] = [
   { id: 1, name: 'Amina Bello', email: 'amina@example.com', role: 'Participant' },
   { id: 2, name: 'Emeka Obi', email: 'emeka@example.com', role: 'Participant' },
   { id: 3, name: 'Fatima Al-Hassan', email: 'fatima@example.com', role: 'Mentor' },
@@ -24,10 +25,10 @@ const users = [
   { id: 5, name: 'Aisha Mohammed', email: 'aisha@ylsh.org', role: 'Super Admin' },
 ]
 
-const roleBadge: Record<string, string> = { 'Super Admin': 'bg-red-100 text-red-700', Admin: 'bg-primary/10 text-primary', Mentor: 'bg-green-100 text-green-700', Participant: 'bg-muted text-muted-foreground' }
+const roleBadge: Record<UserRole, string> = { 'Super Admin': 'bg-red-100 text-red-700', Admin: 'bg-primary/10 text-primary', Mentor: 'bg-green-100 text-green-700', Participant: 'bg-muted text-muted-foreground' }
 
 const RoleManagementPage: NextPageWithLayout = () => {
-  const [editUser, setEditUser] = useState<typeof users[0] | null>(null)
+  const [editUser, setEditUser] = useState<RoleUser | null>(null)
   const [newRole, setNewRole] = useState('')
 
   return (

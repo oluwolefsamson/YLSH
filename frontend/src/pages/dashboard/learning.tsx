@@ -4,23 +4,22 @@ import { DashboardLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
+import type { LearningResource, ResourceType } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
-type ResourceType = 'video' | 'pdf' | 'article'
-
-const resources = [
-  { id: 1, title: 'Introduction to Leadership Fundamentals', type: 'video' as ResourceType, category: 'Leadership', duration: '45 min', progress: 100, completed: true, videoId: 'dQw4w9WgXcQ', excerpt: '' },
-  { id: 2, title: 'Digital Skills for Young Professionals', type: 'video' as ResourceType, category: 'Digital Skills', duration: '1 hr 20 min', progress: 68, completed: false, videoId: 'dQw4w9WgXcQ', excerpt: '' },
-  { id: 3, title: 'Youth Entrepreneurship Handbook', type: 'pdf' as ResourceType, category: 'Entrepreneurship', duration: '80 pages', progress: 45, completed: false, videoId: '', excerpt: '' },
-  { id: 4, title: 'Grant Writing Masterclass Notes', type: 'pdf' as ResourceType, category: 'Opportunities', duration: '32 pages', progress: 100, completed: true, videoId: '', excerpt: '' },
+const resources: LearningResource[] = [
+  { id: 1, title: 'Introduction to Leadership Fundamentals', type: 'video', category: 'Leadership', duration: '45 min', progress: 100, completed: true, videoId: 'dQw4w9WgXcQ', excerpt: '' },
+  { id: 2, title: 'Digital Skills for Young Professionals', type: 'video', category: 'Digital Skills', duration: '1 hr 20 min', progress: 68, completed: false, videoId: 'dQw4w9WgXcQ', excerpt: '' },
+  { id: 3, title: 'Youth Entrepreneurship Handbook', type: 'pdf', category: 'Entrepreneurship', duration: '80 pages', progress: 45, completed: false, videoId: '', excerpt: '' },
+  { id: 4, title: 'Grant Writing Masterclass Notes', type: 'pdf', category: 'Opportunities', duration: '32 pages', progress: 100, completed: true, videoId: '', excerpt: '' },
   {
-    id: 5, title: 'Climate Policy and Youth Advocacy', type: 'article' as ResourceType, category: 'Policy', duration: '15 min read', progress: 0, completed: false, videoId: '',
+    id: 5, title: 'Climate Policy and Youth Advocacy', type: 'article', category: 'Policy', duration: '15 min read', progress: 0, completed: false, videoId: '',
     excerpt: `Climate policy is increasingly shaped by youth voices. From the Fridays for Future movement to formal UN youth delegates, young Africans are at the forefront of demanding bold action.\n\nUnderstanding the policy landscape requires knowledge of frameworks like the Paris Agreement, Nationally Determined Contributions (NDCs), and the African Union's Climate Action agenda.\n\nKey advocacy tools include drafting policy briefs, engaging your local representative, and joining youth-led coalitions like YOUNGO. Start by identifying one climate issue in your community and researching the existing policies around it.\n\nThe next decade will define Africa's climate trajectory. Your voice matters.`,
   },
   {
-    id: 6, title: 'Building Your Personal Brand Online', type: 'article' as ResourceType, category: 'Digital Skills', duration: '10 min read', progress: 30, completed: false, videoId: '',
+    id: 6, title: 'Building Your Personal Brand Online', type: 'article', category: 'Digital Skills', duration: '10 min read', progress: 30, completed: false, videoId: '',
     excerpt: `Your personal brand is what people say about you when you're not in the room. In a digital-first world, it's also what appears when someone Googles your name.\n\nStart with clarity: define your niche, your values, and the audience you want to reach. Then choose 1–2 platforms where that audience lives — LinkedIn for professional audiences, Twitter/X for thought leadership, or Instagram for creative fields.\n\nConsistency is key. Post regularly, engage genuinely, and let your personality show. Document your journey, share lessons learned, and highlight the problems you solve.\n\nA strong online presence opens doors to opportunities, mentors, and collaborations that would otherwise be out of reach.`,
   },
 ]
@@ -35,11 +34,9 @@ const typeColor: Record<ResourceType, string> = { video: '#EF4444', pdf: '#F59E0
 
 const TABS = ['All', 'In Progress', 'Completed', 'Not Started']
 
-type Resource = typeof resources[0]
-
 const LearningPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
-  const [activeResource, setActiveResource] = useState<Resource | null>(null)
+  const [activeResource, setActiveResource] = useState<LearningResource | null>(null)
 
   const filtered = tab === 0 ? resources
     : tab === 1 ? resources.filter((r) => !r.completed && r.progress > 0)
@@ -50,7 +47,7 @@ const LearningPage: NextPageWithLayout = () => {
   const inProgressCount = resources.filter((r) => !r.completed && r.progress > 0).length
   const totalProgress = Math.round(resources.reduce((sum, r) => sum + r.progress, 0) / resources.length)
 
-  const handleAction = (resource: Resource) => {
+  const handleAction = (resource: LearningResource): void => {
     if (resource.type === 'pdf') {
       const content = `YLSH Learning Resource\n\n${resource.title}\nCategory: ${resource.category}\nLength: ${resource.duration}\n\nThis document is part of the YLSH learning library. Access the full content at ylsh.ng/learning.`
       const blob = new Blob([content], { type: 'text/plain' })

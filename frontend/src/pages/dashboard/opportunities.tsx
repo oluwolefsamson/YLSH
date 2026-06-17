@@ -4,23 +4,22 @@ import { DashboardLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
+import type { Opportunity, OpportunityApplication, OppType, TabType } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors'
 
-type OppType = 'job' | 'internship' | 'grant' | 'scholarship'
-
-const opportunities = [
-  { id: 1, title: 'Junior Product Manager', organization: 'TechHub Lagos', type: 'job' as OppType, deadline: 'Jul 30, 2026', location: 'Lagos, Nigeria', description: 'Help build digital products for African youth. 2+ years experience preferred.' },
-  { id: 2, title: 'Data Science Internship', organization: 'Andela', type: 'internship' as OppType, deadline: 'Jul 15, 2026', location: 'Remote', description: '6-month internship building ML pipelines. Open to university students and recent graduates.' },
-  { id: 3, title: 'Youth Innovation Grant', organization: 'Tony Elumelu Foundation', type: 'grant' as OppType, deadline: 'Aug 1, 2026', location: 'Pan-African', description: 'Seed funding for youth-led startups addressing African challenges.', amount: '$5,000' },
-  { id: 4, title: 'STEM Scholarship 2026', organization: 'MTN Foundation', type: 'scholarship' as OppType, deadline: 'Jun 30, 2026', location: 'Nigeria', description: 'Full tuition scholarship for undergraduate STEM students with 3.5+ GPA.', amount: '₦2.5M/year' },
-  { id: 5, title: 'Policy Analyst', organization: 'Federal Ministry of Youth', type: 'job' as OppType, deadline: 'Jul 20, 2026', location: 'Abuja, Nigeria', description: 'Analyze youth policy frameworks and prepare briefs for senior officials.' },
-  { id: 6, title: 'Climate Tech Fellowship', organization: 'GreenAfrica Initiative', type: 'internship' as OppType, deadline: 'Aug 15, 2026', location: 'Remote', description: '3-month fellowship building sustainability solutions for African communities.' },
+const opportunities: Opportunity[] = [
+  { id: 1, title: 'Junior Product Manager', organization: 'TechHub Lagos', type: 'job', deadline: 'Jul 30, 2026', location: 'Lagos, Nigeria', description: 'Help build digital products for African youth. 2+ years experience preferred.' },
+  { id: 2, title: 'Data Science Internship', organization: 'Andela', type: 'internship', deadline: 'Jul 15, 2026', location: 'Remote', description: '6-month internship building ML pipelines. Open to university students and recent graduates.' },
+  { id: 3, title: 'Youth Innovation Grant', organization: 'Tony Elumelu Foundation', type: 'grant', deadline: 'Aug 1, 2026', location: 'Pan-African', description: 'Seed funding for youth-led startups addressing African challenges.', amount: '$5,000' },
+  { id: 4, title: 'STEM Scholarship 2026', organization: 'MTN Foundation', type: 'scholarship', deadline: 'Jun 30, 2026', location: 'Nigeria', description: 'Full tuition scholarship for undergraduate STEM students with 3.5+ GPA.', amount: '₦2.5M/year' },
+  { id: 5, title: 'Policy Analyst', organization: 'Federal Ministry of Youth', type: 'job', deadline: 'Jul 20, 2026', location: 'Abuja, Nigeria', description: 'Analyze youth policy frameworks and prepare briefs for senior officials.' },
+  { id: 6, title: 'Climate Tech Fellowship', organization: 'GreenAfrica Initiative', type: 'internship', deadline: 'Aug 15, 2026', location: 'Remote', description: '3-month fellowship building sustainability solutions for African communities.' },
 ]
 
-const myApplications = [
+const myApplications: OpportunityApplication[] = [
   { id: 2, title: 'Data Science Internship', org: 'Andela', status: 'under_review', appliedDate: 'Jun 5, 2026' },
   { id: 3, title: 'Youth Innovation Grant', org: 'Tony Elumelu Foundation', status: 'shortlisted', appliedDate: 'Jun 1, 2026' },
 ]
@@ -39,28 +38,25 @@ const typeBadge: Record<OppType, string> = {
   scholarship: 'bg-amber-100 text-amber-700',
 }
 
-type TabType = OppType | 'all'
 const tabTypes: TabType[] = ['all', 'job', 'internship', 'grant', 'scholarship']
 const TABS = ['All', 'Jobs', 'Internships', 'Grants', 'Scholarships']
 
-type Opp = typeof opportunities[0]
-
 const OpportunitiesPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
-  const [applyModal, setApplyModal] = useState<Opp | null>(null)
+  const [applyModal, setApplyModal] = useState<Opportunity | null>(null)
   const [appliedIds, setAppliedIds] = useState<Set<number>>(new Set(myApplications.map((a) => a.id)))
   const [applyDone, setApplyDone] = useState(false)
   const [coverLetter, setCoverLetter] = useState('')
 
   const filtered = tab === 0 ? opportunities : opportunities.filter((o) => o.type === tabTypes[tab])
 
-  const openApply = (opp: Opp) => {
+  const openApply = (opp: Opportunity): void => {
     setCoverLetter('')
     setApplyDone(false)
     setApplyModal(opp)
   }
 
-  const handleSubmitApplication = () => {
+  const handleSubmitApplication = (): void => {
     if (applyModal) {
       setAppliedIds((prev) => new Set(prev).add(applyModal.id))
       setApplyDone(true)

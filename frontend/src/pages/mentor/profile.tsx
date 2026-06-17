@@ -26,8 +26,9 @@ const MentorProfilePage: NextPageWithLayout = () => {
     linkedin: 'linkedin.com/in/ngozi-adeyemi', expertise: 'Software Engineering, System Design, Career Mentorship',
   })
 
-  const handleChange = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+  const handleChange = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
+  }
 
   return (
     <div>

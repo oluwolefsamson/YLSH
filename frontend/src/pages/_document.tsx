@@ -6,8 +6,9 @@ class MyDocument extends Document {
       <Html lang="en">
         <Head>
           <meta charSet="utf-8" />
-          <link rel="icon" href="/images/yls-logo.svg" type="image/svg+xml" />
+          <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
           <link rel="icon" href="/favicon.ico" sizes="any" />
+          <link rel="apple-touch-icon" href="/favicon.svg" />
           <meta name="theme-color" content="#fbfbfb" />
           <meta name="msapplication-navbutton-color" content="#fbfbfb" />
           <meta name="apple-mobile-web-app-status-bar-style" content="#fbfbfb" />

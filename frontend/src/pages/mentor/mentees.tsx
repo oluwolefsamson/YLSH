@@ -4,11 +4,12 @@ import { MentorLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
+import type { Mentee } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
-const mentees = [
+const mentees: Mentee[] = [
   { id: 1, name: 'Amina Bello', role: 'Student · ABU Zaria', sessions: 3, lastSession: 'Jun 14, 2026', rating: 5, status: 'active', initials: 'AB', color: '#127C71' },
   { id: 2, name: 'Kelechi Obi', role: 'Graduate · University of Lagos', sessions: 2, lastSession: 'Jun 10, 2026', rating: 4.5, status: 'active', initials: 'KO', color: '#082F49' },
   { id: 3, name: 'Zahra Musa', role: 'Research Assistant · BUK', sessions: 1, lastSession: 'Jun 5, 2026', rating: null, status: 'active', initials: 'ZM', color: '#7C3AED' },

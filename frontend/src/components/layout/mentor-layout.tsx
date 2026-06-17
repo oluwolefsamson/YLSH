@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from 'react'
+import React, { FC, ReactNode, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import {
@@ -13,12 +13,14 @@ import {
   X,
 } from 'lucide-react'
 import { cn } from '@/utils'
+import { useAuth } from '@/contexts/AuthContext'
+import type { NavItem } from '@/types'
 
 interface Props { children: ReactNode }
 
 const drawerWidth = 288
 
-const navItems = [
+const navItems: NavItem[] = [
   { label: 'Overview', href: '/mentor', icon: LayoutDashboard },
   { label: 'Sessions', href: '/mentor/sessions', icon: Calendar },
   { label: 'Mentees', href: '/mentor/mentees', icon: Users },
@@ -28,13 +30,26 @@ const navItems = [
 
 const MentorLayout: FC<Props> = ({ children }) => {
   const router = useRouter()
+  const { user, logout } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [signOutOpen, setSignOutOpen] = useState(false)
+
+  // Redirect pending/declined mentors away from portal pages
+  useEffect(() => {
+    if (user && user.role === 'mentor' && user.approvalStatus !== 'approved') {
+      void router.replace('/mentor/pending')
+    }
+  }, [user, router])
 
   const handleConfirmSignOut = (): void => {
     setSignOutOpen(false)
     setMobileOpen(false)
-    void router.push('/signin')
+    void logout()
+  }
+
+  // Don't render portal for unapproved mentors
+  if (user && user.role === 'mentor' && user.approvalStatus !== 'approved') {
+    return null
   }
 
   const sidebar = (
@@ -46,10 +61,10 @@ const MentorLayout: FC<Props> = ({ children }) => {
         <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/6 pointer-events-none" />
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-[15px] border-2 border-white/25" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}>
-            NA
+            {user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : 'M'}
           </div>
           <div className="min-w-0">
-            <p className="text-white font-bold text-sm leading-snug">Ngozi Adeyemi</p>
+            <p className="text-white font-bold text-sm leading-snug">{user ? `${user.firstName} ${user.lastName}` : 'Mentor'}</p>
             <div className="flex items-center gap-1.5">
               <Star size={11} className="text-white/80" />
               <p className="text-[11px] font-semibold text-white/80">4.9 · Senior Mentor</p>
@@ -87,7 +102,7 @@ const MentorLayout: FC<Props> = ({ children }) => {
       <div className="p-3">
         <hr className="border-border mb-3" />
         <button
-          onClick={() => setSignOutOpen(true)}
+          onClick={() => void logout()}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors"
         >
           <LogOut size={16} />

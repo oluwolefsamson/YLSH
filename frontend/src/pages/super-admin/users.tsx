@@ -4,11 +4,12 @@ import { AdminLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
+import type { AdminUser, UserStatus, UserRole } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
-const allUsers = [
+const allUsers: AdminUser[] = [
   { id: 1, name: 'Amina Bello', email: 'amina@example.com', role: 'Participant', status: 'verified', joined: 'Jun 14, 2026', state: 'Kaduna' },
   { id: 2, name: 'Emeka Obi', email: 'emeka@example.com', role: 'Participant', status: 'pending', joined: 'Jun 13, 2026', state: 'Lagos' },
   { id: 3, name: 'Fatima Al-Hassan', email: 'fatima@example.com', role: 'Mentor', status: 'verified', joined: 'Jun 12, 2026', state: 'Abuja' },
@@ -19,9 +20,9 @@ const allUsers = [
   { id: 8, name: 'Sule Ibrahim', email: 'sule@example.com', role: 'Participant', status: 'pending', joined: 'Jun 7, 2026', state: 'Katsina' },
 ]
 
-const statusStyles: Record<string, string> = { verified: 'bg-green-100 text-green-700', pending: 'bg-amber-100 text-amber-700', suspended: 'bg-red-100 text-red-700' }
-const statusIcon: Record<string, React.ReactNode> = { verified: <CheckCircle size={11} />, pending: <Clock size={11} />, suspended: <Ban size={11} /> }
-const roleBadge: Record<string, string> = { 'Super Admin': 'bg-red-100 text-red-700', Admin: 'bg-primary/10 text-primary', Mentor: 'bg-green-100 text-green-700', Participant: 'bg-muted text-muted-foreground' }
+const statusStyles: Record<UserStatus, string> = { verified: 'bg-green-100 text-green-700', pending: 'bg-amber-100 text-amber-700', suspended: 'bg-red-100 text-red-700' }
+const statusIcon: Record<UserStatus, React.ReactNode> = { verified: <CheckCircle size={11} />, pending: <Clock size={11} />, suspended: <Ban size={11} /> }
+const roleBadge: Record<UserRole, string> = { 'Super Admin': 'bg-red-100 text-red-700', Admin: 'bg-primary/10 text-primary', Mentor: 'bg-green-100 text-green-700', Participant: 'bg-muted text-muted-foreground' }
 
 const TABS = ['All', 'Verified', 'Pending', 'Suspended']
 

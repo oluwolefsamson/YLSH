@@ -1,10 +1,24 @@
-import { get, post, put, del } from '@/services/axios'
+import { get, put, patch, del, post } from '@/services/axios'
 
 export interface User {
-  id: string
-  name: string
+  _id: string
+  firstName: string
+  lastName: string
+  fullName: string
   email: string
-  role: string
+  phone?: string
+  role: 'participant' | 'mentor' | 'admin' | 'super-admin'
+  verificationStatus: 'verified' | 'pending' | 'suspended'
+  approvalStatus: 'pending' | 'approved' | 'declined'
+  approvalNote?: string
+  ninVerified: boolean
+  emailVerified: boolean
+  organization?: string
+  state?: string
+  bio?: string
+  username?: string
+  profilePhoto?: string
+  createdAt: string
 }
 
 export interface PaginatedUsers {
@@ -14,27 +28,48 @@ export interface PaginatedUsers {
   limit: number
 }
 
-export interface CreateUserPayload {
-  name: string
-  email: string
-  password: string
-  role?: string
+export interface UpdateProfilePayload {
+  firstName?: string
+  lastName?: string
+  phone?: string
+  organization?: string
+  state?: string
+  bio?: string
+  username?: string
+  profilePhoto?: string
 }
 
-export interface UpdateUserPayload {
-  name?: string
-  email?: string
-  role?: string
-}
-
-export const listUsers = (page = 1, limit = 10) =>
-  get<PaginatedUsers>('/api/users', { page, limit })
+export const listUsers = (params?: { page?: number; limit?: number; search?: string; status?: string; role?: string }) =>
+  get<PaginatedUsers>('/api/users', params)
 
 export const getUserById = (id: string) => get<User>(`/api/users/${id}`)
 
-export const createUser = (payload: CreateUserPayload) => post<User>('/api/users', payload)
+export const getMyProfile = () => get<User>('/api/users/me')
 
-export const updateUser = (id: string, payload: UpdateUserPayload) =>
-  put<User>(`/api/users/${id}`, payload)
+export const updateMyProfile = (payload: UpdateProfilePayload) => put<User>('/api/users/me', payload)
+
+export const updateUserStatus = (id: string, status: 'verified' | 'pending' | 'suspended') =>
+  patch<User>(`/api/users/${id}/status`, { status })
+
+export const updateUserRole = (id: string, role: string) =>
+  patch<User>(`/api/users/${id}/role`, { role })
 
 export const deleteUser = (id: string) => del<{ message: string }>(`/api/users/${id}`)
+
+export const listPendingMentors = (params?: { page?: number; limit?: number }) =>
+  get<PaginatedUsers>('/api/users/mentors/pending', params)
+
+export const approveMentor = (id: string) => patch<User>(`/api/users/${id}/approve`, {})
+
+export const declineMentor = (id: string, note?: string) =>
+  patch<User>(`/api/users/${id}/decline`, { note })
+
+export interface CreateAdminPayload {
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  phone?: string
+}
+
+export const createAdmin = (payload: CreateAdminPayload) => post<User>('/api/users/admin', payload)

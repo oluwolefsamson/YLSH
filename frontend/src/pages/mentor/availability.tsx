@@ -4,6 +4,7 @@ import { MentorLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
+import type { AvailabilitySlots } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
@@ -24,7 +25,7 @@ const Toggle: React.FC<{ checked: boolean; onChange: () => void }> = ({ checked,
 
 const AvailabilityPage: NextPageWithLayout = () => {
   const [availability, setAvailability] = useState<Record<string, boolean>>({ Monday: false, Tuesday: false, Wednesday: false, Thursday: true, Friday: false, Saturday: true, Sunday: true })
-  const [slots, setSlots] = useState({ from: '09:00', to: '17:00' })
+  const [slots, setSlots] = useState<AvailabilitySlots>({ from: '09:00', to: '17:00' })
   const [sessionDuration, setSessionDuration] = useState('60')
   const [maxPerWeek, setMaxPerWeek] = useState('5')
   const [accepting, setAccepting] = useState(true)

@@ -1,4 +1,5 @@
 import React, { FC, ReactNode } from 'react'
+import Link from 'next/link'
 import { Logo } from '@/components/logo'
 
 interface Props {
@@ -20,7 +21,7 @@ const AuthShell: FC<Props> = ({ eyebrow, title, description, children, footer })
     >
       <div className="container max-w-7xl">
         <div className="mb-6 md:mb-8">
-          <Logo />
+          <Link href="/" className="cursor-pointer inline-block"><Logo /></Link>
         </div>
 
         {/* Two-column card */}

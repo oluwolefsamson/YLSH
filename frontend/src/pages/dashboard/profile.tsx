@@ -4,12 +4,13 @@ import { DashboardLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
+import type { ModalType, TfaStep, ProfileForm, ProfileCompletionItem } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 disabled:bg-muted transition-colors'
 
-const completionItems = [
+const completionItems: ProfileCompletionItem[] = [
   { label: 'Email verified', done: true },
   { label: 'Phone number added', done: true },
   { label: 'NIN verified', done: true },
@@ -18,15 +19,13 @@ const completionItems = [
   { label: 'State of origin set', done: false },
 ]
 
-type Modal = 'password' | '2fa' | 'sessions' | 'delete' | null
-
 const ProfilePage: NextPageWithLayout = () => {
   const [editing, setEditing] = useState(false)
-  const [modal, setModal] = useState<Modal>(null)
+  const [modal, setModal] = useState<ModalType>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<ProfileForm>({
     firstName: 'Amina', lastName: 'Bello', email: 'amina.bello@example.com',
     phone: '+234 803 456 7890', state: 'Kaduna',
     bio: 'Youth advocate and aspiring software engineer from northern Nigeria.',
@@ -41,7 +40,7 @@ const ProfilePage: NextPageWithLayout = () => {
   // 2FA state
   const [tfaPhone, setTfaPhone] = useState('+234 803 456 7890')
   const [tfaCode, setTfaCode] = useState('')
-  const [tfaStep, setTfaStep] = useState<'phone' | 'code' | 'done'>('phone')
+  const [tfaStep, setTfaStep] = useState<TfaStep>('phone')
 
   // Delete confirmation
   const [deleteConfirm, setDeleteConfirm] = useState('')
@@ -49,10 +48,10 @@ const ProfilePage: NextPageWithLayout = () => {
   const completedCount = completionItems.filter((i) => i.done).length
   const completionPct = Math.round((completedCount / completionItems.length) * 100)
 
-  const handleChange = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+  const handleChange = (field: keyof ProfileForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
@@ -61,7 +60,7 @@ const ProfilePage: NextPageWithLayout = () => {
     }
   }
 
-  const closeModal = () => {
+  const closeModal = (): void => {
     setModal(null)
     setPwDone(false)
     setPwForm({ current: '', next: '', confirm: '' })

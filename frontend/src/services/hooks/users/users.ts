@@ -1,58 +1,98 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { QUERY_KEYS } from '@/services/constants/users'
 import {
-  listUsers,
-  getUserById,
-  createUser,
-  updateUser,
-  deleteUser,
-  type PaginatedUsers,
-  type User,
-  type CreateUserPayload,
-  type UpdateUserPayload,
+  listUsers, getUserById, getMyProfile, updateMyProfile,
+  updateUserStatus, updateUserRole, deleteUser,
+  listPendingMentors, approveMentor, declineMentor, createAdmin,
+  type User, type PaginatedUsers, type UpdateProfilePayload, type CreateAdminPayload,
 } from '@/services/endpoints/users/users'
 
-export const useUsers = (page = 1, limit = 10) =>
+const K = { LIST: 'users-list', DETAIL: 'users-detail', ME: 'users-me' }
+
+export const useUsers = (params?: { page?: number; limit?: number; search?: string; status?: string; role?: string }) =>
   useQuery<PaginatedUsers, Error>({
-    queryKey: [QUERY_KEYS.LIST, page, limit],
-    queryFn: () => listUsers(page, limit),
+    queryKey: [K.LIST, params],
+    queryFn: () => listUsers(params),
     placeholderData: (prev) => prev,
   })
 
 export const useUser = (id: string) =>
   useQuery<User, Error>({
-    queryKey: [QUERY_KEYS.DETAIL, id],
+    queryKey: [K.DETAIL, id],
     queryFn: () => getUserById(id),
     enabled: Boolean(id),
   })
 
-export const useCreateUser = () => {
-  const queryClient = useQueryClient()
-  return useMutation<User, Error, CreateUserPayload>({
-    mutationFn: createUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.LIST] })
-    },
+export const useMyProfile = () =>
+  useQuery<User, Error>({
+    queryKey: [K.ME],
+    queryFn: getMyProfile,
+  })
+
+export const useUpdateMyProfile = () => {
+  const qc = useQueryClient()
+  return useMutation<User, Error, UpdateProfilePayload>({
+    mutationFn: updateMyProfile,
+    onSuccess: () => qc.invalidateQueries({ queryKey: [K.ME] }),
   })
 }
 
-export const useUpdateUser = () => {
-  const queryClient = useQueryClient()
-  return useMutation<User, Error, { id: string; payload: UpdateUserPayload }>({
-    mutationFn: ({ id, payload }) => updateUser(id, payload),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.LIST] })
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.DETAIL, id] })
-    },
+export const useUpdateUserStatus = () => {
+  const qc = useQueryClient()
+  return useMutation<User, Error, { id: string; status: 'verified' | 'pending' | 'suspended' }>({
+    mutationFn: ({ id, status }) => updateUserStatus(id, status),
+    onSuccess: () => qc.invalidateQueries({ queryKey: [K.LIST] }),
+  })
+}
+
+export const useUpdateUserRole = () => {
+  const qc = useQueryClient()
+  return useMutation<User, Error, { id: string; role: string }>({
+    mutationFn: ({ id, role }) => updateUserRole(id, role),
+    onSuccess: () => qc.invalidateQueries({ queryKey: [K.LIST] }),
   })
 }
 
 export const useDeleteUser = () => {
-  const queryClient = useQueryClient()
+  const qc = useQueryClient()
   return useMutation<{ message: string }, Error, string>({
     mutationFn: deleteUser,
+    onSuccess: () => qc.invalidateQueries({ queryKey: [K.LIST] }),
+  })
+}
+
+export const usePendingMentors = (params?: { page?: number; limit?: number }) =>
+  useQuery<PaginatedUsers, Error>({
+    queryKey: ['mentors-pending', params],
+    queryFn: () => listPendingMentors(params),
+    placeholderData: (prev) => prev,
+  })
+
+export const useApproveMentor = () => {
+  const qc = useQueryClient()
+  return useMutation<User, Error, string>({
+    mutationFn: approveMentor,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.LIST] })
+      qc.invalidateQueries({ queryKey: ['mentors-pending'] })
+      qc.invalidateQueries({ queryKey: [K.LIST] })
     },
+  })
+}
+
+export const useDeclineMentor = () => {
+  const qc = useQueryClient()
+  return useMutation<User, Error, { id: string; note?: string }>({
+    mutationFn: ({ id, note }) => declineMentor(id, note),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['mentors-pending'] })
+      qc.invalidateQueries({ queryKey: [K.LIST] })
+    },
+  })
+}
+
+export const useCreateAdmin = () => {
+  const qc = useQueryClient()
+  return useMutation<User, Error, CreateAdminPayload>({
+    mutationFn: createAdmin,
+    onSuccess: () => qc.invalidateQueries({ queryKey: [K.LIST] }),
   })
 }

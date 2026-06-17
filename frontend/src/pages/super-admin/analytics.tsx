@@ -3,11 +3,12 @@ import { BarChart2, Users, CalendarCheck, Award, ShieldCheck, GraduationCap, Shi
 import { AdminLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
+import type { AdminKpi, AdminUserGrowthPoint, RoleDistributionRow, TopStateRow } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
-const kpis = [
+const kpis: AdminKpi[] = [
   { label: 'Total users', value: '4,821', change: '+318 this month', icon: <Users size={20} />, pct: 48 },
   { label: 'Verified users', value: '3,940', change: '81.7% verification rate', icon: <ShieldCheck size={20} />, pct: 82 },
   { label: 'Events hosted', value: '28', change: '+4 this quarter', icon: <CalendarCheck size={20} />, pct: 70 },
@@ -16,14 +17,14 @@ const kpis = [
   { label: 'Admin accounts', value: '6', change: '1 Super Admin · 5 Admins', icon: <ShieldAlert size={20} />, pct: 30 },
 ]
 
-const roleDistribution = [
+const roleDistribution: RoleDistributionRow[] = [
   { role: 'Participant', count: 4727, pct: 98 },
   { role: 'Mentor', count: 47, pct: 1 },
   { role: 'Admin', count: 5, pct: 0.1 },
   { role: 'Super Admin', count: 1, pct: 0.02 },
 ]
 
-const userGrowth = [
+const userGrowth: AdminUserGrowthPoint[] = [
   { month: 'Jan 2026', count: 3200 },
   { month: 'Feb 2026', count: 3410 },
   { month: 'Mar 2026', count: 3680 },
@@ -32,7 +33,7 @@ const userGrowth = [
   { month: 'Jun 2026', count: 4821 },
 ]
 
-const topStates = [
+const topStates: TopStateRow[] = [
   { state: 'Lagos', users: 1241 },
   { state: 'Abuja (FCT)', users: 892 },
   { state: 'Kano', users: 634 },

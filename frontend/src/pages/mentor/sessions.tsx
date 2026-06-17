@@ -4,11 +4,12 @@ import { MentorLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
+import type { MentorPortalSession, MentorSessionStatus } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
-const sessions = [
+const sessions: MentorPortalSession[] = [
   { id: 1, mentee: 'Amina Bello', topic: 'Career roadmap in software engineering', date: 'Jun 20, 2026', time: '3:00 PM', duration: '60 min', status: 'upcoming', outcome: null },
   { id: 2, mentee: 'Kelechi Obi', topic: 'Preparing for a product management role', date: 'Jun 22, 2026', time: '11:00 AM', duration: '45 min', status: 'upcoming', outcome: null },
   { id: 3, mentee: 'Zahra Musa', topic: 'Transitioning from academia to industry', date: 'Jun 25, 2026', time: '5:00 PM', duration: '60 min', status: 'upcoming', outcome: null },
@@ -19,8 +20,8 @@ const sessions = [
 
 const TABS = ['All', 'Upcoming', 'Completed', 'Cancelled']
 
-const statusBadge: Record<string, string> = { upcoming: 'bg-amber-100 text-amber-700', completed: 'bg-green-100 text-green-700', cancelled: 'bg-red-100 text-red-700' }
-const statusIcon: Record<string, React.ReactNode> = { upcoming: <Clock size={11} />, completed: <CheckCircle size={11} />, cancelled: <XCircle size={11} /> }
+const statusBadge: Record<MentorSessionStatus, string> = { upcoming: 'bg-amber-100 text-amber-700', completed: 'bg-green-100 text-green-700', cancelled: 'bg-red-100 text-red-700' }
+const statusIcon: Record<MentorSessionStatus, React.ReactNode> = { upcoming: <Clock size={11} />, completed: <CheckCircle size={11} />, cancelled: <XCircle size={11} /> }
 
 const MentorSessionsPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)

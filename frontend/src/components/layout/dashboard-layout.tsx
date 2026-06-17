@@ -15,12 +15,13 @@ import {
   X,
 } from 'lucide-react'
 import { cn } from '@/utils'
+import type { NavItem } from '@/types'
 
 interface Props { children: ReactNode }
 
 const drawerWidth = 288
 
-const navItems = [
+const navItems: NavItem[] = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Events', href: '/dashboard/events', icon: CalendarCheck },
   { label: 'Certificates', href: '/dashboard/certificates', icon: Award },

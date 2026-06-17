@@ -4,11 +4,12 @@ import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
+import type { SuperAdminEvent } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
-const events = [
+const events: SuperAdminEvent[] = [
   { id: 1, title: 'Youth Leadership Summit 2026', date: 'Jul 15, 2026', venue: 'Transcorp Hilton, Abuja', category: 'Summit', capacity: 500, registered: 412, certificates: 0, status: 'upcoming' },
   { id: 2, title: 'Digital Skills Bootcamp', date: 'Jun 28, 2026', venue: 'Co-Creation Hub, Lagos', category: 'Workshop', capacity: 150, registered: 148, certificates: 0, status: 'upcoming' },
   { id: 3, title: 'Entrepreneurship Masterclass', date: 'Jun 20, 2026', venue: 'Virtual (Zoom)', category: 'Masterclass', capacity: 300, registered: 300, certificates: 0, status: 'upcoming' },

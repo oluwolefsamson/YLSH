@@ -5,11 +5,12 @@ import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
+import type { AdminOverviewStat, SuperAdminAccount, AuditLogEntry } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
-const stats = [
+const stats: AdminOverviewStat[] = [
   { label: 'Total users', value: '4,821', progress: 48, icon: <Users size={20} /> },
   { label: 'Verified', value: '3,940', progress: 82, icon: <ShieldCheck size={20} /> },
   { label: 'Events', value: '28', progress: 70, icon: <CalendarCheck size={20} /> },
@@ -18,14 +19,14 @@ const stats = [
   { label: 'Admins', value: '6', progress: 30, icon: <ShieldAlert size={20} /> },
 ]
 
-const adminAccounts = [
+const adminAccounts: SuperAdminAccount[] = [
   { name: 'Obiora Chukwu', email: 'obiora@ylsh.org', role: 'Admin', lastActive: '1 hr ago', status: 'active' },
   { name: 'Mariam Suleiman', email: 'mariam@ylsh.org', role: 'Admin', lastActive: '3 hrs ago', status: 'active' },
   { name: 'Emeka Nwofor', email: 'emeka.n@ylsh.org', role: 'Admin', lastActive: 'Yesterday', status: 'active' },
   { name: 'Aisha Mohammed', email: 'aisha@ylsh.org', role: 'Super Admin', lastActive: 'Now', status: 'active' },
 ]
 
-const auditLog = [
+const auditLog: AuditLogEntry[] = [
   { action: 'Role changed: emeka.n@ylsh.org → Admin', actor: 'aisha@ylsh.org', time: '2 hrs ago' },
   { action: 'User suspended: zahra@example.com', actor: 'mariam@ylsh.org', time: '5 hrs ago' },
   { action: 'New event created: Youth Leadership Summit 2026', actor: 'obiora@ylsh.org', time: 'Yesterday' },

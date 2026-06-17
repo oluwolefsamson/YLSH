@@ -3,6 +3,7 @@ import Head from 'next/head'
 import type { AppProps } from 'next/app'
 import { Toaster } from 'sonner'
 import ReactQueryProvider from '@/providers/react-query-provider'
+import { AuthProvider } from '@/contexts/AuthContext'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import 'slick-carousel/slick/slick.css'
 import '@/styles/globals.css'
@@ -22,8 +23,10 @@ const App: FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
         <title>YLSH Enterprise</title>
       </Head>
       <ReactQueryProvider>
-        {getLayout(<Component {...pageProps} />)}
-        <Toaster richColors position="top-right" />
+        <AuthProvider>
+          {getLayout(<Component {...pageProps} />)}
+          <Toaster richColors position="top-right" />
+        </AuthProvider>
       </ReactQueryProvider>
     </>
   )

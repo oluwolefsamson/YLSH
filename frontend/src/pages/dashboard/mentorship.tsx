@@ -4,26 +4,25 @@ import { DashboardLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
+import type { Mentor, MentorSession } from '@/types'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
 const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
-const mentors = [
+const mentors: Mentor[] = [
   { id: 1, name: 'Dr. Ngozi Adeyemi', role: 'Chief Technology Officer', company: 'Flutterwave', category: 'Tech & Engineering', rating: 4.9, sessions: 142, bio: 'Former Google engineer turned fintech CTO. Passionate about growing the next generation of African tech leaders.', availability: 'Weekends', initials: 'NA', color: '#127C71' },
   { id: 2, name: 'Emeka Okafor', role: 'Venture Partner', company: 'Ventures Platform', category: 'Entrepreneurship', rating: 4.8, sessions: 98, bio: 'Early-stage investor who has backed 30+ African startups. Expert in business model design and fundraising.', availability: 'Weekdays (PM)', initials: 'EO', color: '#082F49' },
   { id: 3, name: 'Fatima Al-Hassan', role: 'Senior Policy Advisor', company: 'African Union Commission', category: 'Policy & Governance', rating: 4.7, sessions: 65, bio: 'Policy expert specializing in youth development, climate action, and continental governance frameworks.', availability: 'Flexible', initials: 'FA', color: '#7C3AED' },
   { id: 4, name: 'Chidi Nwosu', role: 'Head of Growth', company: 'Paystack', category: 'Marketing & Growth', rating: 4.6, sessions: 77, bio: 'Growth practitioner who scaled Paystack from 0 to 200k merchants. Expert in product-led growth and GTM strategy.', availability: 'Thursdays', initials: 'CN', color: '#D97706' },
 ]
 
-const mySessions = [
+const mySessions: MentorSession[] = [
   { id: 1, mentorName: 'Dr. Ngozi Adeyemi', topic: 'Career roadmap in software engineering', date: 'Jun 20, 2026', time: '3:00 PM', status: 'upcoming', mode: 'Video call', meetLink: 'https://meet.google.com/abc-defg-hij' },
   { id: 2, mentorName: 'Emeka Okafor', topic: 'Pitching to investors for the first time', date: 'May 28, 2026', time: '11:00 AM', status: 'completed', mode: 'Video call', meetLink: '' },
   { id: 3, mentorName: 'Fatima Al-Hassan', topic: 'Writing policy briefs that get noticed', date: 'May 10, 2026', time: '2:00 PM', status: 'completed', mode: 'Video call', meetLink: '' },
 ]
 
 const MENTOR_TABS = ['All', 'Tech & Engineering', 'Entrepreneurship', 'Policy & Governance', 'Marketing & Growth']
-
-type Session = typeof mySessions[0]
 
 const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
   <div className="flex items-center gap-0.5">
@@ -36,7 +35,7 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
 const MentorshipPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
   const [bookedIds, setBookedIds] = useState<Set<number>>(new Set())
-  const [joinModal, setJoinModal] = useState<Session | null>(null)
+  const [joinModal, setJoinModal] = useState<MentorSession | null>(null)
   const upcomingCount = mySessions.filter((s) => s.status === 'upcoming').length
   const completedCount = mySessions.filter((s) => s.status === 'completed').length
 
