@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, Fragment } from "react"
 import type { NextPage } from "next"
 import { useRouter } from "next/router"
 import { toast } from "sonner"
@@ -115,15 +115,15 @@ const SignUpPage: NextPage = () => {
           </button>
           <div className="flex items-center gap-3"><hr className="flex-1 border-border" /><span className="text-xs text-muted-foreground">or create account with NIN</span><hr className="flex-1 border-border" /></div>
           {isCreated && (<div className="absolute inset-0 z-20 rounded-2xl bg-white/78 backdrop-blur-sm grid place-items-center"><div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>)}
-          <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center mb-1">
             {steps.map((label, i) => (
-              <div key={label} className="flex items-center flex-1">
-                <div className="flex flex-col items-center">
+              <Fragment key={label}>
+                <div className="flex flex-col items-center flex-shrink-0">
                   <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors", i < activeStep ? "bg-primary border-primary text-white" : i === activeStep ? "border-primary text-primary bg-primary/10" : "border-border text-muted-foreground")}>{i < activeStep ? "✓" : i + 1}</div>
                   <p className={cn("text-[10px] font-medium mt-1 text-center max-w-[56px]", i === activeStep ? "text-primary" : "text-muted-foreground")}>{label}</p>
                 </div>
-                {i < steps.length - 1 && <div className={cn("flex-1 h-0.5 mx-1 mb-4 rounded-full", i < activeStep ? "bg-primary" : "bg-border")} />}
-              </div>
+                {i < steps.length - 1 && <div className={cn("flex-1 h-0.5 mx-2 mb-4 rounded-full", i < activeStep ? "bg-primary" : "bg-border")} />}
+              </Fragment>
             ))}
           </div>
 
