@@ -1,34 +1,21 @@
-import nodemailer from 'nodemailer'
-import fs from 'fs'
-import path from 'path'
+import { Resend } from 'resend'
 
 const isDev = process.env.NODE_ENV !== 'production'
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000'
+const LOGO_SRC = `${CLIENT_URL}/images/yls-logo.svg`
 
-const LOGO_CID = 'ylsh-logo@ylsh.ng'
-const LOGO_PATH = path.resolve(__dirname, '../../../frontend/public/images/yls-logo.svg')
-const logoExists = fs.existsSync(LOGO_PATH)
-const LOGO_SRC = logoExists ? `cid:${LOGO_CID}` : `${CLIENT_URL}/images/yls-logo.svg`
-const logoAttachment = logoExists
-  ? [{ filename: 'yls-logo.svg', path: LOGO_PATH, cid: LOGO_CID, contentDisposition: 'inline' as const }]
-  : []
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
-const transporter = nodemailer.createTransport(
-  isDev && !process.env.EMAIL_USER
-    ? ({ jsonTransport: true } as Parameters<typeof nodemailer.createTransport>[0])
-    : {
-        host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-        port: Number(process.env.EMAIL_PORT) || 587,
-        secure: Number(process.env.EMAIL_PORT) === 465,
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 15000,
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      }
-)
+const FROM = process.env.EMAIL_FROM || 'YLSH Platform <onboarding@resend.dev>'
+
+async function send(to: string, subject: string, html: string): Promise<void> {
+  if (!resend) {
+    console.log(`\n📧 [DEV] Email to ${to} | Subject: ${subject}\n`)
+    return
+  }
+  const { error } = await resend.emails.send({ from: FROM, to, subject, html })
+  if (error) throw new Error(error.message)
+}
 
 function otpDigits(otp: string, borderColor: string, bgColor: string, textColor: string): string {
   return otp
@@ -190,21 +177,9 @@ export const sendOTP = async (to: string, otp: string): Promise<void> => {
       </td>
     </tr>
   `
+  await send(to, 'Verify Your Email — YLSH Platform', shell('#0e7490', '#2bb3e0', body))
 
-  const info = await transporter.sendMail({
-    from: `YLSH Platform <${process.env.EMAIL_USER || 'noreply@ylsh.ng'}>`,
-    to,
-    subject: 'Verify Your Email — YLSH Platform',
-    html: shell('#0e7490', '#2bb3e0', body),
-    attachments: logoAttachment,
-  })
-
-  if (isDev && !process.env.EMAIL_USER) {
-    console.log(`\n📧 [DEV] Registration OTP for ${to}: ${otp}\n`)
-    if (info && typeof info === 'object' && 'message' in info) {
-      console.log(JSON.stringify(info, null, 2))
-    }
-  }
+  if (isDev && !resend) console.log(`[DEV] Registration OTP for ${to}: ${otp}`)
 }
 
 // ─── Super-Admin Login OTP ───────────────────────────────────────────────────
@@ -297,21 +272,9 @@ export const sendLoginOTP = async (to: string, otp: string): Promise<void> => {
       </td>
     </tr>
   `
+  await send(to, '[ACTION REQUIRED] YLSH Admin Login Verification Code', shell('#991b1b', '#dc2626', body))
 
-  const info = await transporter.sendMail({
-    from: `YLSH Platform <${process.env.EMAIL_USER || 'noreply@ylsh.ng'}>`,
-    to,
-    subject: '[ACTION REQUIRED] YLSH Admin Login Verification Code',
-    html: shell('#991b1b', '#dc2626', body),
-    attachments: logoAttachment,
-  })
-
-  if (isDev && !process.env.EMAIL_USER) {
-    console.log(`\n🔐 [DEV] Super-Admin Login OTP for ${to}: ${otp}\n`)
-    if (info && typeof info === 'object' && 'message' in info) {
-      console.log(JSON.stringify(info, null, 2))
-    }
-  }
+  if (isDev && !resend) console.log(`[DEV] Super-Admin Login OTP for ${to}: ${otp}`)
 }
 
 // ─── Mentor Approval ─────────────────────────────────────────────────────────
@@ -381,29 +344,12 @@ export const sendMentorApprovalEmail = async (to: string, name: string): Promise
       </td>
     </tr>
   `
-
-  await transporter
-    .sendMail({
-      from: `YLSH Platform <${process.env.EMAIL_USER || 'noreply@ylsh.ng'}>`,
-      to,
-      subject: 'Congratulations — Your Mentor Application is Approved!',
-      html: shell('#065f46', '#10b981', body),
-      attachments: logoAttachment,
-    })
-    .catch(() => {})
-
-  if (isDev && !process.env.EMAIL_USER) {
-    console.log(`\n✅ [DEV] Mentor approval email sent to ${to}\n`)
-  }
+  await send(to, 'Congratulations — Your Mentor Application is Approved!', shell('#065f46', '#10b981', body)).catch(() => {})
 }
 
 // ─── Mentor Decline ──────────────────────────────────────────────────────────
 
-export const sendMentorDeclineEmail = async (
-  to: string,
-  name: string,
-  note?: string
-): Promise<void> => {
+export const sendMentorDeclineEmail = async (to: string, name: string, note?: string): Promise<void> => {
   const reviewerNote = note
     ? `<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:20px 0 14px;">
         <tr>
@@ -459,18 +405,5 @@ export const sendMentorDeclineEmail = async (
       </td>
     </tr>
   `
-
-  await transporter
-    .sendMail({
-      from: `YLSH Platform <${process.env.EMAIL_USER || 'noreply@ylsh.ng'}>`,
-      to,
-      subject: 'Update on Your YLSH Mentor Application',
-      html: shell('#475569', '#94a3b8', body),
-      attachments: logoAttachment,
-    })
-    .catch(() => {})
-
-  if (isDev && !process.env.EMAIL_USER) {
-    console.log(`\n❌ [DEV] Mentor decline email sent to ${to}\n`)
-  }
+  await send(to, 'Update on Your YLSH Mentor Application', shell('#475569', '#94a3b8', body)).catch(() => {})
 }
