@@ -13,7 +13,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction): 
   const token = header.slice(7)
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload
-    const user = await User.findById(decoded.id).select('-password -emailOtp -emailOtpExpires')
+    const user = await User.findById(decoded.id).select('-password')
     if (!user) {
       res.status(401).json({ message: 'User not found' })
       return

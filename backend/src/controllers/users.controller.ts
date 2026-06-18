@@ -20,7 +20,7 @@ export const list = async (req: Request, res: Response, next: NextFunction): Pro
 
     const skip = (Number(page) - 1) * Number(limit)
     const [data, total] = await Promise.all([
-      User.find(filter).select('-password -emailOtp -emailOtpExpires').sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
+      User.find(filter).select('-password').sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
       User.countDocuments(filter),
     ])
     res.json({ data, total, page: Number(page), limit: Number(limit) })
@@ -38,7 +38,7 @@ export const listPendingMentors = async (req: Request, res: Response, next: Next
     const filter: any = { role: 'mentor', approvalStatus: 'pending' }
 
     const [data, total] = await Promise.all([
-      User.find(filter).select('-password -emailOtp -emailOtpExpires').sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
+      User.find(filter).select('-password').sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
       User.countDocuments(filter),
     ])
     res.json({ data, total, page: Number(page), limit: Number(limit) })
@@ -55,7 +55,7 @@ export const getMe = (req: Request, res: Response): void => {
 // GET /api/users/:id  (admin)
 export const getById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const user = await User.findById(req.params.id).select('-password -emailOtp -emailOtpExpires')
+    const user = await User.findById(req.params.id).select('-password')
     if (!user) {
       res.status(404).json({ message: 'User not found' })
       return
@@ -73,7 +73,7 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction):
     const updates: Record<string, unknown> = {}
     allowed.forEach((k) => { if (req.body[k] !== undefined) updates[k] = req.body[k] })
 
-    const user = await User.findByIdAndUpdate(req.user!._id, updates, { new: true, runValidators: true }).select('-password -emailOtp -emailOtpExpires')
+    const user = await User.findByIdAndUpdate(req.user!._id, updates, { new: true, runValidators: true }).select('-password')
     res.json(user)
   } catch (err) {
     next(err)
@@ -93,7 +93,7 @@ export const updateStatus = async (req: Request, res: Response, next: NextFuncti
       req.params.id,
       { verificationStatus: status },
       { new: true }
-    ).select('-password -emailOtp -emailOtpExpires')
+    ).select('-password')
 
     if (!user) {
       res.status(404).json({ message: 'User not found' })
@@ -197,7 +197,7 @@ export const updateRole = async (req: Request, res: Response, next: NextFunction
       return
     }
 
-    const user = await User.findByIdAndUpdate(req.params.id, { role }, { new: true }).select('-password -emailOtp -emailOtpExpires')
+    const user = await User.findByIdAndUpdate(req.params.id, { role }, { new: true }).select('-password')
     if (!user) {
       res.status(404).json({ message: 'User not found' })
       return

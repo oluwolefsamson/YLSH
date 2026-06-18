@@ -18,8 +18,6 @@ const userSchema = new Schema<IUser>(
     nin: { type: String, trim: true },
     ninVerified: { type: Boolean, default: false },
     emailVerified: { type: Boolean, default: false },
-    emailOtp: { type: String },
-    emailOtpExpires: { type: Date },
     organization: { type: String, trim: true },
     state: { type: String, trim: true },
     bio: { type: String },
@@ -58,8 +56,6 @@ userSchema.methods.comparePassword = async function (candidate: string): Promise
 userSchema.methods.toPublicJSON = function (): Record<string, unknown> {
   const obj = this.toObject({ virtuals: true })
   delete obj.password
-  delete obj.emailOtp
-  delete obj.emailOtpExpires
   return obj
 }
 

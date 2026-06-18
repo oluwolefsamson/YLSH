@@ -23,8 +23,6 @@ export interface IUser extends Document {
   nin?: string
   ninVerified: boolean
   emailVerified: boolean
-  emailOtp?: string
-  emailOtpExpires?: Date
   organization?: string
   state?: string
   bio?: string
