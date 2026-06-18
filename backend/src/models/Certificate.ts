@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, CallbackWithoutResultAndOptionalError } from 'mongoose'
+import mongoose, { Schema, Model } from 'mongoose'
 import crypto from 'crypto'
 import { ICertificate, CertificateType, CertificateStatus } from '../types'
 
@@ -25,12 +25,11 @@ const certificateSchema = new Schema<ICertificate>(
   { timestamps: true }
 )
 
-certificateSchema.pre('save', function (next: CallbackWithoutResultAndOptionalError) {
+certificateSchema.pre('save', async function () {
   if (!this.verifyCode) {
     const raw = crypto.randomBytes(9).toString('hex').toUpperCase()
     this.verifyCode = `YLSH-CERT-${raw.slice(0, 6)}`
   }
-  next()
 })
 
 const Certificate: Model<ICertificate> = mongoose.model<ICertificate>('Certificate', certificateSchema)

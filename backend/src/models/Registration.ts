@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, CallbackWithoutResultAndOptionalError } from 'mongoose'
+import mongoose, { Schema, Model } from 'mongoose'
 import crypto from 'crypto'
 import { IRegistration, RegistrationStatus } from '../types'
 
@@ -20,12 +20,11 @@ const registrationSchema = new Schema<IRegistration>(
 
 registrationSchema.index({ user: 1, event: 1 }, { unique: true })
 
-registrationSchema.pre('save', function (next: CallbackWithoutResultAndOptionalError) {
+registrationSchema.pre('save', async function () {
   if (!this.qrToken) {
     const raw = crypto.randomBytes(6).toString('hex').toUpperCase()
     this.qrToken = `YLS-${raw.slice(0, 4)}-${raw.slice(4)}`
   }
-  next()
 })
 
 const Registration: Model<IRegistration> = mongoose.model<IRegistration>('Registration', registrationSchema)
