@@ -64,13 +64,15 @@ const DashboardLayout: FC<Props> = ({ children }) => {
         <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/6 pointer-events-none" />
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-[15px] border-2 border-white/25" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}>
-            AB
+            {`${user?.firstName?.[0] ?? ''}${user?.lastName?.[0] ?? ''}`.toUpperCase() || '?'}
           </div>
           <div className="min-w-0">
-            <p className="text-white font-bold text-sm leading-snug">Amina Bello</p>
+            <p className="text-white font-bold text-sm leading-snug">{user?.firstName} {user?.lastName}</p>
             <div className="flex items-center gap-1.5">
               <ShieldCheck size={11} className="text-white/80" />
-              <p className="text-[11px] font-semibold text-white/80">Verified Participant</p>
+              <p className="text-[11px] font-semibold text-white/80">
+                {user?.verificationStatus === 'verified' ? 'Verified' : 'Unverified'} Participant
+              </p>
             </div>
           </div>
         </div>
@@ -87,6 +89,7 @@ const DashboardLayout: FC<Props> = ({ children }) => {
               <NextLink
                 key={item.label}
                 href={item.href}
+                onClick={() => setMobileOpen(false)}
                 className={cn(
                   'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150',
                   active

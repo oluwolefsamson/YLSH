@@ -14,7 +14,7 @@ const HomeNewsLetter: FC = () => {
     <section className="py-16 md:py-20 bg-white">
       <div className="container">
         <div
-          className="rounded-3xl py-14 px-8 md:px-16"
+          className="rounded-3xl py-10 md:py-14 px-5 sm:px-8 md:px-16"
           style={{
             background: 'linear-gradient(135deg, #082F49 0%, #0d5c54 50%, #127C71 100%)',
             boxShadow: '0 30px 70px rgba(18,124,113,0.22)',
@@ -26,7 +26,7 @@ const HomeNewsLetter: FC = () => {
               Free Access · No Paywall
             </span>
 
-            <h2 className="text-[32px] md:text-[50px] font-extrabold text-white mb-4 leading-tight">
+            <h2 className="text-[24px] sm:text-[32px] md:text-[50px] font-extrabold text-white mb-4 leading-tight">
               Join YLSH today —<br className="hidden sm:block" /> it&apos;s completely free
             </h2>
 
@@ -49,10 +49,10 @@ const HomeNewsLetter: FC = () => {
             <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
               <input
                 type="email"
-                placeholder="Enter your email address"
-                className="flex-1 h-12 px-5 rounded-full bg-white text-foreground placeholder:text-muted-foreground outline-none border-0 text-sm shadow-inner"
+                placeholder="Enter your email"
+                className="w-full flex-1 h-16 sm:h-12 px-5 rounded-full bg-white text-foreground placeholder:text-muted-foreground outline-none border-0 text-base sm:text-sm shadow-inner"
               />
-              <button className="flex-shrink-0 inline-flex items-center justify-center gap-2 px-7 h-12 rounded-full bg-primary text-white font-bold text-sm tracking-wide hover:bg-[#0d5c54] transition-colors shadow-lg whitespace-nowrap">
+              <button className="w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-7 h-16 sm:h-12 rounded-full bg-primary text-white font-bold text-base sm:text-sm tracking-wide hover:bg-[#0d5c54] transition-colors shadow-lg">
                 Join Free
                 <ArrowRight size={15} />
               </button>

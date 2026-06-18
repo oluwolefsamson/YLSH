@@ -12,7 +12,7 @@ const badges = [
 
 const HomeHero: FC = () => {
   return (
-    <section id="hero" className="relative min-h-[50vh] md:min-h-[60vh] flex flex-col justify-center overflow-hidden bg-black">
+    <section id="hero" className="relative min-h-[70vh] md:min-h-[92vh] flex flex-col justify-center overflow-hidden bg-black">
 
       {/* Video background */}
       <video
@@ -29,15 +29,15 @@ const HomeHero: FC = () => {
       <div className="absolute inset-0 bg-black/55" />
 
       {/* Content */}
-      <div className="relative z-10 container py-12 md:py-32">
+      <div className="relative z-10 container py-7 md:py-32">
         <div className="max-w-3xl mx-auto text-center">
 
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white text-sm font-semibold mb-6">
+          <div className="hidden sm:inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white text-sm font-semibold mb-6">
             <span className="w-2 h-2 rounded-full bg-white animate-pulse inline-block" />
             Youth Platform · Free Access
           </div>
 
-          <h1 className="text-[42px] sm:text-[58px] lg:text-[68px] font-extrabold tracking-tight leading-[1.08] mb-6 text-white">
+          <h1 className="text-[28px] sm:text-[58px] lg:text-[68px] font-extrabold tracking-tight leading-[1.1] mb-3 sm:mb-6 text-white">
             One platform for{' '}
             <span className="relative inline-block">
               youth programs
@@ -48,13 +48,13 @@ const HomeHero: FC = () => {
             {' '}and events
           </h1>
 
-          <p className="text-[17px] text-white/85 leading-relaxed mb-8 max-w-xl mx-auto">
+          <p className="hidden sm:block text-[17px] text-white/85 leading-relaxed mb-8 max-w-xl mx-auto">
             YLSH unifies identity verification, event management, attendance, certificates,
             mentorship, and analytics — all in one place, completely free.
           </p>
 
-          {/* Feature badge pills */}
-          <div className="flex flex-wrap gap-2 justify-center mb-10">
+          {/* Feature badge pills — desktop only */}
+          <div className="hidden sm:flex flex-wrap gap-2 justify-center mb-10">
             {badges.map((b) => (
               <span key={b} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/20 text-white text-sm font-medium" style={{ backgroundColor: '#127C71' }}>
                 <CheckCircle2 size={13} className="text-white/80" />
@@ -64,15 +64,15 @@ const HomeHero: FC = () => {
           </div>
 
           {/* CTA buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8 md:mb-14">
+          <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 justify-center mt-4 sm:mt-0 mb-4 md:mb-14">
             <Link href="/signup">
-              <button className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-[#082F49] font-bold text-[15px] shadow-lg hover:bg-white/90 transition-colors">
+              <button className="inline-flex items-center gap-2 px-7 py-3 sm:px-8 sm:py-3.5 bg-white text-[#082F49] font-bold text-[14px] sm:text-[15px] shadow-lg hover:bg-white/90 transition-colors">
                 Get Started Free
-                <ArrowRight size={17} />
+                <ArrowRight size={16} />
               </button>
             </Link>
             <Link href="/signin">
-              <button className="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-white/60 text-white font-bold text-[15px] hover:bg-white/10 transition-colors">
+              <button className="inline-flex items-center gap-2 px-7 py-3 sm:px-8 sm:py-3.5 border-2 border-white/60 text-white font-bold text-[14px] sm:text-[15px] hover:bg-white/10 transition-colors">
                 Sign In
               </button>
             </Link>

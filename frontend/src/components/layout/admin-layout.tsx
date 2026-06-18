@@ -15,6 +15,7 @@ import {
   ScanLine,
 } from 'lucide-react'
 import { cn } from '@/utils'
+import { useAuth } from '@/contexts/AuthContext'
 import type { NavItem } from '@/types'
 
 interface Props {
@@ -46,12 +47,14 @@ const superAdminNavItems: NavItem[] = [
 
 const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
   const router = useRouter()
+  const { user } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [signOutOpen, setSignOutOpen] = useState(false)
 
   const navItems = superAdmin ? superAdminNavItems : adminNavItems
   const portalLabel = superAdmin ? 'Super Admin' : 'Admin'
-  const initials = superAdmin ? 'SA' : 'AD'
+  const initials = user ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() : (superAdmin ? 'SA' : 'AD')
+  const displayName = user ? `${user.firstName} ${user.lastName}` : portalLabel
   const roleName = superAdmin ? 'System Administrator' : 'Platform Admin'
   const activeColor = superAdmin ? '#7c3aed' : '#127C71'
   const sidebarBg = superAdmin
@@ -74,7 +77,7 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
             {initials}
           </div>
           <div className="min-w-0">
-            <p className="text-white font-bold text-sm leading-snug">{portalLabel}</p>
+            <p className="text-white font-bold text-sm leading-snug">{displayName}</p>
             <div className="flex items-center gap-1.5">
               <Shield size={11} className="text-white/80" />
               <p className="text-[11px] font-semibold text-white/80">{roleName}</p>
@@ -94,6 +97,7 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
               <NextLink
                 key={item.label}
                 href={item.href}
+                onClick={() => setMobileOpen(false)}
                 className={cn(
                   'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150',
                   active

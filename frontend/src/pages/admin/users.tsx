@@ -81,7 +81,7 @@ const AdminUsersPage: NextPageWithLayout = () => {
           </div>
         </div>
 
-        <div className="flex gap-1 border-b border-slate-200/18 mb-5">
+        <div className="flex gap-1 border-b border-slate-200/18 mb-5 overflow-x-auto">
           {TABS.map((label, i) => (
             <button key={label} onClick={() => setTab(i)} className={cn("px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors whitespace-nowrap", tab === i ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
               {label} {i === 0 ? `(${total})` : ""}

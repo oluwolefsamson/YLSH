@@ -12,16 +12,16 @@ const HomeFeature: FC = () => {
           <div className="relative order-2 lg:order-1">
             <div className="rounded-3xl overflow-hidden">
               <Image
-                src="/images/home-feature.png"
-                alt="YLSH platform features"
+                src="/images/gallery/ylsh-networking.jpg"
+                alt="Participants networking at YLS 2025"
                 width={650}
                 height={500}
                 quality={95}
-                className="w-full h-auto block"
+                className="w-full h-auto block object-cover"
               />
             </div>
             {/* Floating readiness card */}
-            <div className="absolute -top-6 -right-4 md:right-4 rounded-2xl bg-white shadow-xl border border-slate-100 px-5 py-4 w-[210px]">
+            <div className="hidden sm:block absolute -top-6 -right-4 md:right-4 rounded-2xl bg-white shadow-xl border border-slate-100 px-5 py-4 w-[210px]">
               <p className="text-sm font-bold text-[#082F49] mb-3">Platform Readiness</p>
               {[
                 { label: 'Auth & Identity', pct: 65, color: '#127C71' },

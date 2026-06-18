@@ -9,13 +9,13 @@ const stats = [
 
 const HomeStats: FC = () => {
   return (
-    <section className="bg-black py-12">
+    <section className="bg-black py-6">
       <div className="container">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+        <div className="flex flex-wrap justify-center gap-x-10 gap-y-4">
           {stats.map((s) => (
-            <div key={s.value} className="text-center">
-              <p className="text-[36px] md:text-[44px] font-extrabold text-white leading-none mb-2">{s.value}</p>
-              <p className="text-sm text-white/85 font-medium">{s.label}</p>
+            <div key={s.value} className="flex items-center gap-2.5">
+              <p className="text-[22px] font-extrabold text-white leading-none">{s.value}</p>
+              <p className="text-xs text-white/70 font-medium">{s.label}</p>
             </div>
           ))}
         </div>
