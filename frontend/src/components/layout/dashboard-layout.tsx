@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from 'react'
+import React, { FC, ReactNode, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import {
@@ -16,6 +16,7 @@ import {
   QrCode,
 } from 'lucide-react'
 import { cn } from '@/utils'
+import { useAuth, ROLE_REDIRECTS } from '@/contexts/AuthContext'
 import type { NavItem } from '@/types'
 
 interface Props { children: ReactNode }
@@ -35,14 +36,23 @@ const navItems: NavItem[] = [
 
 const DashboardLayout: FC<Props> = ({ children }) => {
   const router = useRouter()
+  const { user, isLoading, logout } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [signOutOpen, setSignOutOpen] = useState(false)
+
+  useEffect(() => {
+    if (!isLoading && user && user.role !== 'participant') {
+      void router.replace(ROLE_REDIRECTS[user.role] ?? '/signin')
+    }
+  }, [user, isLoading, router])
 
   const handleConfirmSignOut = (): void => {
     setSignOutOpen(false)
     setMobileOpen(false)
-    void router.push('/signin')
+    void logout()
   }
+
+  if (!isLoading && user && user.role !== 'participant') return null
 
   const sidebar = (
     <div className="h-full flex flex-col">

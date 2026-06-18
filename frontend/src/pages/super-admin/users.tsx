@@ -43,6 +43,7 @@ const SuperAdminUsersPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
   const [search, setSearch] = useState('')
   const [menuId, setMenuId] = useState<string | null>(null)
+  const [confirmModal, setConfirmModal] = useState<{ type: 'delete' | 'suspend'; id: string; name: string; suspended?: boolean } | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   // Modal state
@@ -86,23 +87,23 @@ const SuperAdminUsersPage: NextPageWithLayout = () => {
 
   const closeModal = () => { setModalOpen(false); setForm(EMPTY_FORM); setShowPassword(false) }
 
-  const handleSuspend = (user: UserType) => {
-    const newStatus = user.verificationStatus === 'suspended' ? 'verified' : 'suspended'
-    updateStatus.mutate(
-      { id: user._id, status: newStatus },
-      {
-        onSuccess: () => toast.success(`User ${newStatus === 'suspended' ? 'suspended' : 'unsuspended'}`),
-        onError: () => toast.error('Failed to update user status'),
-      }
-    )
-    setMenuId(null)
-  }
-
-  const handleDelete = (user: UserType) => {
-    deleteUser.mutate(user._id, {
-      onSuccess: () => toast.success('User deleted'),
-      onError: () => toast.error('Failed to delete user'),
-    })
+  const handleConfirm = () => {
+    if (!confirmModal) return
+    if (confirmModal.type === 'delete') {
+      deleteUser.mutate(confirmModal.id, {
+        onSuccess: () => { toast.success('User deleted'); setConfirmModal(null) },
+        onError: () => toast.error('Failed to delete user'),
+      })
+    } else {
+      const newStatus = confirmModal.suspended ? 'verified' : 'suspended'
+      updateStatus.mutate(
+        { id: confirmModal.id, status: newStatus },
+        {
+          onSuccess: () => { toast.success(newStatus === 'suspended' ? 'User suspended' : 'User activated'); setConfirmModal(null) },
+          onError: () => toast.error('Failed to update user status'),
+        }
+      )
+    }
     setMenuId(null)
   }
 
@@ -186,10 +187,10 @@ const SuperAdminUsersPage: NextPageWithLayout = () => {
                     </button>
                     {menuId === user._id && (
                       <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-xl shadow-lg py-1 z-50 min-w-[160px]">
-                        <button onClick={() => handleSuspend(user)} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">
-                          {user.verificationStatus === 'suspended' ? 'Unsuspend account' : 'Suspend account'}
+                        <button onClick={() => { setConfirmModal({ type: 'suspend', id: user._id, name: `${user.firstName} ${user.lastName}`, suspended: user.verificationStatus === 'suspended' }); setMenuId(null) }} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">
+                          {user.verificationStatus === 'suspended' ? 'Activate account' : 'Suspend account'}
                         </button>
-                        <button onClick={() => handleDelete(user)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete account</button>
+                        <button onClick={() => { setConfirmModal({ type: 'delete', id: user._id, name: `${user.firstName} ${user.lastName}` }); setMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete account</button>
                       </div>
                     )}
                   </div>
@@ -202,6 +203,37 @@ const SuperAdminUsersPage: NextPageWithLayout = () => {
           </div>
         )}
       </div>
+
+      {confirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}>
+          <div className="w-full max-w-sm rounded-2xl bg-white shadow-2xl p-6">
+            <div className={`w-12 h-12 rounded-full grid place-items-center mx-auto mb-4 ${confirmModal.type === 'delete' ? 'bg-red-100' : 'bg-amber-100'}`}>
+              {confirmModal.type === 'delete' ? <X size={22} className="text-red-600" /> : <Ban size={22} className="text-amber-600" />}
+            </div>
+            <h2 className="text-lg font-bold text-center mb-1">
+              {confirmModal.type === 'delete' ? 'Delete Account?' : confirmModal.suspended ? 'Activate Account?' : 'Suspend Account?'}
+            </h2>
+            <p className="text-sm text-muted-foreground text-center mb-6">
+              {confirmModal.type === 'delete'
+                ? <><span className="font-semibold text-foreground">{confirmModal.name}</span>'s account will be permanently deleted.</>
+                : confirmModal.suspended
+                  ? <><span className="font-semibold text-foreground">{confirmModal.name}</span> will be able to access the platform again.</>
+                  : <><span className="font-semibold text-foreground">{confirmModal.name}</span> will lose access to the platform.</>
+              }
+            </p>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmModal(null)} className="flex-1 h-11 rounded-full border border-border font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
+              <button
+                onClick={handleConfirm}
+                disabled={deleteUser.isPending || updateStatus.isPending}
+                className={`flex-1 h-11 rounded-full text-white font-bold text-sm disabled:opacity-50 transition-colors flex items-center justify-center gap-2 ${confirmModal.type === 'delete' ? 'bg-red-600 hover:bg-red-700' : confirmModal.suspended ? 'bg-green-600 hover:bg-green-700' : 'bg-amber-600 hover:bg-amber-700'}`}
+              >
+                {(deleteUser.isPending || updateStatus.isPending) ? <Loader2 size={15} className="animate-spin" /> : confirmModal.type === 'delete' ? 'Delete' : confirmModal.suspended ? 'Activate' : 'Suspend'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add Admin Modal */}
       {modalOpen && (

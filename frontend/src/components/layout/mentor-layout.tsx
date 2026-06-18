@@ -5,15 +5,17 @@ import {
   Menu,
   LayoutDashboard,
   Calendar,
+  CalendarCheck,
   Users,
   Clock,
   UserCircle,
   LogOut,
   Star,
   X,
+  QrCode,
 } from 'lucide-react'
 import { cn } from '@/utils'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth, ROLE_REDIRECTS } from '@/contexts/AuthContext'
 import type { NavItem } from '@/types'
 
 interface Props { children: ReactNode }
@@ -22,6 +24,8 @@ const drawerWidth = 288
 
 const navItems: NavItem[] = [
   { label: 'Overview', href: '/mentor', icon: LayoutDashboard },
+  { label: 'Events', href: '/mentor/events', icon: CalendarCheck },
+  { label: 'My Registrations', href: '/mentor/registrations', icon: QrCode },
   { label: 'Sessions', href: '/mentor/sessions', icon: Calendar },
   { label: 'Mentees', href: '/mentor/mentees', icon: Users },
   { label: 'Availability', href: '/mentor/availability', icon: Clock },
@@ -34,9 +38,11 @@ const MentorLayout: FC<Props> = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [signOutOpen, setSignOutOpen] = useState(false)
 
-  // Redirect pending/declined mentors away from portal pages
   useEffect(() => {
-    if (user && user.role === 'mentor' && user.approvalStatus !== 'approved') {
+    if (!user) return
+    if (user.role !== 'mentor') {
+      void router.replace(ROLE_REDIRECTS[user.role] ?? '/signin')
+    } else if (user.approvalStatus !== 'approved') {
       void router.replace('/mentor/pending')
     }
   }, [user, router])
@@ -47,8 +53,7 @@ const MentorLayout: FC<Props> = ({ children }) => {
     void logout()
   }
 
-  // Don't render portal for unapproved mentors
-  if (user && user.role === 'mentor' && user.approvalStatus !== 'approved') {
+  if (user && (user.role !== 'mentor' || user.approvalStatus !== 'approved')) {
     return null
   }
 
@@ -102,7 +107,7 @@ const MentorLayout: FC<Props> = ({ children }) => {
       <div className="p-3">
         <hr className="border-border mb-3" />
         <button
-          onClick={() => void logout()}
+          onClick={() => setSignOutOpen(true)}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors"
         >
           <LogOut size={16} />

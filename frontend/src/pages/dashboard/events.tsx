@@ -87,7 +87,7 @@ const EventsPage: NextPageWithLayout = () => {
             {events.map((event) => {
               const isRegistered = registeredEventIds.has(event._id)
               const isWaitlisted = waitlistedIds.has(event._id)
-              const isFull = event.registeredCount >= event.capacity
+              const isFull = event.capacity != null && event.registeredCount >= event.capacity
               const isPast = event.status === "past"
               return (
                 <div key={event._id} className="flex flex-col p-5 rounded-xl border border-slate-200/18">
@@ -166,7 +166,7 @@ const EventsPage: NextPageWithLayout = () => {
             {!registerDone ? (
               <>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-lg">{registerModal.registeredCount >= registerModal.capacity ? "Join Waitlist" : "Confirm Registration"}</h3>
+                  <h3 className="font-bold text-lg">{registerModal.capacity != null && registerModal.registeredCount >= registerModal.capacity ? "Join Waitlist" : "Confirm Registration"}</h3>
                   <button onClick={closeRegisterModal} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X size={18} /></button>
                 </div>
                 <div className="p-4 rounded-xl bg-muted mb-4">
@@ -176,13 +176,13 @@ const EventsPage: NextPageWithLayout = () => {
                     <div className="flex items-center gap-2"><MapPin size={13} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{registerModal.venue}</span></div>
                   </div>
                 </div>
-                {registerModal.registeredCount >= registerModal.capacity && (
+                {registerModal.capacity != null && registerModal.registeredCount >= registerModal.capacity && (
                   <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">This event is full. You will be added to the waitlist and notified if a slot opens.</p>
                 )}
                 <div className="flex gap-3">
                   <button onClick={closeRegisterModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 text-foreground font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
                   <button onClick={() => handleRegisterConfirm(registerModal)} disabled={registerMutation.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-60 transition-colors">
-                    {registerMutation.isPending ? "Processing..." : registerModal.registeredCount >= registerModal.capacity ? "Join Waitlist" : "Confirm"}
+                    {registerMutation.isPending ? "Processing..." : registerModal.capacity != null && registerModal.registeredCount >= registerModal.capacity ? "Join Waitlist" : "Confirm"}
                   </button>
                 </div>
               </>

@@ -10,7 +10,7 @@ import AuthShell from "@/components/auth/auth-shell"
 import AuthFormCard from "@/components/auth/auth-form-card"
 import AuthLink from "@/components/auth/auth-link"
 import { cn } from "@/utils"
-import { useAuth } from "@/contexts/AuthContext"
+import { useAuth, ROLE_REDIRECTS } from "@/contexts/AuthContext"
 import { verifyNIN, register } from "@/services/endpoints/auth/auth"
 import type { SignupRole } from "@/types"
 
@@ -84,7 +84,7 @@ const SignUpPage: NextPage = () => {
       if (user.role === "mentor" && user.approvalStatus !== "approved") {
         void router.push("/mentor/pending")
       } else {
-        void router.push("/dashboard")
+        void router.push(ROLE_REDIRECTS[user.role] ?? "/dashboard")
       }
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "Registration failed"

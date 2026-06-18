@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Calendar, CheckCircle, Video, XCircle, Clock, Loader2, X } from 'lucide-react'
+import { Calendar, CheckCircle, Video, XCircle, Clock, Loader2, X, AlertTriangle } from 'lucide-react'
 import { MentorLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
@@ -34,6 +34,7 @@ const MentorSessionsPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
   const [outcomeModal, setOutcomeModal] = useState<MentorSession | null>(null)
   const [outcomeText, setOutcomeText] = useState('')
+  const [cancelConfirm, setCancelConfirm] = useState<MentorSession | null>(null)
 
   const { data: sessions = [], isLoading } = useMySessions()
   const updateStatus = useUpdateSessionStatus()
@@ -59,9 +60,10 @@ const MentorSessionsPage: NextPageWithLayout = () => {
     )
   }
 
-  const handleCancel = (session: MentorSession) => {
-    cancelMutation.mutate(session._id, {
-      onSuccess: () => toast.success('Session cancelled'),
+  const handleCancel = () => {
+    if (!cancelConfirm) return
+    cancelMutation.mutate(cancelConfirm._id, {
+      onSuccess: () => { toast.success('Session cancelled'); setCancelConfirm(null) },
       onError: () => toast.error('Failed to cancel session'),
     })
   }
@@ -139,7 +141,7 @@ const MentorSessionsPage: NextPageWithLayout = () => {
                         <button onClick={() => handleMarkComplete(session)} disabled={updateStatus.isPending} className="px-4 py-2 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors disabled:opacity-50">
                           Mark done
                         </button>
-                        <button onClick={() => handleCancel(session)} disabled={cancelMutation.isPending} className="px-4 py-2 rounded-full border border-red-300 text-red-600 text-sm font-semibold hover:bg-red-50 transition-colors disabled:opacity-50">Cancel</button>
+                        <button onClick={() => setCancelConfirm(session)} className="px-4 py-2 rounded-full border border-red-300 text-red-600 text-sm font-semibold hover:bg-red-50 transition-colors">Cancel</button>
                       </div>
                     )}
                     {session.status === 'completed' && !session.outcome && (
@@ -152,6 +154,27 @@ const MentorSessionsPage: NextPageWithLayout = () => {
           </div>
         )}
       </div>
+
+      {cancelConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}>
+          <div className="w-full max-w-sm rounded-2xl bg-white shadow-2xl p-6">
+            <div className="w-12 h-12 rounded-full bg-amber-100 grid place-items-center mx-auto mb-4">
+              <AlertTriangle size={22} className="text-amber-600" />
+            </div>
+            <h2 className="text-lg font-bold text-center mb-1">Cancel Session?</h2>
+            <p className="text-sm text-muted-foreground text-center mb-1">
+              Session with <span className="font-semibold text-foreground">{(cancelConfirm.mentee as User)?.firstName} {(cancelConfirm.mentee as User)?.lastName}</span>
+            </p>
+            <p className="text-sm text-muted-foreground text-center mb-6">{cancelConfirm.topic}</p>
+            <div className="flex gap-3">
+              <button onClick={() => setCancelConfirm(null)} className="flex-1 h-11 rounded-full border border-border font-semibold text-sm hover:bg-muted transition-colors">Keep it</button>
+              <button onClick={handleCancel} disabled={cancelMutation.isPending} className="flex-1 h-11 rounded-full bg-red-600 text-white font-bold text-sm hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+                {cancelMutation.isPending ? <Loader2 size={15} className="animate-spin" /> : 'Yes, cancel'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {outcomeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

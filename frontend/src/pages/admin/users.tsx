@@ -1,6 +1,6 @@
 ﻿import React, { useState, useRef, useEffect } from "react"
 import { toast } from "sonner"
-import { Users, Search, MoreVertical, CheckCircle, Clock, Ban, Filter } from "lucide-react"
+import { Users, Search, MoreVertical, CheckCircle, Clock, Ban, Filter, Loader2, X } from "lucide-react"
 import { AdminLayout } from "@/components/layout"
 import { PageHeader } from "@/components/dashboard"
 import { NextPageWithLayout } from "@/interfaces/layout"
@@ -29,6 +29,7 @@ const AdminUsersPage: NextPageWithLayout = () => {
   const [search, setSearch] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [confirmModal, setConfirmModal] = useState<{ type: 'delete' | 'suspend'; id: string; name: string; suspended?: boolean } | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -49,20 +50,20 @@ const AdminUsersPage: NextPageWithLayout = () => {
   const users = data?.data ?? []
   const total = data?.total ?? 0
 
-  const handleSuspend = async (id: string) => {
-    try { await updateStatus.mutateAsync({ id, status: "suspended" }); toast.success("User suspended"); setOpenMenuId(null) }
-    catch { toast.error("Failed to suspend user") }
-  }
-
-  const handleActivate = async (id: string) => {
-    try { await updateStatus.mutateAsync({ id, status: "verified" }); toast.success("User activated"); setOpenMenuId(null) }
-    catch { toast.error("Failed to activate user") }
-  }
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Delete this user permanently?")) return
-    try { await deleteUser.mutateAsync(id); toast.success("User deleted"); setOpenMenuId(null) }
-    catch { toast.error("Failed to delete user") }
+  const handleConfirm = async () => {
+    if (!confirmModal) return
+    try {
+      if (confirmModal.type === 'delete') {
+        await deleteUser.mutateAsync(confirmModal.id)
+        toast.success("User deleted")
+      } else {
+        const newStatus = confirmModal.suspended ? "verified" : "suspended"
+        await updateStatus.mutateAsync({ id: confirmModal.id, status: newStatus })
+        toast.success(newStatus === "suspended" ? "User suspended" : "User activated")
+      }
+      setConfirmModal(null)
+      setOpenMenuId(null)
+    } catch { toast.error("Action failed") }
   }
 
   return (
@@ -112,11 +113,11 @@ const AdminUsersPage: NextPageWithLayout = () => {
                       {openMenuId === user._id && (
                         <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-xl shadow-lg py-1 z-50 min-w-[160px]">
                           {user.verificationStatus !== "suspended" ? (
-                            <button onClick={() => handleSuspend(user._id)} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">Suspend account</button>
+                            <button onClick={() => { setConfirmModal({ type: 'suspend', id: user._id, name: `${user.firstName} ${user.lastName}`, suspended: false }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">Suspend account</button>
                           ) : (
-                            <button onClick={() => handleActivate(user._id)} className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50 transition-colors">Activate account</button>
+                            <button onClick={() => { setConfirmModal({ type: 'suspend', id: user._id, name: `${user.firstName} ${user.lastName}`, suspended: true }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50 transition-colors">Activate account</button>
                           )}
-                          <button onClick={() => handleDelete(user._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete account</button>
+                          <button onClick={() => { setConfirmModal({ type: 'delete', id: user._id, name: `${user.firstName} ${user.lastName}` }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete account</button>
                         </div>
                       )}
                     </div>
@@ -128,6 +129,37 @@ const AdminUsersPage: NextPageWithLayout = () => {
           </div>
         )}
       </div>
+
+      {confirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}>
+          <div className="w-full max-w-sm rounded-2xl bg-white shadow-2xl p-6">
+            <div className={`w-12 h-12 rounded-full grid place-items-center mx-auto mb-4 ${confirmModal.type === 'delete' ? 'bg-red-100' : 'bg-amber-100'}`}>
+              {confirmModal.type === 'delete' ? <X size={22} className="text-red-600" /> : <Ban size={22} className="text-amber-600" />}
+            </div>
+            <h2 className="text-lg font-bold text-center mb-1">
+              {confirmModal.type === 'delete' ? 'Delete Account?' : confirmModal.suspended ? 'Activate Account?' : 'Suspend Account?'}
+            </h2>
+            <p className="text-sm text-muted-foreground text-center mb-6">
+              {confirmModal.type === 'delete'
+                ? <><span className="font-semibold text-foreground">{confirmModal.name}</span>'s account will be permanently deleted.</>
+                : confirmModal.suspended
+                  ? <><span className="font-semibold text-foreground">{confirmModal.name}</span> will be able to access the platform again.</>
+                  : <><span className="font-semibold text-foreground">{confirmModal.name}</span> will lose access to the platform.</>
+              }
+            </p>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmModal(null)} className="flex-1 h-11 rounded-full border border-border font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
+              <button
+                onClick={handleConfirm}
+                disabled={deleteUser.isPending || updateStatus.isPending}
+                className={`flex-1 h-11 rounded-full text-white font-bold text-sm disabled:opacity-50 transition-colors flex items-center justify-center gap-2 ${confirmModal.type === 'delete' ? 'bg-red-600 hover:bg-red-700' : confirmModal.suspended ? 'bg-green-600 hover:bg-green-700' : 'bg-amber-600 hover:bg-amber-700'}`}
+              >
+                {(deleteUser.isPending || updateStatus.isPending) ? <Loader2 size={15} className="animate-spin" /> : confirmModal.type === 'delete' ? 'Delete' : confirmModal.suspended ? 'Activate' : 'Suspend'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

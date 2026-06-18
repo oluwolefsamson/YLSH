@@ -139,18 +139,18 @@ export const cancelRegistration = async (req: Request, res: Response, next: Next
       await Event.findByIdAndUpdate(req.params.id, { $inc: { registeredCount: -1 } })
 
       // promote the oldest waitlisted person
-      const next = await Registration.findOne({ event: req.params.id, status: 'waitlisted' })
+      const promoted = await Registration.findOne({ event: req.params.id, status: 'waitlisted' })
         .sort({ createdAt: 1 })
         .populate<{ user: { firstName: string; lastName: string; email: string } }>('user', 'firstName lastName email')
         .populate<{ event: { title: string; date: Date; venue: string } }>('event', 'title date venue')
 
-      if (next) {
-        next.status = 'registered'
-        await next.save()
+      if (promoted) {
+        promoted.status = 'registered'
+        await promoted.save()
         await Event.findByIdAndUpdate(req.params.id, { $inc: { registeredCount: 1 } })
 
-        const promotedUser = next.user as { firstName: string; lastName: string; email: string }
-        const promotedEvent = next.event as { title: string; date: Date; venue: string }
+        const promotedUser = promoted.user as { firstName: string; lastName: string; email: string }
+        const promotedEvent = promoted.event as { title: string; date: Date; venue: string }
         const formattedDate = new Date(promotedEvent.date).toLocaleDateString('en-NG', {
           weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
         })
