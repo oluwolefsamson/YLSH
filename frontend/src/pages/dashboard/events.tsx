@@ -3,6 +3,7 @@ import { toast } from "sonner"
 import { CalendarCheck, MapPin, Calendar, Users, QrCode, Clock, X, CheckCircle } from "lucide-react"
 import { DashboardLayout } from "@/components/layout"
 import { PageHeader, StatCard } from "@/components/dashboard"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { NextPageWithLayout } from "@/interfaces/layout"
 import { cn } from "@/utils"
 import { useEvents, useRegisterForEvent, useCancelRegistration } from "@/services/hooks/events/events"
@@ -21,15 +22,16 @@ const categoryBadge: Record<string, string> = {
 }
 
 const TABS = ["All Events", "Upcoming", "Past"]
+const TAB_VALUES = ["all", "upcoming", "past"]
 
 const EventsPage: NextPageWithLayout = () => {
-  const [tab, setTab] = useState(0)
+  const [tabValue, setTabValue] = useState("all")
   const [expandedQR, setExpandedQR] = useState<string | null>(null)
   const [registerModal, setRegisterModal] = useState<Event | null>(null)
   const [registerDone, setRegisterDone] = useState(false)
   const [resultStatus, setResultStatus] = useState<"registered" | "waitlisted" | null>(null)
 
-  const statusFilter = tab === 1 ? "upcoming" : tab === 2 ? "past" : undefined
+  const statusFilter = tabValue === "upcoming" ? "upcoming" : tabValue === "past" ? "past" : undefined
   const { data: eventsData, isLoading: eventsLoading } = useEvents({ status: statusFilter, limit: 50 })
   const { data: registrations = [], isLoading: regsLoading } = useMyRegistrations()
   const registerMutation = useRegisterForEvent()
@@ -67,10 +69,17 @@ const EventsPage: NextPageWithLayout = () => {
       </div>
 
       <div className={cn(CARD, "mb-5")} style={CARD_STYLE}>
-        <div className="flex gap-1 border-b border-slate-200/18 mb-5">
-          {TABS.map((label, i) => (
-            <button key={label} onClick={() => setTab(i)} className={cn("px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors", tab === i ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>{label}</button>
-          ))}
+        <div className="mb-5">
+          <Select value={tabValue} onValueChange={setTabValue}>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TABS.map((label, i) => (
+                <SelectItem key={label} value={TAB_VALUES[i]}>{label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         {eventsLoading ? <div className="text-center py-12 text-muted-foreground">Loading events...</div> : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

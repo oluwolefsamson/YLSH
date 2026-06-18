@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { UserCircle, Pencil, Save, Star, Users, Calendar, Briefcase, Loader2 } from 'lucide-react'
+import { UserCircle, Pencil, Save, Star, Users, Calendar, Briefcase, Loader2, Lock, Eye, EyeOff, X, CheckCircle } from 'lucide-react'
 import { MentorLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
 import { useMyMentorProfile, useUpdateMyMentorProfile, useMentorStats } from '@/services/hooks/mentors/mentors'
-import { useMyProfile } from '@/services/hooks/users/users'
+import { useMyProfile, useChangePassword } from '@/services/hooks/users/users'
 import { toast } from 'sonner'
 
 const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
@@ -59,6 +59,28 @@ const MentorProfilePage: NextPageWithLayout = () => {
       {
         onSuccess: () => { toast.success('Profile updated'); setEditing(false) },
         onError: () => toast.error('Failed to update profile'),
+      }
+    )
+  }
+
+  const changePassword = useChangePassword()
+  const [pwModal, setPwModal] = useState(false)
+  const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' })
+  const [showPw, setShowPw] = useState({ current: false, next: false, confirm: false })
+  const [pwDone, setPwDone] = useState(false)
+
+  const closePwModal = () => { setPwModal(false); setPwDone(false); setPwForm({ current: '', next: '', confirm: '' }); setShowPw({ current: false, next: false, confirm: false }) }
+
+  const handleChangePassword = () => {
+    if (pwForm.next !== pwForm.confirm) { toast.error('Passwords do not match'); return }
+    if (pwForm.next.length < 6) { toast.error('Password must be at least 6 characters'); return }
+    changePassword.mutate(
+      { currentPassword: pwForm.current, newPassword: pwForm.next },
+      {
+        onSuccess: () => setPwDone(true),
+        onError: (err: unknown) => {
+          toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'Password change failed')
+        },
       }
     )
   }
@@ -170,6 +192,66 @@ const MentorProfilePage: NextPageWithLayout = () => {
             </div>
             <hr className="border-border my-4" />
             <p className="text-sm text-muted-foreground">Your profile is visible to all YLSH participants when they browse mentors. Keep your bio and expertise up to date to attract the right mentees.</p>
+          </div>
+
+          <div className={CARD} style={CARD_STYLE}>
+            <div className="flex items-center gap-2 mb-5"><Lock size={18} className="text-muted-foreground" /><p className="font-bold text-lg">Account Security</p></div>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <p className="font-semibold text-sm">Password</p>
+                <p className="text-sm text-muted-foreground">Update your account password</p>
+              </div>
+              <button onClick={() => setPwModal(true)} className="px-4 py-1.5 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors flex-shrink-0">
+                Change password
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Change Password Modal */}
+      {pwModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={closePwModal} />
+          <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            {!pwDone ? (
+              <>
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="font-bold text-lg">Change Password</h3>
+                  <button onClick={closePwModal} className="p-1.5 rounded-lg hover:bg-muted"><X size={18} /></button>
+                </div>
+                <div className="flex flex-col gap-4 mb-5">
+                  {([
+                    { key: 'current' as const, label: 'Current password' },
+                    { key: 'next' as const, label: 'New password' },
+                    { key: 'confirm' as const, label: 'Confirm new password' },
+                  ]).map((f) => (
+                    <div key={f.key}>
+                      <label className="block text-xs font-medium text-muted-foreground mb-1">{f.label}</label>
+                      <div className="relative">
+                        <input type={showPw[f.key] ? 'text' : 'password'} value={pwForm[f.key]} onChange={(e) => setPwForm((p) => ({ ...p, [f.key]: e.target.value }))} className={cn(INPUT, 'pr-10')} />
+                        <button type="button" onClick={() => setShowPw((p) => ({ ...p, [f.key]: !p[f.key] }))} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                          {showPw[f.key] ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={closePwModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
+                  <button onClick={handleChangePassword} disabled={!pwForm.current || !pwForm.next || pwForm.next !== pwForm.confirm || changePassword.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
+                    {changePassword.isPending ? <Loader2 size={16} className="animate-spin" /> : 'Update Password'}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center text-center py-4">
+                <div className="w-16 h-16 rounded-full bg-green-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-green-600" /></div>
+                <h3 className="font-bold text-lg mb-1">Password Updated!</h3>
+                <p className="text-sm text-muted-foreground mb-5">Your password has been changed successfully.</p>
+                <button onClick={closePwModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Done</button>
+              </div>
+            )}
           </div>
         </div>
       )}

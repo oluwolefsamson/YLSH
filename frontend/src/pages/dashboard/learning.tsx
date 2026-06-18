@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { GraduationCap, PlayCircle, FileText, CheckCircle, X, Download, ExternalLink, Loader2 } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
 import { useResources, useUpdateProgress } from '@/services/hooks/learning/learning'
@@ -16,9 +17,10 @@ const typeIcon: Record<ResourceType, React.ReactNode> = {
 const typeColor: Record<ResourceType, string> = { video: '#EF4444', pdf: '#F59E0B', article: '#3B82F6' }
 
 const TABS = ['All', 'In Progress', 'Completed', 'Not Started']
+const TAB_VALUES = ['all', 'in-progress', 'completed', 'not-started']
 
 const LearningPage: NextPageWithLayout = () => {
-  const [tab, setTab] = useState(0)
+  const [tabValue, setTabValue] = useState('all')
   const [activeResource, setActiveResource] = useState<LearningResource | null>(null)
 
   const { data: resourceData, isLoading } = useResources()
@@ -26,9 +28,9 @@ const LearningPage: NextPageWithLayout = () => {
 
   const resources = resourceData?.data ?? []
 
-  const filtered = tab === 0 ? resources
-    : tab === 1 ? resources.filter((r) => !r.completed && r.progress > 0)
-    : tab === 2 ? resources.filter((r) => r.completed)
+  const filtered = tabValue === 'all' ? resources
+    : tabValue === 'in-progress' ? resources.filter((r) => !r.completed && r.progress > 0)
+    : tabValue === 'completed' ? resources.filter((r) => r.completed)
     : resources.filter((r) => r.progress === 0)
 
   const completedCount = resources.filter((r) => r.completed).length
@@ -76,12 +78,17 @@ const LearningPage: NextPageWithLayout = () => {
       </div>
 
       <div className={CARD} style={CARD_STYLE}>
-        <div className="flex gap-1 border-b border-slate-200/18 mb-5 overflow-x-auto">
-          {TABS.map((label, i) => (
-            <button key={label} onClick={() => setTab(i)} className={cn('px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors whitespace-nowrap', tab === i ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
-              {label}
-            </button>
-          ))}
+        <div className="mb-5">
+          <Select value={tabValue} onValueChange={setTabValue}>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TABS.map((label, i) => (
+                <SelectItem key={label} value={TAB_VALUES[i]}>{label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {isLoading ? (

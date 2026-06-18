@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Users, Calendar, CheckCircle, Video, Hourglass, Star, Briefcase, X, ExternalLink, Loader2 } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
 import { useMentors } from '@/services/hooks/mentors/mentors'
@@ -36,14 +37,16 @@ function getInitials(user: User | null): string {
 
 const COLORS = ['#127C71', '#082F49', '#7C3AED', '#D97706', '#B91C1C', '#0891B2']
 
+const MENTOR_TAB_VALUES = ['all', 'Tech & Engineering', 'Entrepreneurship', 'Policy & Governance', 'Marketing & Growth', 'General']
+
 const MentorshipPage: NextPageWithLayout = () => {
-  const [tab, setTab] = useState(0)
+  const [tabValue, setTabValue] = useState('all')
   const [bookModal, setBookModal] = useState<MentorProfile | null>(null)
   const [joinModal, setJoinModal] = useState<MentorSession | null>(null)
   const [topic, setTopic] = useState('')
   const [scheduledAt, setScheduledAt] = useState('')
 
-  const selectedCategory = tab === 0 ? undefined : MENTOR_TABS[tab]
+  const selectedCategory = tabValue === 'all' ? undefined : tabValue
   const { data: mentorsData, isLoading: loadingMentors } = useMentors({ category: selectedCategory })
   const { data: sessions = [], isLoading: loadingSessions } = useMySessions()
   const requestSession = useRequestSession()
@@ -142,12 +145,17 @@ const MentorshipPage: NextPageWithLayout = () => {
       {/* Discover Mentors */}
       <div className={CARD} style={CARD_STYLE}>
         <h2 className="text-xl font-bold mb-4">Discover Mentors</h2>
-        <div className="flex gap-1 border-b border-slate-200/18 mb-5 overflow-x-auto">
-          {MENTOR_TABS.map((label, i) => (
-            <button key={label} onClick={() => setTab(i)} className={cn('px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors whitespace-nowrap', tab === i ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
-              {label}
-            </button>
-          ))}
+        <div className="mb-5">
+          <Select value={tabValue} onValueChange={setTabValue}>
+            <SelectTrigger className="w-56">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {MENTOR_TABS.map((label, i) => (
+                <SelectItem key={label} value={MENTOR_TAB_VALUES[i]}>{label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {loadingMentors ? (

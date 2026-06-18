@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { UserCheck, Search, CheckCircle, Clock, XCircle, Calendar, Mail, Loader2 } from 'lucide-react'
+import { UserCheck, Search, CheckCircle, Clock, XCircle, Calendar, Mail, Loader2, Building } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { NextPageWithLayout } from '@/interfaces/layout'
+import { cn } from '@/utils'
 import { toast } from 'sonner'
 import { usePendingMentors, useApproveMentor, useDeclineMentor } from '@/services/hooks/users/users'
 
@@ -13,13 +14,13 @@ const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12
 const FILTER_OPTIONS = ['Pending', 'All Processed']
 const FILTER_VALUES = ['pending', 'processed']
 
-const AdminVerificationsPage: NextPageWithLayout = () => {
+const SuperAdminVerificationsPage: NextPageWithLayout = () => {
   const [filterValue, setFilterValue] = useState('pending')
   const [search, setSearch] = useState('')
   const [declineId, setDeclineId] = useState<string | null>(null)
   const [declineNote, setDeclineNote] = useState('')
 
-  const { data, isLoading, isError } = usePendingMentors({ limit: 50 })
+  const { data, isLoading, isError } = usePendingMentors({ limit: 100 })
   const approve = useApproveMentor()
   const decline = useDeclineMentor()
 
@@ -58,14 +59,14 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
       <PageHeader
         eyebrow="Mentor Applications"
         title="Mentor Application Review"
-        subtitle="Approve or decline mentor registration requests. Approved mentors gain access to the Mentor Portal."
+        subtitle="Approve or decline mentor registration requests. Approved mentors gain access to the Mentor Portal and their account becomes active."
         icon={<UserCheck size={14} />}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard label="Pending review" value={String(data?.total ?? 0)} icon={<Clock size={20} />} progress={70} accent="#f59e0b" />
-        <StatCard label="Reviewed this session" value={String(approve.variables ? 1 : 0)} icon={<CheckCircle size={20} />} progress={40} accent="#22c55e" />
-        <StatCard label="Pending total" value={String(mentors.length)} icon={<UserCheck size={20} />} progress={100} />
+        <StatCard label="Approved this session" value={String(approve.variables ? 1 : 0)} icon={<CheckCircle size={20} />} progress={40} accent="#22c55e" />
+        <StatCard label="Total pending" value={String(mentors.length)} icon={<UserCheck size={20} />} progress={100} />
       </div>
 
       <div className={CARD} style={CARD_STYLE}>
@@ -79,9 +80,6 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
               className="w-full h-10 pl-9 pr-4 rounded-full border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
             />
           </div>
-        </div>
-
-        <div className="mb-5">
           <Select value={filterValue} onValueChange={setFilterValue}>
             <SelectTrigger className="w-44">
               <SelectValue />
@@ -117,7 +115,10 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
                   </div>
                   <div className="flex flex-wrap gap-3 mt-2">
                     {mentor.organization && (
-                      <span className="text-xs text-muted-foreground">{mentor.organization}</span>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Building size={11} />
+                        {mentor.organization}
+                      </div>
                     )}
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Calendar size={11} />
@@ -164,7 +165,9 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4">
             <h3 className="font-bold text-base mb-1">Decline Application</h3>
-            <p className="text-sm text-muted-foreground mb-4">Optionally add a note explaining the decision. The applicant will receive an email.</p>
+            <p className="text-sm text-muted-foreground mb-4">
+              Optionally add a note explaining the decision. The applicant will receive an email.
+            </p>
             <textarea
               value={declineNote}
               onChange={(e) => setDeclineNote(e.target.value)}
@@ -173,7 +176,10 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
               className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20 resize-none mb-4"
             />
             <div className="flex gap-2">
-              <button onClick={() => { setDeclineId(null); setDeclineNote('') }} className="flex-1 h-10 rounded-full border border-slate-200 text-sm font-semibold hover:bg-slate-50 transition-colors">
+              <button
+                onClick={() => { setDeclineId(null); setDeclineNote('') }}
+                className="flex-1 h-10 rounded-full border border-slate-200 text-sm font-semibold hover:bg-slate-50 transition-colors"
+              >
                 Cancel
               </button>
               <button
@@ -191,5 +197,5 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
   )
 }
 
-AdminVerificationsPage.getLayout = (page) => <AdminLayout>{page}</AdminLayout>
-export default AdminVerificationsPage
+SuperAdminVerificationsPage.getLayout = (page) => <AdminLayout superAdmin>{page}</AdminLayout>
+export default SuperAdminVerificationsPage

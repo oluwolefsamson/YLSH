@@ -10,6 +10,7 @@ import AuthShell from "@/components/auth/auth-shell"
 import AuthFormCard from "@/components/auth/auth-form-card"
 import AuthLink from "@/components/auth/auth-link"
 import { cn } from "@/utils"
+import { useAuth } from "@/contexts/AuthContext"
 import { verifyNIN, register } from "@/services/endpoints/auth/auth"
 import type { SignupRole } from "@/types"
 
@@ -17,6 +18,7 @@ const steps = ["Verify NIN", "Personal info", "Account details"]
 
 const SignUpPage: NextPage = () => {
   const router = useRouter()
+  const { setUser } = useAuth()
   const [activeStep, setActiveStep] = useState(0)
   const [isCreated, setIsCreated] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -75,10 +77,15 @@ const SignUpPage: NextPage = () => {
     if (password.length < 6) { toast.error("Password must be at least 6 characters"); return }
     setIsSubmitting(true); setIsCreated(true)
     try {
-      const { token } = await register({ firstName, lastName, email, phone, organization, nin, role: role.toLowerCase(), username, password })
+      const { token, user } = await register({ firstName, lastName, email, phone, organization, nin, role: role.toLowerCase(), username, password })
       localStorage.setItem("token", token)
+      setUser(user)
       toast.success("Account created! Redirecting...")
-      void router.push("/dashboard")
+      if (user.role === "mentor" && user.approvalStatus !== "approved") {
+        void router.push("/mentor/pending")
+      } else {
+        void router.push("/dashboard")
+      }
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "Registration failed"
       toast.error(msg); setIsCreated(false)

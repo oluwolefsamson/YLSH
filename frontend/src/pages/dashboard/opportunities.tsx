@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Trophy, Briefcase, Clock, DollarSign, GraduationCap, Calendar, Building, Send, CheckCircle, Hourglass, MapPin, X, FileText, Loader2 } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
 import { useOpportunities, useMyApplications, useApplyForOpportunity } from '@/services/hooks/opportunities/opportunities'
@@ -34,15 +35,15 @@ const statusLabel: Record<ApplicationStatus, string> = {
 }
 
 const TABS = ['All', 'Jobs', 'Internships', 'Grants', 'Scholarships']
-const tabTypes: Array<OppType | 'all'> = ['all', 'job', 'internship', 'grant', 'scholarship']
+const TAB_VALUES: Array<OppType | 'all'> = ['all', 'job', 'internship', 'grant', 'scholarship']
 
 const OpportunitiesPage: NextPageWithLayout = () => {
-  const [tab, setTab] = useState(0)
+  const [tabValue, setTabValue] = useState<OppType | 'all'>('all')
   const [applyModal, setApplyModal] = useState<Opportunity | null>(null)
   const [coverLetter, setCoverLetter] = useState('')
   const [applyDone, setApplyDone] = useState(false)
 
-  const selectedType = tabTypes[tab] !== 'all' ? tabTypes[tab] : undefined
+  const selectedType = tabValue !== 'all' ? tabValue : undefined
   const { data: oppData, isLoading: loadingOpps } = useOpportunities({ type: selectedType as string | undefined })
   const { data: applications = [], isLoading: loadingApps } = useMyApplications()
   const applyMutation = useApplyForOpportunity()
@@ -105,12 +106,17 @@ const OpportunitiesPage: NextPageWithLayout = () => {
 
       {/* Opportunities List */}
       <div className={CARD} style={CARD_STYLE}>
-        <div className="flex gap-1 border-b border-slate-200/18 mb-5 overflow-x-auto">
-          {TABS.map((label, i) => (
-            <button key={label} onClick={() => setTab(i)} className={cn('px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors whitespace-nowrap', tab === i ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
-              {label}
-            </button>
-          ))}
+        <div className="mb-5">
+          <Select value={tabValue} onValueChange={(v) => setTabValue(v as OppType | 'all')}>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TABS.map((label, i) => (
+                <SelectItem key={label} value={TAB_VALUES[i]}>{label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {loadingOpps ? (

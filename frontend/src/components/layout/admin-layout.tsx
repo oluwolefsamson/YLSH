@@ -11,6 +11,7 @@ import {
   Shield,
   LogOut,
   X,
+  UserCircle,
 } from 'lucide-react'
 import { cn } from '@/utils'
 import type { NavItem } from '@/types'
@@ -28,14 +29,17 @@ const adminNavItems: NavItem[] = [
   { label: 'Events', href: '/admin/events', icon: CalendarCheck },
   { label: 'Verifications', href: '/admin/verifications', icon: ShieldCheck },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart2 },
+  { label: 'Profile', href: '/admin/profile', icon: UserCircle },
 ]
 
 const superAdminNavItems: NavItem[] = [
   { label: 'Overview', href: '/super-admin', icon: LayoutDashboard },
   { label: 'Users', href: '/super-admin/users', icon: Users },
   { label: 'Events', href: '/super-admin/events', icon: CalendarCheck },
+  { label: 'Verifications', href: '/super-admin/verifications', icon: ShieldCheck },
   { label: 'Role Management', href: '/super-admin/roles', icon: Shield },
   { label: 'Analytics', href: '/super-admin/analytics', icon: BarChart2 },
+  { label: 'Profile', href: '/super-admin/profile', icon: UserCircle },
 ]
 
 const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {

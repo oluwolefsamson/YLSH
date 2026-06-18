@@ -26,12 +26,12 @@ const AuthShell: FC<Props> = ({ eyebrow, title, description, children, footer })
 
         {/* Two-column card */}
         <div
-          className="rounded-2xl md:rounded-3xl overflow-hidden grid grid-cols-1 md:grid-cols-[1fr_0.9fr]"
+          className="rounded-2xl md:rounded-3xl overflow-hidden grid grid-cols-1 md:grid-cols-[1fr_0.9fr] max-w-lg md:max-w-none mx-auto"
           style={{ boxShadow: '0 40px 80px rgba(15,23,42,0.14)' }}
         >
           {/* Left — gradient brand panel */}
           <div
-            className="p-8 md:p-12 text-white relative overflow-hidden"
+            className="hidden md:block p-8 md:p-12 text-white relative overflow-hidden"
             style={{
               background:
                 'linear-gradient(145deg, rgba(8,47,73,0.99) 0%, rgba(18,124,113,0.97) 55%, rgba(14,116,144,0.93) 100%)',
