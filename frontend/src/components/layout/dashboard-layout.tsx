@@ -13,6 +13,7 @@ import {
   LogOut,
   ShieldCheck,
   X,
+  QrCode,
 } from 'lucide-react'
 import { cn } from '@/utils'
 import type { NavItem } from '@/types'
@@ -24,6 +25,7 @@ const drawerWidth = 288
 const navItems: NavItem[] = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Events', href: '/dashboard/events', icon: CalendarCheck },
+  { label: 'My Registrations', href: '/dashboard/registrations', icon: QrCode },
   { label: 'Certificates', href: '/dashboard/certificates', icon: Award },
   { label: 'Learning', href: '/dashboard/learning', icon: GraduationCap },
   { label: 'Opportunities', href: '/dashboard/opportunities', icon: Trophy },

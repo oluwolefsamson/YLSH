@@ -45,7 +45,7 @@ export interface IEvent extends Document {
   time?: string
   venue: string
   category: EventCategory
-  capacity: number
+  capacity?: number | null
   registeredCount: number
   status: EventStatus
   speakers: Types.ObjectId[]

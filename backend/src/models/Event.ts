@@ -13,7 +13,7 @@ const eventSchema = new Schema<IEvent>(
       enum: ['Summit', 'Workshop', 'Masterclass', 'Bootcamp', 'Conference'] as EventCategory[],
       default: 'Summit',
     },
-    capacity: { type: Number, required: true, default: 100 },
+    capacity: { type: Number, default: null },
     registeredCount: { type: Number, default: 0 },
     status: {
       type: String,

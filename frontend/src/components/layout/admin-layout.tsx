@@ -12,6 +12,7 @@ import {
   LogOut,
   X,
   UserCircle,
+  ScanLine,
 } from 'lucide-react'
 import { cn } from '@/utils'
 import type { NavItem } from '@/types'
@@ -27,6 +28,7 @@ const adminNavItems: NavItem[] = [
   { label: 'Overview', href: '/admin', icon: LayoutDashboard },
   { label: 'Users', href: '/admin/users', icon: Users },
   { label: 'Events', href: '/admin/events', icon: CalendarCheck },
+  { label: 'Check-in', href: '/admin/checkin', icon: ScanLine },
   { label: 'Verifications', href: '/admin/verifications', icon: ShieldCheck },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart2 },
   { label: 'Profile', href: '/admin/profile', icon: UserCircle },

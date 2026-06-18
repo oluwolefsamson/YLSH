@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import Event from '../models/Event'
 import Registration from '../models/Registration'
 import AuditLog from '../models/AuditLog'
+import { sendRegistrationConfirmationEmail, sendWaitlistConfirmationEmail, sendWaitlistPromotionEmail } from '../services/email.service'
 
 export const list = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -100,13 +101,26 @@ export const registerForEvent = async (req: Request, res: Response, next: NextFu
       return
     }
 
-    const status = event.registeredCount >= event.capacity ? 'waitlisted' : 'registered'
+    const isFull = event.capacity != null && event.registeredCount >= event.capacity
+    const status = isFull ? 'waitlisted' : 'registered'
     const registration = await Registration.create({ user: req.user!._id, event: event._id, status })
 
     if (status === 'registered') {
       event.registeredCount += 1
       await event.save()
     }
+
+    const formattedDate = new Date(event.date).toLocaleDateString('en-NG', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    })
+    const userName = `${req.user!.firstName} ${req.user!.lastName}`
+
+    if (status === 'registered') {
+      await sendRegistrationConfirmationEmail(req.user!.email, userName, event.title, formattedDate, event.venue, registration.qrToken)
+    } else {
+      await sendWaitlistConfirmationEmail(req.user!.email, userName, event.title, formattedDate, event.venue)
+    }
+
     res.status(201).json({ registration, status })
   } catch (err) {
     next(err)
@@ -120,9 +134,37 @@ export const cancelRegistration = async (req: Request, res: Response, next: Next
       res.status(404).json({ message: 'Registration not found' })
       return
     }
+
     if (reg.status === 'registered') {
       await Event.findByIdAndUpdate(req.params.id, { $inc: { registeredCount: -1 } })
+
+      // promote the oldest waitlisted person
+      const next = await Registration.findOne({ event: req.params.id, status: 'waitlisted' })
+        .sort({ createdAt: 1 })
+        .populate<{ user: { firstName: string; lastName: string; email: string } }>('user', 'firstName lastName email')
+        .populate<{ event: { title: string; date: Date; venue: string } }>('event', 'title date venue')
+
+      if (next) {
+        next.status = 'registered'
+        await next.save()
+        await Event.findByIdAndUpdate(req.params.id, { $inc: { registeredCount: 1 } })
+
+        const promotedUser = next.user as { firstName: string; lastName: string; email: string }
+        const promotedEvent = next.event as { title: string; date: Date; venue: string }
+        const formattedDate = new Date(promotedEvent.date).toLocaleDateString('en-NG', {
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        })
+
+        await sendWaitlistPromotionEmail(
+          promotedUser.email,
+          `${promotedUser.firstName} ${promotedUser.lastName}`,
+          promotedEvent.title,
+          formattedDate,
+          promotedEvent.venue,
+        )
+      }
     }
+
     res.json({ message: 'Registration cancelled' })
   } catch (err) {
     next(err)

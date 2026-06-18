@@ -75,6 +75,237 @@ function shell(headerStart: string, headerEnd: string, body: string): string {
 </html>`
 }
 
+// ─── Registration Confirmation ────────────────────────────────────────────────
+
+export const sendRegistrationConfirmationEmail = async (
+  to: string, name: string, eventTitle: string, eventDate: string, venue: string, qrToken: string,
+): Promise<void> => {
+  const body = `
+    <tr>
+      <td align="center" style="background:#ffffff;padding:36px 40px 0;">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td align="center" width="60" height="60"
+              style="width:60px;height:60px;background-color:#d1fae5;border-radius:50%;
+                     font-size:28px;line-height:60px;text-align:center;">&#10003;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <td align="center" style="background:#ffffff;padding:14px 40px 0;">
+        <span style="display:inline-block;background-color:#d1fae5;color:#065f46;
+                     font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+                     padding:5px 16px;border-radius:20px;font-family:Arial,Helvetica,sans-serif;">
+          Registration Confirmed
+        </span>
+      </td>
+    </tr>
+
+    <tr>
+      <td align="center" style="background:#ffffff;padding:14px 40px 0;">
+        <h1 style="margin:0;font-size:22px;font-weight:700;color:#0f172a;font-family:Arial,Helvetica,sans-serif;">
+          You're registered!
+        </h1>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="background:#ffffff;padding:16px 48px 0;">
+        <p style="margin:0 0 14px;font-size:15px;color:#334155;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
+          Hi <strong>${name}</strong>,
+        </p>
+        <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
+          Your spot has been confirmed for:
+        </p>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 20px;">
+          <tr>
+            <td style="background-color:#f0f9ff;border-left:4px solid #0e7490;border-radius:0 8px 8px 0;padding:14px 18px;">
+              <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#0f172a;font-family:Arial,Helvetica,sans-serif;">${eventTitle}</p>
+              <p style="margin:0;font-size:13px;color:#475569;font-family:Arial,Helvetica,sans-serif;">${eventDate} &bull; ${venue}</p>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#64748b;font-family:Arial,Helvetica,sans-serif;">
+          Your Registration ID
+        </p>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 24px;">
+          <tr>
+            <td align="center" style="background-color:#0f172a;border-radius:10px;padding:16px;">
+              <span style="font-size:22px;font-weight:700;color:#ffffff;letter-spacing:4px;font-family:'Courier New',Courier,monospace;">
+                ${qrToken}
+              </span>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:0 0 28px;font-size:14px;color:#64748b;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
+          Present this ID or your QR code from the dashboard at the venue for check-in. Keep this email safe.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td align="center" style="background:#ffffff;padding:4px 40px 44px;">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td align="center" style="background-color:#0e7490;border-radius:8px;">
+              <a href="${CLIENT_URL}/dashboard/registrations"
+                style="display:inline-block;padding:14px 36px;font-size:15px;font-weight:700;
+                       color:#ffffff;text-decoration:none;font-family:Arial,Helvetica,sans-serif;">
+                View My QR Code &rarr;
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  `
+  await send(to, `Registration confirmed — ${eventTitle}`, shell('#065f46', '#0e7490', body)).catch(() => {})
+}
+
+// ─── Waitlist Confirmation ────────────────────────────────────────────────────
+
+export const sendWaitlistConfirmationEmail = async (
+  to: string, name: string, eventTitle: string, eventDate: string, venue: string,
+): Promise<void> => {
+  const body = `
+    <tr>
+      <td align="center" style="background:#ffffff;padding:36px 40px 0;">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td align="center" width="60" height="60"
+              style="width:60px;height:60px;background-color:#fef9c3;border-radius:50%;
+                     font-size:28px;line-height:60px;text-align:center;">&#9203;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <td align="center" style="background:#ffffff;padding:14px 40px 0;">
+        <span style="display:inline-block;background-color:#fef9c3;color:#854d0e;
+                     font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+                     padding:5px 16px;border-radius:20px;font-family:Arial,Helvetica,sans-serif;">
+          On the Waitlist
+        </span>
+      </td>
+    </tr>
+
+    <tr>
+      <td align="center" style="background:#ffffff;padding:14px 40px 0;">
+        <h1 style="margin:0;font-size:22px;font-weight:700;color:#0f172a;font-family:Arial,Helvetica,sans-serif;">
+          You're on the waitlist
+        </h1>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="background:#ffffff;padding:16px 48px 44px;">
+        <p style="margin:0 0 14px;font-size:15px;color:#334155;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
+          Hi <strong>${name}</strong>,
+        </p>
+        <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
+          The event below is currently full, but we've added you to the waitlist:
+        </p>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 20px;">
+          <tr>
+            <td style="background-color:#fefce8;border-left:4px solid #eab308;border-radius:0 8px 8px 0;padding:14px 18px;">
+              <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#0f172a;font-family:Arial,Helvetica,sans-serif;">${eventTitle}</p>
+              <p style="margin:0;font-size:13px;color:#475569;font-family:Arial,Helvetica,sans-serif;">${eventDate} &bull; ${venue}</p>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:0;font-size:14px;color:#64748b;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
+          If a spot opens up, you will automatically be moved to confirmed and receive a new email with your registration ID. No action is needed from you.
+        </p>
+      </td>
+    </tr>
+  `
+  await send(to, `You're on the waitlist — ${eventTitle}`, shell('#854d0e', '#eab308', body)).catch(() => {})
+}
+
+// ─── Waitlist Promotion ───────────────────────────────────────────────────────
+
+export const sendWaitlistPromotionEmail = async (to: string, name: string, eventTitle: string, eventDate: string, venue: string): Promise<void> => {
+  const body = `
+    <tr>
+      <td align="center" style="background:#ffffff;padding:36px 40px 0;">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td align="center" width="60" height="60"
+              style="width:60px;height:60px;background-color:#dbeafe;border-radius:50%;
+                     font-size:28px;line-height:60px;text-align:center;">&#127881;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <td align="center" style="background:#ffffff;padding:14px 40px 0;">
+        <span style="display:inline-block;background-color:#dbeafe;color:#1e40af;
+                     font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+                     padding:5px 16px;border-radius:20px;font-family:Arial,Helvetica,sans-serif;">
+          Spot Confirmed
+        </span>
+      </td>
+    </tr>
+
+    <tr>
+      <td align="center" style="background:#ffffff;padding:14px 40px 0;">
+        <h1 style="margin:0;font-size:22px;font-weight:700;color:#0f172a;font-family:Arial,Helvetica,sans-serif;">
+          You're Off the Waitlist!
+        </h1>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="background:#ffffff;padding:16px 48px 0;">
+        <p style="margin:0 0 14px;font-size:15px;color:#334155;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
+          Hi <strong>${name}</strong>,
+        </p>
+        <p style="margin:0 0 14px;font-size:15px;color:#334155;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
+          Great news! A spot has opened up and you have been <strong style="color:#1e40af;">confirmed</strong>
+          for the following event:
+        </p>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:4px 0 20px;">
+          <tr>
+            <td style="background-color:#f0f9ff;border-left:4px solid #0e7490;
+                       border-radius:0 8px 8px 0;padding:14px 18px;">
+              <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#0f172a;font-family:Arial,Helvetica,sans-serif;">
+                ${eventTitle}
+              </p>
+              <p style="margin:0;font-size:13px;color:#475569;font-family:Arial,Helvetica,sans-serif;">
+                ${eventDate} &bull; ${venue}
+              </p>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:0 0 28px;font-size:15px;color:#334155;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
+          Your QR code is ready in your dashboard. Please present it at the venue for check-in.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td align="center" style="background:#ffffff;padding:4px 40px 44px;">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td align="center" style="background-color:#0e7490;border-radius:8px;">
+              <a href="${CLIENT_URL}/dashboard/registrations"
+                style="display:inline-block;padding:14px 36px;font-size:15px;font-weight:700;
+                       color:#ffffff;text-decoration:none;font-family:Arial,Helvetica,sans-serif;">
+                View My QR Code &rarr;
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  `
+  await send(to, `You're confirmed for ${eventTitle}!`, shell('#1e40af', '#0e7490', body)).catch(() => {})
+}
+
 // ─── Mentor Approval ─────────────────────────────────────────────────────────
 
 export const sendMentorApprovalEmail = async (to: string, name: string): Promise<void> => {

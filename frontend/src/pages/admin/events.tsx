@@ -27,6 +27,7 @@ const AdminEventsPage: NextPageWithLayout = () => {
   const [menuId, setMenuId] = useState<string | null>(null)
   const [showCreate, setShowCreate] = useState(false)
   const [createForm, setCreateForm] = useState({ title: '', date: '', venue: '', category: 'Summit', capacity: '' })
+  const [limitCapacity, setLimitCapacity] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   const { data: eventsData, isLoading } = useEvents({ limit: 100 })
@@ -53,17 +54,20 @@ const AdminEventsPage: NextPageWithLayout = () => {
   }, [])
 
   const handleCreate = () => {
-    if (!createForm.title || !createForm.date || !createForm.venue || !createForm.capacity) {
+    if (!createForm.title || !createForm.date || !createForm.venue) {
       toast.error('Please fill all required fields')
       return
     }
-    createEvent.mutate(
-      { title: createForm.title, date: createForm.date, venue: createForm.venue, category: createForm.category, capacity: Number(createForm.capacity) },
-      {
-        onSuccess: () => { toast.success('Event created'); setShowCreate(false); setCreateForm({ title: '', date: '', venue: '', category: 'Summit', capacity: '' }) },
-        onError: () => toast.error('Failed to create event'),
-      }
-    )
+    if (limitCapacity && !createForm.capacity) {
+      toast.error('Please enter a capacity or disable the limit')
+      return
+    }
+    const payload: Record<string, unknown> = { title: createForm.title, date: createForm.date, venue: createForm.venue, category: createForm.category }
+    if (limitCapacity && createForm.capacity) payload.capacity = Number(createForm.capacity)
+    createEvent.mutate(payload as Parameters<typeof createEvent.mutate>[0], {
+      onSuccess: () => { toast.success('Event created'); setShowCreate(false); setCreateForm({ title: '', date: '', venue: '', category: 'Summit', capacity: '' }); setLimitCapacity(false) },
+      onError: () => toast.error('Failed to create event'),
+    })
   }
 
   const handleDelete = (id: string) => {
@@ -124,11 +128,15 @@ const AdminEventsPage: NextPageWithLayout = () => {
                     </div>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs text-muted-foreground">Registration</span>
-                      <span className="text-xs text-muted-foreground">{event.registeredCount}/{event.capacity}</span>
+                      <span className="text-xs text-muted-foreground">{event.capacity ? `${event.registeredCount}/${event.capacity}` : `${event.registeredCount} registered · Unlimited`}</span>
                     </div>
-                    <div className="h-[6px] rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }}>
-                      <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min((event.registeredCount / event.capacity) * 100, 100)}%` }} />
-                    </div>
+                    {event.capacity ? (
+                      <div className="h-[6px] rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }}>
+                        <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min((event.registeredCount / event.capacity) * 100, 100)}%` }} />
+                      </div>
+                    ) : (
+                      <div className="h-[6px] rounded-full" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }} />
+                    )}
                   </div>
                   <div className="relative flex-shrink-0">
                     <button onClick={() => setMenuId(menuId === event._id ? null : event._id)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
@@ -162,15 +170,24 @@ const AdminEventsPage: NextPageWithLayout = () => {
                 <label className="block text-sm font-semibold mb-1.5">Event title <span className="text-red-500">*</span></label>
                 <input value={createForm.title} onChange={(e) => setCreateForm((p) => ({ ...p, title: e.target.value }))} placeholder="e.g. Youth Innovation Forum 2026" className={INPUT} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold mb-1.5">Date <span className="text-red-500">*</span></label>
-                  <input type="date" value={createForm.date} onChange={(e) => setCreateForm((p) => ({ ...p, date: e.target.value }))} className={INPUT} />
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Date <span className="text-red-500">*</span></label>
+                <input type="date" value={createForm.date} onChange={(e) => setCreateForm((p) => ({ ...p, date: e.target.value }))} className={INPUT} />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-sm font-semibold">Capacity</label>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <span className="text-xs text-muted-foreground">{limitCapacity ? 'Limited' : 'Unlimited'}</span>
+                    <div onClick={() => { setLimitCapacity((v) => !v); setCreateForm((p) => ({ ...p, capacity: '' })) }} className={cn('w-9 h-5 rounded-full transition-colors relative', limitCapacity ? 'bg-primary' : 'bg-slate-200')}>
+                      <div className={cn('absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all', limitCapacity ? 'left-4' : 'left-0.5')} />
+                    </div>
+                  </label>
                 </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-1.5">Capacity <span className="text-red-500">*</span></label>
-                  <input type="number" value={createForm.capacity} onChange={(e) => setCreateForm((p) => ({ ...p, capacity: e.target.value }))} placeholder="e.g. 200" className={INPUT} />
-                </div>
+                {limitCapacity
+                  ? <input type="number" min={1} value={createForm.capacity} onChange={(e) => setCreateForm((p) => ({ ...p, capacity: e.target.value }))} placeholder="e.g. 200" className={INPUT} />
+                  : <div className="h-10 px-3 flex items-center rounded-xl border border-input bg-muted text-sm text-muted-foreground">No limit — anyone can register</div>
+                }
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-1.5">Venue <span className="text-red-500">*</span></label>
