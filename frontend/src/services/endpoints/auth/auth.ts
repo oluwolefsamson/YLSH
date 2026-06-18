@@ -26,14 +26,6 @@ export interface AuthResponse {
   user: AuthUser
 }
 
-// Super-admin login returns this before OTP is verified
-export interface LoginOtpRequired {
-  requiresOtp: true
-  preAuthToken: string
-}
-
-export type LoginResponse = LoginOtpRequired | AuthResponse
-
 export interface RegisterPayload {
   firstName: string
   lastName: string
@@ -49,20 +41,11 @@ export interface RegisterPayload {
 export const verifyNIN = (nin: string) =>
   post<{ verified: boolean; message: string }>('/api/auth/verify-nin', { nin })
 
-export const sendOTP = (email: string) =>
-  post<{ sent: boolean; message: string }>('/api/auth/send-otp', { email })
-
-export const verifyOTP = (email: string, otp: string) =>
-  post<{ verified: boolean }>('/api/auth/verify-otp', { email, otp })
-
 export const register = (payload: RegisterPayload) =>
   post<AuthResponse>('/api/auth/register', payload)
 
 export const login = (email: string, password: string) =>
-  post<LoginResponse>('/api/auth/login', { email, password })
-
-export const loginVerifyOtp = (preAuthToken: string, otp: string) =>
-  post<AuthResponse>('/api/auth/verify-login-otp', { preAuthToken, otp })
+  post<AuthResponse>('/api/auth/login', { email, password })
 
 export const logout = () => post<{ message: string }>('/api/auth/logout')
 

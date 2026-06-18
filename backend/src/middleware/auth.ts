@@ -13,10 +13,6 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction): 
   const token = header.slice(7)
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload
-    if (decoded.preAuth) {
-      res.status(401).json({ message: 'Pre-auth token cannot be used for API access' })
-      return
-    }
     const user = await User.findById(decoded.id).select('-password -emailOtp -emailOtpExpires')
     if (!user) {
       res.status(401).json({ message: 'User not found' })

@@ -1,6 +1,5 @@
 import { Resend } from 'resend'
 
-const isDev = process.env.NODE_ENV !== 'production'
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000'
 const LOGO_SRC = `${CLIENT_URL}/images/yls-logo.svg`
 
@@ -17,22 +16,6 @@ async function send(to: string, subject: string, html: string): Promise<void> {
   if (error) throw new Error(error.message)
 }
 
-function otpDigits(otp: string, borderColor: string, bgColor: string, textColor: string): string {
-  return otp
-    .split('')
-    .map(
-      (d) =>
-        `<td style="padding:0 5px;">` +
-        `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;">` +
-        `<tr><td width="52" height="68" align="center" valign="middle" ` +
-        `style="width:52px;height:68px;background-color:${bgColor};border:2.5px solid ${borderColor};` +
-        `border-radius:10px;font-size:30px;font-weight:800;color:${textColor};` +
-        `font-family:'Courier New',Courier,monospace;letter-spacing:0;">${d}</td></tr>` +
-        `</table></td>`
-    )
-    .join('')
-}
-
 function shell(headerStart: string, headerEnd: string, body: string): string {
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -46,22 +29,17 @@ function shell(headerStart: string, headerEnd: string, body: string): string {
 
   <table border="0" cellpadding="0" cellspacing="0" width="580" style="max-width:580px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 4px 32px rgba(14,116,144,0.13);">
 
-    <!-- Header -->
     <tr>
       <td align="center" style="background:linear-gradient(135deg,${headerStart} 0%,${headerEnd} 100%);padding:32px 40px;">
         <img src="${LOGO_SRC}" alt="YLS Summit" height="60" style="display:block;height:60px;border:0;"/>
       </td>
     </tr>
-
-    <!-- Accent bar -->
     <tr>
       <td height="4" style="background:linear-gradient(90deg,${headerStart},${headerEnd},${headerStart});font-size:0;line-height:0;">&nbsp;</td>
     </tr>
 
-    <!-- Body rows -->
     ${body}
 
-    <!-- Footer -->
     <tr>
       <td style="background-color:#f8fafc;padding:24px 40px;border-top:1px solid #e2e8f0;">
         <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -95,186 +73,6 @@ function shell(headerStart: string, headerEnd: string, body: string): string {
 </table>
 </body>
 </html>`
-}
-
-// ─── Registration OTP ────────────────────────────────────────────────────────
-
-export const sendOTP = async (to: string, otp: string): Promise<void> => {
-  const body = `
-    <tr>
-      <td align="center" style="background:#ffffff;padding:36px 40px 0;">
-        <table border="0" cellpadding="0" cellspacing="0">
-          <tr>
-            <td align="center" width="60" height="60"
-              style="width:60px;height:60px;background-color:#e0f2fe;border-radius:50%;
-                     font-size:28px;line-height:60px;text-align:center;">&#9993;</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-
-    <tr>
-      <td align="center" style="background:#ffffff;padding:18px 40px 0;">
-        <h1 style="margin:0;font-size:22px;font-weight:700;color:#0f172a;font-family:Arial,Helvetica,sans-serif;">
-          Verify Your Email Address
-        </h1>
-      </td>
-    </tr>
-
-    <tr>
-      <td align="center" style="background:#ffffff;padding:10px 48px 0;">
-        <p style="margin:0;font-size:15px;color:#64748b;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
-          Use the code below to complete your registration on the YLSH platform. Do not share this code with anyone.
-        </p>
-      </td>
-    </tr>
-
-    <!-- OTP card -->
-    <tr>
-      <td align="center" style="background:#ffffff;padding:32px 40px 24px;">
-        <table border="0" cellpadding="0" cellspacing="0"
-          style="background-color:#f0f9ff;border-radius:14px;border:1px solid #bae6fd;padding:28px 32px;">
-          <tr>
-            <td align="center" style="padding:0 0 14px;">
-              <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:3px;
-                         text-transform:uppercase;color:#0e7490;font-family:Arial,Helvetica,sans-serif;">
-                Verification Code
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td align="center" style="padding:0 0 16px;">
-              <table border="0" cellpadding="0" cellspacing="0">
-                <tr>${otpDigits(otp, '#0e7490', '#e0f2fe', '#0e7490')}</tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td align="center">
-              <p style="margin:0;font-size:13px;color:#64748b;font-family:Arial,Helvetica,sans-serif;">
-                &#9201;&nbsp; Expires in <strong>10 minutes</strong>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-
-    <!-- Warning note -->
-    <tr>
-      <td style="background:#ffffff;padding:0 40px 40px;">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-          <tr>
-            <td style="background-color:#fef9c3;border-left:4px solid #facc15;
-                       border-radius:0 8px 8px 0;padding:13px 16px;">
-              <p style="margin:0;font-size:13px;color:#78350f;font-family:Arial,Helvetica,sans-serif;">
-                <strong>Didn't request this?</strong>&nbsp;
-                You can safely ignore this email. Your account has not been affected.
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  `
-  await send(to, 'Verify Your Email — YLSH Platform', shell('#0e7490', '#2bb3e0', body))
-
-  if (isDev && !resend) console.log(`[DEV] Registration OTP for ${to}: ${otp}`)
-}
-
-// ─── Super-Admin Login OTP ───────────────────────────────────────────────────
-
-export const sendLoginOTP = async (to: string, otp: string): Promise<void> => {
-  const body = `
-    <tr>
-      <td align="center" style="background:#ffffff;padding:36px 40px 0;">
-        <table border="0" cellpadding="0" cellspacing="0">
-          <tr>
-            <td align="center" width="60" height="60"
-              style="width:60px;height:60px;background-color:#fee2e2;border-radius:50%;
-                     font-size:26px;line-height:60px;text-align:center;">&#128274;</td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-
-    <tr>
-      <td align="center" style="background:#ffffff;padding:14px 40px 0;">
-        <span style="display:inline-block;background-color:#fee2e2;color:#b91c1c;
-                     font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-                     padding:5px 16px;border-radius:20px;font-family:Arial,Helvetica,sans-serif;">
-          Security Alert
-        </span>
-      </td>
-    </tr>
-
-    <tr>
-      <td align="center" style="background:#ffffff;padding:14px 40px 0;">
-        <h1 style="margin:0;font-size:22px;font-weight:700;color:#0f172a;font-family:Arial,Helvetica,sans-serif;">
-          Super Admin Login Attempt
-        </h1>
-      </td>
-    </tr>
-
-    <tr>
-      <td align="center" style="background:#ffffff;padding:10px 48px 0;">
-        <p style="margin:0;font-size:15px;color:#64748b;line-height:1.7;font-family:Arial,Helvetica,sans-serif;">
-          A sign-in was attempted on your Super Admin account. Enter this one-time code to complete authentication.
-        </p>
-      </td>
-    </tr>
-
-    <!-- OTP card -->
-    <tr>
-      <td align="center" style="background:#ffffff;padding:32px 40px 24px;">
-        <table border="0" cellpadding="0" cellspacing="0"
-          style="background-color:#fff1f2;border-radius:14px;border:1px solid #fecdd3;padding:28px 32px;">
-          <tr>
-            <td align="center" style="padding:0 0 14px;">
-              <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:3px;
-                         text-transform:uppercase;color:#b91c1c;font-family:Arial,Helvetica,sans-serif;">
-                One-Time Access Code
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td align="center" style="padding:0 0 16px;">
-              <table border="0" cellpadding="0" cellspacing="0">
-                <tr>${otpDigits(otp, '#b91c1c', '#fee2e2', '#b91c1c')}</tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td align="center">
-              <p style="margin:0;font-size:13px;color:#64748b;font-family:Arial,Helvetica,sans-serif;">
-                &#9201;&nbsp; Expires in <strong>5 minutes</strong>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-
-    <!-- Urgent warning -->
-    <tr>
-      <td style="background:#ffffff;padding:0 40px 40px;">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-          <tr>
-            <td style="background-color:#fef2f2;border-left:4px solid #ef4444;
-                       border-radius:0 8px 8px 0;padding:13px 16px;">
-              <p style="margin:0;font-size:13px;color:#991b1b;font-family:Arial,Helvetica,sans-serif;">
-                <strong>Not you?</strong>&nbsp;
-                Contact your system administrator immediately. Never share this code with anyone.
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  `
-  await send(to, '[ACTION REQUIRED] YLSH Admin Login Verification Code', shell('#991b1b', '#dc2626', body))
-
-  if (isDev && !resend) console.log(`[DEV] Super-Admin Login OTP for ${to}: ${otp}`)
 }
 
 // ─── Mentor Approval ─────────────────────────────────────────────────────────

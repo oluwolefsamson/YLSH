@@ -1,21 +1,19 @@
-﻿import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 import type { NextPage } from "next"
 import { useRouter } from "next/router"
 import { toast } from "sonner"
 import {
   Mail, Lock, User, BadgeCheck, Eye, EyeOff,
-  ShieldCheck, KeyRound, RefreshCw, ChevronDown, Check,
+  ShieldCheck, ChevronDown, Check,
 } from "lucide-react"
 import AuthShell from "@/components/auth/auth-shell"
 import AuthFormCard from "@/components/auth/auth-form-card"
 import AuthLink from "@/components/auth/auth-link"
 import { cn } from "@/utils"
-import { verifyNIN, sendOTP, verifyOTP, register } from "@/services/endpoints/auth/auth"
+import { verifyNIN, register } from "@/services/endpoints/auth/auth"
 import type { SignupRole } from "@/types"
 
-const steps = ["Verify NIN", "Personal info", "Verify email", "Account details"]
-const OTP_LENGTH = 6
-const RESEND_COUNTDOWN = 30
+const steps = ["Verify NIN", "Personal info", "Account details"]
 
 const SignUpPage: NextPage = () => {
   const router = useRouter()
@@ -31,12 +29,6 @@ const SignUpPage: NextPage = () => {
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [organization, setOrganization] = useState("")
-
-  const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""))
-  const [otpError, setOtpError] = useState("")
-  const [resendTimer, setResendTimer] = useState(0)
-  const [isSending, setIsSending] = useState(false)
-  const otpRefs = useRef<(HTMLInputElement | null)[]>([])
 
   const [role, setRole] = useState<SignupRole>("Participant")
   const [roleOpen, setRoleOpen] = useState(false)
@@ -56,47 +48,6 @@ const SignUpPage: NextPage = () => {
 
   const isBusy = isCreated || isSubmitting
 
-  useEffect(() => {
-    if (activeStep === 2) {
-      setResendTimer(RESEND_COUNTDOWN)
-      sendOTP(email).catch(() => {})
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeStep])
-
-  useEffect(() => {
-    if (resendTimer <= 0) return
-    const t = window.setTimeout(() => setResendTimer((v) => v - 1), 1000)
-    return () => clearTimeout(t)
-  }, [resendTimer])
-
-  const handleOtpChange = (index: number, value: string) => {
-    const digit = value.replace(/\D/g, "").slice(-1)
-    const next = [...otp]; next[index] = digit; setOtp(next); setOtpError("")
-    if (digit && index < OTP_LENGTH - 1) otpRefs.current[index + 1]?.focus()
-  }
-
-  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) otpRefs.current[index - 1]?.focus()
-  }
-
-  const handleOtpPaste = (e: React.ClipboardEvent) => {
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, OTP_LENGTH)
-    if (pasted.length) {
-      const next = Array(OTP_LENGTH).fill("")
-      pasted.split("").forEach((d, i) => { next[i] = d })
-      setOtp(next)
-      otpRefs.current[Math.min(pasted.length, OTP_LENGTH - 1)]?.focus()
-    }
-    e.preventDefault()
-  }
-
-  const handleResend = async () => {
-    setIsSending(true); setOtp(Array(OTP_LENGTH).fill("")); setOtpError("")
-    try { await sendOTP(email); toast.success("New code sent") } catch { toast.error("Failed to resend") }
-    setIsSending(false); setResendTimer(RESEND_COUNTDOWN); otpRefs.current[0]?.focus()
-  }
-
   const handleNext = async () => {
     if (isBusy) return
     setIsSubmitting(true)
@@ -109,17 +60,10 @@ const SignUpPage: NextPage = () => {
       if (activeStep === 1) {
         if (!firstName || !lastName || !email) { toast.error("Please fill all required fields"); return }
       }
-      if (activeStep === 2) {
-        const code = otp.join("")
-        if (code.length < OTP_LENGTH) { setOtpError("Please enter all 6 digits"); return }
-        await verifyOTP(email, code)
-        toast.success("Email verified")
-      }
       setActiveStep((s) => Math.min(s + 1, steps.length - 1))
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "Something went wrong"
-      if (activeStep === 2) setOtpError(msg)
-      else toast.error(msg)
+      toast.error(msg)
     } finally { setIsSubmitting(false) }
   }
 
@@ -198,33 +142,8 @@ const SignUpPage: NextPage = () => {
           )}
 
           {activeStep === 2 && (
-            <div className="flex flex-col gap-5">
-              <div className="text-center">
-                <div className="w-14 h-14 rounded-full bg-primary/10 grid place-items-center mx-auto mb-4"><KeyRound size={26} className="text-primary" /></div>
-                <p className="font-bold text-base mb-1">Check your email</p>
-                <p className="text-sm text-muted-foreground leading-relaxed">We sent a 6-digit code to <span className="font-semibold text-foreground">{email}</span>.</p>
-              </div>
-              <div className="flex gap-2 justify-center" onPaste={handleOtpPaste}>
-                {Array.from({ length: OTP_LENGTH }, (_, i) => (
-                  <input key={i} ref={(el) => { otpRefs.current[i] = el }} type="text" inputMode="numeric" maxLength={1} value={otp[i]} onChange={(e) => handleOtpChange(i, e.target.value)} onKeyDown={(e) => handleOtpKeyDown(i, e)} disabled={isSubmitting}
-                    className={cn("w-11 text-center text-xl font-bold rounded-xl border-2 outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20", otp[i] ? "border-primary bg-primary/5" : "border-input bg-background", isSubmitting && "opacity-50", otpError && "border-red-400")}
-                    style={{ height: "52px" }} />
-                ))}
-              </div>
-              {otpError && <p className="text-center text-sm text-red-500">{otpError}</p>}
-              {isSubmitting && <div className="flex items-center justify-center gap-2 text-sm text-primary"><div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />Verifying...</div>}
-              <div className="text-center text-sm text-muted-foreground">
-                {"Didn't receive it? "}{resendTimer > 0 ? <span>Resend in <span className="font-semibold text-foreground">{resendTimer}s</span></span> : (
-                  <button type="button" onClick={handleResend} disabled={isSending} className="inline-flex items-center gap-1 font-semibold text-primary hover:underline disabled:opacity-50">{isSending && <RefreshCw size={12} className="animate-spin" />}Resend code</button>
-                )}
-              </div>
-              <div className="flex gap-3 p-3 rounded-xl border border-primary/16 bg-primary/7"><Mail size={16} className="text-primary flex-shrink-0 mt-0.5" /><p className="text-xs text-muted-foreground leading-relaxed">Check your spam folder. The code expires in 10 minutes.</p></div>
-            </div>
-          )}
-
-          {activeStep === 3 && (
             <div className="flex flex-col gap-4">
-              <div><p className="font-bold mb-1">Step 4: Account details and review</p><p className="text-sm text-muted-foreground leading-relaxed">Finish by setting your role, password, and preferences.</p></div>
+              <div><p className="font-bold mb-1">Step 3: Account details and review</p><p className="text-sm text-muted-foreground leading-relaxed">Finish by setting your role, password, and preferences.</p></div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div ref={roleRef} className="relative">
                   <button type="button" disabled={isBusy} onClick={() => setRoleOpen((v) => !v)} className={cn("w-full h-11 px-4 rounded-xl border border-input bg-background text-sm text-left flex items-center justify-between gap-2 transition-colors disabled:opacity-50", roleOpen ? "border-primary ring-2 ring-primary/20" : "hover:border-slate-300")}>

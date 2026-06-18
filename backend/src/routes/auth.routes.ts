@@ -14,23 +14,6 @@ router.post(
 )
 
 router.post(
-  '/send-otp',
-  [body('email').isEmail().withMessage('Valid email is required')],
-  validate,
-  authController.sendEmailOTP
-)
-
-router.post(
-  '/verify-otp',
-  [
-    body('email').isEmail().withMessage('Valid email is required'),
-    body('otp').isLength({ min: 6, max: 6 }).withMessage('OTP must be 6 digits'),
-  ],
-  validate,
-  authController.verifyOTP
-)
-
-router.post(
   '/register',
   [
     body('firstName').trim().notEmpty().withMessage('First name is required'),
@@ -51,16 +34,6 @@ router.post(
   ],
   validate,
   authController.login
-)
-
-router.post(
-  '/verify-login-otp',
-  [
-    body('preAuthToken').notEmpty().withMessage('Pre-auth token is required'),
-    body('otp').isLength({ min: 6, max: 6 }).withMessage('OTP must be 6 digits'),
-  ],
-  validate,
-  authController.verifyLoginOTP
 )
 
 router.post('/logout', authController.logout)

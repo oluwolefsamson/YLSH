@@ -3,17 +3,16 @@ import { useRouter } from "next/router"
 import type { NextPage } from "next"
 import { toast } from "sonner"
 import {
-  Mail, Lock, Eye, EyeOff, KeyRound,
+  Mail, Lock, Eye, EyeOff,
   LayoutDashboard, Users, ShieldCheck, Shield, ArrowRight, ChevronLeft,
 } from "lucide-react"
 import AuthShell from "@/components/auth/auth-shell"
 import AuthFormCard from "@/components/auth/auth-form-card"
 import AuthLink from "@/components/auth/auth-link"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 import { useAuth } from "@/contexts/AuthContext"
-import { login as apiLogin, loginVerifyOtp, type AuthUser, type AuthResponse } from "@/services/endpoints/auth/auth"
+import { login as apiLogin, type AuthUser, type AuthResponse } from "@/services/endpoints/auth/auth"
 
-type SigninStep = "select" | "form" | "otp"
+type SigninStep = "select" | "form"
 
 const portals = [
   {
@@ -65,11 +64,6 @@ const shellConfig = (step: SigninStep, portal: Portal | null) => {
     title: "Sign in to your YLSH account",
     description: "Select your role below to access your personalised workspace — events, certificates, mentorship, analytics, and more.",
   }
-  if (step === "otp") return {
-    eyebrow: "Super Admin access",
-    title: "Security verification",
-    description: "A 6-digit one-time code was sent to your registered email. Enter it to complete super admin sign-in.",
-  }
   return {
     eyebrow: portal ? `${portal.label} access` : "Participant access",
     title: portal ? `Sign in as ${portal.label}` : "Sign in to your YLSH account",
@@ -89,9 +83,6 @@ const SignInPage: NextPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  const [preAuthToken, setPreAuthToken] = useState("")
-  const [otp, setOtp] = useState("")
-
   const { eyebrow, title, description } = shellConfig(step, selectedPortal)
 
   const storeAndSetUser = (token: string, u: AuthUser) => {
@@ -109,16 +100,7 @@ const SignInPage: NextPage = () => {
     if (!email || !password) { toast.error("Please enter your email and password"); return }
     setIsLoading(true)
     try {
-      const resp = await apiLogin(email, password)
-
-      if ("requiresOtp" in resp && resp.requiresOtp) {
-        setPreAuthToken(resp.preAuthToken)
-        setStep("otp")
-        toast.info("A 6-digit code was sent to your email.")
-        return
-      }
-
-      const { token, user } = resp as AuthResponse
+      const { token, user } = await apiLogin(email, password) as AuthResponse
 
       if (user.role === "mentor" && user.approvalStatus !== "approved") {
         storeAndSetUser(token, user)
@@ -136,22 +118,6 @@ const SignInPage: NextPage = () => {
     }
   }
 
-  const handleOtpVerify = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (otp.length !== 6) { toast.error("Please enter the 6-digit code"); return }
-    setIsLoading(true)
-    try {
-      const { token, user } = await loginVerifyOtp(preAuthToken, otp)
-      storeAndSetUser(token, user)
-      void router.push("/super-admin")
-    } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "Invalid or expired code"
-      toast.error(msg)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
     <AuthShell
       eyebrow={eyebrow}
@@ -160,12 +126,10 @@ const SignInPage: NextPage = () => {
       footer={<p className="text-center text-muted-foreground">New here? <AuthLink href="/signup">Create an account</AuthLink></p>}
     >
       <AuthFormCard
-        title={step === "select" ? "Who are you?" : step === "otp" ? "Verify your identity" : `Welcome back`}
+        title={step === "select" ? "Who are you?" : "Welcome back"}
         subtitle={
           step === "select"
             ? "Choose your role to continue to the login form."
-            : step === "otp"
-            ? "Enter the 6-digit code sent to your email."
             : "Use your verified credentials to sign in."
         }
       >
@@ -213,7 +177,6 @@ const SignInPage: NextPage = () => {
         {step === "form" && (
           <form onSubmit={handleSignIn} className="flex flex-col gap-4">
 
-            {/* Selected role badge */}
             {selectedPortal && (
               <div className="flex items-center justify-between px-3 py-2 rounded-xl border border-slate-100 bg-slate-50">
                 <div className="flex items-center gap-2">
@@ -296,54 +259,6 @@ const SignInPage: NextPage = () => {
               style={{ backgroundColor: selectedPortal?.color ?? "#127C71" }}
             >
               {isLoading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
-        )}
-
-        {/* ── Step 3: OTP verification (super-admin only) ── */}
-        {step === "otp" && (
-          <form onSubmit={handleOtpVerify} className="flex flex-col gap-5">
-            <div className="flex flex-col items-center gap-3 text-center py-2">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(185,28,28,0.10)" }}>
-                <KeyRound size={22} style={{ color: "#B91C1C" }} />
-              </div>
-              <div>
-                <p className="font-bold text-base">Admin Verification Required</p>
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  A 6-digit security code was sent to your registered email. Enter it below to complete sign-in.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading || otp.length !== 6}
-              className="w-full h-11 rounded-full text-white font-semibold text-sm disabled:opacity-60 transition-colors"
-              style={{ backgroundColor: "#B91C1C" }}
-            >
-              {isLoading ? "Verifying..." : "Verify & Sign In"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => { setStep("form"); setOtp(""); setPreAuthToken("") }}
-              className="flex items-center justify-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              <ChevronLeft size={14} />
-              Back to sign in
             </button>
           </form>
         )}

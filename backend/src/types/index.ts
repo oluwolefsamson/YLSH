@@ -120,11 +120,6 @@ export interface LoginBody {
   password: string
 }
 
-export interface VerifyLoginOtpBody {
-  preAuthToken: string
-  otp: string
-}
-
 export interface CreateAdminBody {
   firstName: string
   lastName: string
@@ -147,5 +142,4 @@ export interface UserListQuery extends PaginationQuery {
 // ─── JWT Payload ──────────────────────────────────────────────────────────────
 export interface JwtPayload {
   id: string
-  preAuth?: boolean
 }
