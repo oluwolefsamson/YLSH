@@ -104,21 +104,23 @@ const AdminUsersPage: NextPageWithLayout = () => {
                   <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold capitalize", statusStyles[user.verificationStatus])}>
                     {statusIcon[user.verificationStatus]} {user.verificationStatus}
                   </span>
-                  <div className="relative">
-                    <button onClick={() => setOpenMenuId(openMenuId === user._id ? null : user._id)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
-                      <MoreVertical size={16} className="text-muted-foreground" />
-                    </button>
-                    {openMenuId === user._id && (
-                      <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-xl shadow-lg py-1 z-50 min-w-[160px]">
-                        {user.verificationStatus !== "suspended" ? (
-                          <button onClick={() => handleSuspend(user._id)} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">Suspend account</button>
-                        ) : (
-                          <button onClick={() => handleActivate(user._id)} className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50 transition-colors">Activate account</button>
-                        )}
-                        <button onClick={() => handleDelete(user._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete account</button>
-                      </div>
-                    )}
-                  </div>
+                  {user.role !== 'super-admin' && (
+                    <div className="relative">
+                      <button onClick={() => setOpenMenuId(openMenuId === user._id ? null : user._id)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
+                        <MoreVertical size={16} className="text-muted-foreground" />
+                      </button>
+                      {openMenuId === user._id && (
+                        <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-xl shadow-lg py-1 z-50 min-w-[160px]">
+                          {user.verificationStatus !== "suspended" ? (
+                            <button onClick={() => handleSuspend(user._id)} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">Suspend account</button>
+                          ) : (
+                            <button onClick={() => handleActivate(user._id)} className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50 transition-colors">Activate account</button>
+                          )}
+                          <button onClick={() => handleDelete(user._id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete account</button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

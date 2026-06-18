@@ -89,6 +89,16 @@ export const updateStatus = async (req: Request, res: Response, next: NextFuncti
       return
     }
 
+    const target = await User.findById(req.params.id).select('-password')
+    if (!target) {
+      res.status(404).json({ message: 'User not found' })
+      return
+    }
+    if (target.role === 'super-admin' && req.user!.role !== 'super-admin') {
+      res.status(403).json({ message: 'Admins cannot modify a super-admin account' })
+      return
+    }
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
       { verificationStatus: status },
@@ -296,6 +306,16 @@ export const changePassword = async (req: Request, res: Response, next: NextFunc
 // DELETE /api/users/:id  (admin)
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    const existing = await User.findById(req.params.id).select('role')
+    if (!existing) {
+      res.status(404).json({ message: 'User not found' })
+      return
+    }
+    if (existing.role === 'super-admin' && req.user!.role !== 'super-admin') {
+      res.status(403).json({ message: 'Admins cannot delete a super-admin account' })
+      return
+    }
+
     const user = await User.findByIdAndDelete(req.params.id)
     if (!user) {
       res.status(404).json({ message: 'User not found' })

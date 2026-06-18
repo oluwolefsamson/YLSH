@@ -20,7 +20,7 @@ YLSH replaces that chaos with a single platform where:
 
 | Layer | Technology |
 |---|---|
-| Frontend | Next.js (TypeScript), Tailwind CSS |
+| Frontend | Next.js (TypeScript), Tailwind CSS, ShadCN UI (Radix UI) |
 | Backend | Node.js, Express (TypeScript) |
 | Database | MongoDB (Mongoose) |
 | Auth | JWT (HTTP Bearer) |
@@ -78,6 +78,7 @@ Staff members who manage the day-to-day operations of the summit.
 ### Super Admin
 The platform owner with full system access.
 - Everything an Admin can do
+- **Mentor Approvals** — review, approve, or decline mentor registration applications directly from the Super Admin portal
 - **Role Management** — assign or revoke any role on any account
 - **Create Admin accounts** — provision new admin users
 - **Audit Logs** — see a timestamped record of every significant action taken on the platform
@@ -199,7 +200,7 @@ Go to `/signup`. Three steps:
 | Users | `/admin/users` | Search, filter, suspend, approve mentors |
 | Events | `/admin/events` | Create and manage events |
 | Analytics | `/admin/analytics` | Growth charts, event stats, audit trail |
-| Verifications | `/admin/verifications` | Pending identity verifications |
+| Verifications | `/admin/verifications` | Review and approve/decline pending mentor applications |
 
 ---
 
@@ -209,9 +210,10 @@ Go to `/signup`. Three steps:
 |---|---|---|
 | Dashboard | `/super-admin` | Full platform stats and audit log |
 | Users | `/super-admin/users` | All users with role assignment |
+| Events | `/super-admin/events` | Full event controls |
+| Verifications | `/super-admin/verifications` | Review and approve/decline pending mentor applications |
 | Roles | `/super-admin/roles` | RBAC matrix and role assignment interface |
 | Analytics | `/super-admin/analytics` | Role distribution, state breakdown |
-| Events | `/super-admin/events` | Full event controls |
 
 ---
 
