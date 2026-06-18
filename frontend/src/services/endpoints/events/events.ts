@@ -30,7 +30,7 @@ export interface CreateEventPayload {
   time?: string
   venue: string
   category?: string
-  capacity: number
+  capacity?: number
 }
 
 export const listEvents = (params?: { status?: string; category?: string; page?: number; limit?: number }) =>

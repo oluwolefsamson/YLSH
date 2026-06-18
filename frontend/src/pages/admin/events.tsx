@@ -70,9 +70,9 @@ const AdminEventsPage: NextPageWithLayout = () => {
       toast.error('Please enter a capacity or disable the limit')
       return
     }
-    const payload: Record<string, unknown> = { title: createForm.title, date: createForm.date, venue: createForm.venue, category: createForm.category }
+    const payload: Parameters<typeof createEvent.mutate>[0] = { title: createForm.title, date: createForm.date, venue: createForm.venue, category: createForm.category }
     if (limitCapacity && createForm.capacity) payload.capacity = Number(createForm.capacity)
-    createEvent.mutate(payload as Parameters<typeof createEvent.mutate>[0], {
+    createEvent.mutate(payload, {
       onSuccess: () => { toast.success('Event created'); setShowCreate(false); setCreateForm({ title: '', date: '', venue: '', category: 'Summit', capacity: '' }); setLimitCapacity(false) },
       onError: () => toast.error('Failed to create event'),
     })
