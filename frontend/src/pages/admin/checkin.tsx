@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+﻿import React, { useState, useRef } from 'react'
 import { ScanLine, CheckCircle, XCircle, Loader2, User, Calendar, MapPin } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
@@ -6,9 +6,8 @@ import { NextPageWithLayout } from '@/interfaces/layout'
 import { useCheckIn } from '@/services/hooks/registrations/registrations'
 import type { Registration } from '@/services/endpoints/registrations/registrations'
 import { cn } from '@/utils'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 const INPUT = 'w-full h-12 px-4 rounded-xl border border-input bg-background text-sm font-mono outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors tracking-widest text-center uppercase'
 
 type CheckInResult = { success: true; registration: Registration } | { success: false; message: string }
@@ -66,7 +65,7 @@ const CheckInPage: NextPageWithLayout = () => {
             <button
               type="submit"
               disabled={checkIn.isPending || !token.trim()}
-              className="h-12 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+              className="h-12 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
             >
               {checkIn.isPending ? <><Loader2 size={16} className="animate-spin" /> Checking in...</> : <><ScanLine size={16} /> Check In</>}
             </button>
@@ -74,16 +73,16 @@ const CheckInPage: NextPageWithLayout = () => {
         </div>
 
         {result && (
-          <div className={cn('mt-4 rounded-2xl border overflow-hidden', result.success ? 'border-green-200' : 'border-red-200')}>
+          <div className={cn('mt-4 rounded-2xl border overflow-hidden', result.success ? 'border-blue-200' : 'border-red-200')}>
             {result.success ? (
               <>
-                <div className="flex items-center gap-3 p-4" style={{ backgroundColor: 'rgba(209,250,229,0.5)' }}>
-                  <div className="w-10 h-10 rounded-full bg-green-500 grid place-items-center flex-shrink-0">
+                <div className="flex items-center gap-3 p-4" style={{ backgroundColor: 'rgba(8,47,73,0.06)' }}>
+                  <div className="w-10 h-10 rounded-full bg-[#082F49] grid place-items-center flex-shrink-0">
                     <CheckCircle size={20} className="text-white" />
                   </div>
                   <div>
-                    <p className="font-bold text-green-800">Check-in Successful!</p>
-                    <p className="text-sm text-green-700">Participant marked as attended</p>
+                    <p className="font-bold text-blue-950">Check-in Successful!</p>
+                    <p className="text-sm text-[#082F49]">Participant marked as attended</p>
                   </div>
                 </div>
                 <div className="p-4 bg-white flex flex-col gap-2">
@@ -110,7 +109,7 @@ const CheckInPage: NextPageWithLayout = () => {
                       </span>
                     </div>
                   )}
-                  <button onClick={handleReset} className="mt-2 w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">
+                  <button onClick={handleReset} className="mt-2 w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">
                     Scan Next
                   </button>
                 </div>

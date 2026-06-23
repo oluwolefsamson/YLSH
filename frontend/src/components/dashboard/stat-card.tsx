@@ -9,7 +9,7 @@ interface Props {
   accent?: string
 }
 
-const StatCard: FC<Props> = ({ label, value, icon, progress, change, accent = '#127C71' }) => {
+const StatCard: FC<Props> = ({ label, value, icon, progress, change, accent = '#082F49' }) => {
   return (
     <div
       className="p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16 transition-transform duration-200 hover:-translate-y-0.5"
@@ -35,7 +35,7 @@ const StatCard: FC<Props> = ({ label, value, icon, progress, change, accent = '#
             {label}
           </p>
           <p className="font-bold text-[28px] leading-none tracking-[-0.03em] text-foreground">{value}</p>
-          {change && <p className="text-xs font-semibold mt-0.5" style={{ color: '#127C71' }}>{change}</p>}
+          {change && <p className="text-xs font-semibold mt-0.5" style={{ color: '#082F49' }}>{change}</p>}
         </div>
       </div>
       {progress !== undefined && (

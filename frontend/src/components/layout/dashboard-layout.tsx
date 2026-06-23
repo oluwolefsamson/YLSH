@@ -59,7 +59,7 @@ const DashboardLayout: FC<Props> = ({ children }) => {
       {/* Header */}
       <div
         className="px-6 py-5 relative overflow-hidden"
-        style={{ background: '#127C71' }}
+        style={{ background: '#082F49' }}
       >
         <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/6 pointer-events-none" />
         <div className="relative z-10 flex items-center gap-3">
@@ -93,13 +93,13 @@ const DashboardLayout: FC<Props> = ({ children }) => {
                 className={cn(
                   'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150',
                   active
-                    ? 'bg-green-50 border-l-[3px] border-[#127C71] pl-[9px] text-[#127C71] font-bold'
-                    : 'text-muted-foreground hover:bg-[#127C71]/8 hover:text-[#127C71]'
+                    ? 'bg-blue-50 border-l-[3px] border-[#082F49] pl-[9px] text-[#082F49] font-bold'
+                    : 'text-muted-foreground hover:bg-[#082F49]/8 hover:text-[#082F49]'
                 )}
               >
                 <Icon size={16} />
                 {item.label}
-                {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#127C71]" />}
+                {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#082F49]" />}
               </NextLink>
             )
           })}
@@ -148,7 +148,7 @@ const DashboardLayout: FC<Props> = ({ children }) => {
           {/* Mobile topbar */}
           <div
             className="md:hidden flex items-center justify-between px-4 py-3 sticky top-0 z-40"
-            style={{ background: '#127C71' }}
+            style={{ background: '#082F49' }}
           >
             <div className="flex items-center gap-3">
               <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg text-white hover:bg-white/10">
@@ -183,7 +183,7 @@ const DashboardLayout: FC<Props> = ({ children }) => {
               </button>
               <button
                 onClick={handleConfirmSignOut}
-                className="px-5 py-2 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#0d5c54] transition-colors"
+                className="px-5 py-2 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#061e35] transition-colors"
               >
                 Sign out
               </button>

@@ -34,7 +34,7 @@ const StyledButton: FC<Props> = ({
 
   const colorVariant: Record<string, Record<string, string>> = {
     contained: {
-      primary: 'bg-primary text-white hover:bg-[#0d5c54] shadow-[0_6px_22px_rgb(18_124_113/12%)]',
+      primary: 'bg-primary text-white hover:bg-[#061e35] shadow-[0_6px_22px_rgb(8_47_73/12%)]',
       secondary: 'bg-[#082F49] text-white hover:bg-[#0a3d61]',
       default: 'bg-foreground text-white hover:opacity-90',
       dark: 'bg-[#313d56] text-white hover:opacity-90',

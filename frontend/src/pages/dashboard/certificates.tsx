@@ -8,8 +8,8 @@ import { cn } from "@/utils"
 import { useMyCertificates } from "@/services/hooks/certificates/certificates"
 import { useAuth } from "@/contexts/AuthContext"
 import type { Certificate } from "@/services/endpoints/certificates/certificates"
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD_STYLE = { backgroundColor: "rgba(255,255,255,0.88)", boxShadow: "0 12px 30px rgba(15,23,42,0.06)" }
 
 const CertificatesPage: NextPageWithLayout = () => {
   const { user } = useAuth()
@@ -62,10 +62,10 @@ const CertificatesPage: NextPageWithLayout = () => {
           {certificates.map((cert) => (
             <div key={cert._id} className={cn("flex flex-col p-5 md:p-6 rounded-2xl border border-slate-200/16", cert.status === "pending" ? "opacity-65" : "")} style={CARD_STYLE}>
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-[14px] grid place-items-center text-white flex-shrink-0" style={{ background: "linear-gradient(135deg, #082F49 0%, #127C71 100%)" }}>
+                <div className="w-12 h-12 rounded-[14px] grid place-items-center text-white flex-shrink-0" style={{ background: "linear-gradient(135deg, #061e35 0%, #082F49 100%)" }}>
                   <Award size={22} />
                 </div>
-                <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold", cert.status === "issued" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700")}>
+                <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold", cert.status === "issued" ? "bg-blue-100 text-[#082F49]" : "bg-amber-100 text-amber-700")}>
                   {cert.status === "issued" ? <ShieldCheck size={11} /> : <Clock size={11} />}
                   {cert.status === "issued" ? "Issued" : "Pending"}
                 </span>
@@ -76,13 +76,13 @@ const CertificatesPage: NextPageWithLayout = () => {
                 Issued: {cert.issuedDate ? new Date(cert.issuedDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Pending generation"}
               </p>
               {cert.verifyCode && (
-                <div className="flex items-center gap-2 p-3 rounded-xl mb-3" style={{ backgroundColor: "rgba(18,124,113,0.06)", border: "1px solid rgba(18,124,113,0.18)" }}>
+                <div className="flex items-center gap-2 p-3 rounded-xl mb-3" style={{ backgroundColor: "rgba(8,47,73,0.06)", border: "1px solid rgba(8,47,73,0.18)" }}>
                   <QrCode size={16} className="text-primary flex-shrink-0" />
                   <span className="font-mono text-xs font-bold text-primary">{cert.verifyCode}</span>
                 </div>
               )}
               <div className="flex gap-3 mt-auto">
-                <button disabled={cert.status === "pending"} onClick={() => handleDownload(cert)} className="flex-1 flex items-center justify-center gap-2 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 disabled:cursor-default transition-colors">
+                <button disabled={cert.status === "pending"} onClick={() => handleDownload(cert)} className="flex-1 flex items-center justify-center gap-2 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 disabled:cursor-default transition-colors">
                   <Download size={15} /> Download PDF
                 </button>
                 <button disabled={cert.status === "pending"} onClick={() => setVerifyModal(cert)} className="flex items-center gap-2 h-10 px-4 rounded-full border border-primary text-primary font-semibold text-sm hover:bg-primary/5 disabled:opacity-50 disabled:cursor-default transition-colors">
@@ -102,7 +102,7 @@ const CertificatesPage: NextPageWithLayout = () => {
               <h3 className="font-bold text-lg">Certificate Verification</h3>
               <button onClick={() => setVerifyModal(null)} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X size={18} /></button>
             </div>
-            <div className="w-24 h-24 mx-auto rounded-2xl border-4 border-primary/20 grid place-items-center mb-5" style={{ backgroundColor: "rgba(18,124,113,0.06)" }}>
+            <div className="w-24 h-24 mx-auto rounded-2xl border-4 border-primary/20 grid place-items-center mb-5" style={{ backgroundColor: "rgba(8,47,73,0.06)" }}>
               <QrCode size={48} className="text-primary" />
             </div>
             <div className="flex flex-col gap-3 mb-5">
@@ -111,16 +111,16 @@ const CertificatesPage: NextPageWithLayout = () => {
                 <div className="p-3 rounded-xl bg-muted"><p className="text-xs text-muted-foreground mb-0.5">Type</p><p className="font-semibold text-sm">{verifyModal.type}</p></div>
                 <div className="p-3 rounded-xl bg-muted"><p className="text-xs text-muted-foreground mb-0.5">Issued</p><p className="font-semibold text-sm">{verifyModal.issuedDate ? new Date(verifyModal.issuedDate).toLocaleDateString() : "Pending"}</p></div>
               </div>
-              <div className="p-3 rounded-xl border border-primary/20" style={{ backgroundColor: "rgba(18,124,113,0.05)" }}>
+              <div className="p-3 rounded-xl border border-primary/20" style={{ backgroundColor: "rgba(8,47,73,0.05)" }}>
                 <p className="text-xs text-muted-foreground mb-0.5">Verification Code</p>
                 <p className="font-mono font-bold text-primary">{verifyModal.verifyCode}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-green-50 border border-green-200 mb-4">
-              <ShieldCheck size={16} className="text-green-600 flex-shrink-0" />
-              <p className="text-sm text-green-700 font-medium">This certificate is verified and authentic.</p>
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-blue-50 border border-blue-200 mb-4">
+              <ShieldCheck size={16} className="text-[#082F49] flex-shrink-0" />
+              <p className="text-sm text-[#082F49] font-medium">This certificate is verified and authentic.</p>
             </div>
-            <button onClick={() => setVerifyModal(null)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Close</button>
+            <button onClick={() => setVerifyModal(null)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">Close</button>
           </div>
         </div>
       )}

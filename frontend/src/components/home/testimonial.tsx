@@ -5,7 +5,7 @@ import { data } from './testimonial.data'
 
 const HomeTestimonial: FC = () => {
   return (
-    <section id="testimonial" className="py-16 md:py-20 bg-[#127C71]">
+    <section id="testimonial" className="py-16 md:py-20 bg-[#082F49]">
       <div className="container">
 
         {/* Header */}

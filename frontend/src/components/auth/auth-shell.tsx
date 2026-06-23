@@ -16,7 +16,7 @@ const AuthShell: FC<Props> = ({ eyebrow, title, description, children, footer })
       className="min-h-screen py-6 md:py-10"
       style={{
         background:
-          'radial-gradient(circle at top left, rgba(18,124,113,0.14), transparent 30%), radial-gradient(circle at bottom right, rgba(8,47,73,0.08), transparent 28%), linear-gradient(180deg, #f0f7f6 0%, #f3f6fb 100%)',
+          'radial-gradient(circle at top left, rgba(8,47,73,0.14), transparent 30%), radial-gradient(circle at bottom right, rgba(8,47,73,0.08), transparent 28%), linear-gradient(180deg, #f0f4f8 0%, #f3f6fb 100%)',
       }}
     >
       <div className="container max-w-7xl">
@@ -34,7 +34,7 @@ const AuthShell: FC<Props> = ({ eyebrow, title, description, children, footer })
             className="hidden md:block p-8 md:p-12 text-white relative overflow-hidden"
             style={{
               background:
-                'linear-gradient(145deg, rgba(8,47,73,0.99) 0%, rgba(18,124,113,0.97) 55%, rgba(14,116,144,0.93) 100%)',
+                'linear-gradient(145deg, rgba(6,30,53,0.99) 0%, rgba(8,47,73,0.97) 55%, rgba(13,61,110,0.93) 100%)',
             }}
           >
             <div

@@ -1,15 +1,14 @@
-import React from 'react'
+﻿import React from 'react'
 import { Users, Calendar, Star, Loader2 } from 'lucide-react'
 import { MentorLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
 import { useMyMentees } from '@/services/hooks/mentors/mentors'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
-const COLORS = ['#127C71', '#082F49', '#7C3AED', '#D97706', '#B91C1C', '#0891B2', '#059669']
+const COLORS = ['#082F49', '#0d3d6e', '#7C3AED', '#D97706', '#B91C1C', '#0891B2', '#059669']
 
 const StarRating: React.FC<{ value: number }> = ({ value }) => (
   <div className="flex items-center gap-0.5">
@@ -52,7 +51,7 @@ const MenteesPage: NextPageWithLayout = () => {
                         <p className="font-bold">{user.firstName} {user.lastName}</p>
                         <p className="text-sm text-muted-foreground">{user.organization || user.state || 'Participant'}</p>
                       </div>
-                      <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', status === 'active' ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground')}>
+                      <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', status === 'active' ? 'bg-blue-100 text-[#082F49]' : 'bg-muted text-muted-foreground')}>
                         {status === 'active' ? 'Active' : 'Completed'}
                       </span>
                     </div>
@@ -63,8 +62,8 @@ const MenteesPage: NextPageWithLayout = () => {
                   <div className="flex items-center gap-2">
                     <Calendar size={14} className="text-muted-foreground" />
                     <span className="text-sm text-muted-foreground">
-                      {totalSessions} session{totalSessions !== 1 ? 's' : ''} · {completedSessions} completed
-                      {lastSession ? ` · Last: ${new Date(lastSession).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}
+                      {totalSessions} session{totalSessions !== 1 ? 's' : ''} Â· {completedSessions} completed
+                      {lastSession ? ` Â· Last: ${new Date(lastSession).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}
                     </span>
                   </div>
                   {completedSessions > 0 && (

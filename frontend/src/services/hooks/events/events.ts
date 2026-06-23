@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   listEvents, getEventById, createEvent, updateEvent, deleteEvent,
-  registerForEvent, cancelRegistration,
-  type Event, type PaginatedEvents, type CreateEventPayload,
+  registerForEvent, cancelRegistration, getEventAttendees,
+  type Event, type PaginatedEvents, type CreateEventPayload, type PaginatedAttendees,
 } from '@/services/endpoints/events/events'
 
 const K = { LIST: 'events-list', DETAIL: 'events-detail' }
@@ -47,6 +47,13 @@ export const useDeleteEvent = () => {
     onSuccess: () => qc.invalidateQueries({ queryKey: [K.LIST] }),
   })
 }
+
+export const useEventAttendees = (eventId: string) =>
+  useQuery<PaginatedAttendees, Error>({
+    queryKey: ['event-attendees', eventId],
+    queryFn: () => getEventAttendees(eventId),
+    enabled: Boolean(eventId),
+  })
 
 export const useRegisterForEvent = () => {
   const qc = useQueryClient()

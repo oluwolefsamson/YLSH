@@ -9,13 +9,12 @@ import { cn } from "@/utils"
 import { useEvents, useRegisterForEvent, useCancelRegistration } from "@/services/hooks/events/events"
 import { useMyRegistrations } from "@/services/hooks/registrations/registrations"
 import type { Event } from "@/services/endpoints/events/events"
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = "p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16"
-const CARD_STYLE = { backgroundColor: "rgba(255,255,255,0.88)", boxShadow: "0 12px 30px rgba(15,23,42,0.06)" }
 
 const categoryBadge: Record<string, string> = {
   Summit: "bg-primary/10 text-primary",
-  Workshop: "bg-green-100 text-green-700",
+  Workshop: "bg-blue-100 text-[#082F49]",
   Masterclass: "bg-amber-100 text-amber-700",
   Bootcamp: "bg-blue-100 text-blue-700",
   Conference: "bg-purple-100 text-purple-700",
@@ -93,7 +92,7 @@ const EventsPage: NextPageWithLayout = () => {
                 <div key={event._id} className="flex flex-col p-5 rounded-xl border border-slate-200/18">
                   <div className="flex items-start justify-between mb-3">
                     <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold", categoryBadge[event.category] ?? "bg-muted text-muted-foreground")}>{event.category}</span>
-                    <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border", isFull ? "border-red-300 text-red-600" : "border-green-300 text-green-700")}>{isFull ? "Full" : "Open"}</span>
+                    <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border", isFull ? "border-red-300 text-red-600" : "border-blue-300 text-[#082F49]")}>{isFull ? "Full" : "Open"}</span>
                   </div>
                   <h3 className="font-bold mb-1">{event.title}</h3>
                   <p className="text-sm text-muted-foreground mb-3 flex-1">{event.description}</p>
@@ -109,11 +108,11 @@ const EventsPage: NextPageWithLayout = () => {
                   {isPast ? (
                     <button disabled className="w-full h-10 rounded-full border border-border text-muted-foreground font-bold text-sm cursor-default">Event ended</button>
                   ) : isRegistered && !isWaitlisted ? (
-                    <button disabled className="w-full h-10 rounded-full bg-green-100 text-green-700 font-bold text-sm flex items-center justify-center gap-2 cursor-default"><CheckCircle size={15} /> Registered</button>
+                    <button disabled className="w-full h-10 rounded-full bg-blue-100 text-[#082F49] font-bold text-sm flex items-center justify-center gap-2 cursor-default"><CheckCircle size={15} /> Registered</button>
                   ) : isWaitlisted ? (
                     <button disabled className="w-full h-10 rounded-full bg-amber-100 text-amber-700 font-bold text-sm cursor-default">On waitlist</button>
                   ) : (
-                    <button onClick={() => openRegisterModal(event)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">
+                    <button onClick={() => openRegisterModal(event)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">
                       {isFull ? "Join waitlist" : "Register"}
                     </button>
                   )}
@@ -145,8 +144,8 @@ const EventsPage: NextPageWithLayout = () => {
                   </div>
                 </div>
                 {expandedQR === reg.qrToken && (
-                  <div className="border-t border-slate-200/18 p-5 text-center" style={{ backgroundColor: "rgba(18,124,113,0.04)" }}>
-                    <div className="w-28 h-28 mx-auto rounded-2xl border-4 border-primary/25 grid place-items-center mb-3" style={{ backgroundColor: "rgba(18,124,113,0.06)" }}>
+                  <div className="border-t border-slate-200/18 p-5 text-center" style={{ backgroundColor: "rgba(8,47,73,0.04)" }}>
+                    <div className="w-28 h-28 mx-auto rounded-2xl border-4 border-primary/25 grid place-items-center mb-3" style={{ backgroundColor: "rgba(8,47,73,0.06)" }}>
                       <QrCode size={56} className="text-primary" />
                     </div>
                     <p className="font-mono text-sm font-bold text-primary mb-1">{reg.qrToken}</p>
@@ -181,17 +180,17 @@ const EventsPage: NextPageWithLayout = () => {
                 )}
                 <div className="flex gap-3">
                   <button onClick={closeRegisterModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 text-foreground font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-                  <button onClick={() => handleRegisterConfirm(registerModal)} disabled={registerMutation.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-60 transition-colors">
+                  <button onClick={() => handleRegisterConfirm(registerModal)} disabled={registerMutation.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-60 transition-colors">
                     {registerMutation.isPending ? "Processing..." : registerModal.capacity != null && registerModal.registeredCount >= registerModal.capacity ? "Join Waitlist" : "Confirm"}
                   </button>
                 </div>
               </>
             ) : (
               <div className="flex flex-col items-center text-center py-4">
-                <div className="w-16 h-16 rounded-full bg-green-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-green-600" /></div>
+                <div className="w-16 h-16 rounded-full bg-blue-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-[#082F49]" /></div>
                 <h3 className="font-bold text-lg mb-1">{resultStatus === "waitlisted" ? "Added to Waitlist!" : "Registration Confirmed!"}</h3>
                 <p className="text-sm text-muted-foreground mb-5">{resultStatus === "waitlisted" ? "We'll notify you when a slot becomes available." : "Your QR code will appear in My Registrations below."}</p>
-                <button onClick={closeRegisterModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Done</button>
+                <button onClick={closeRegisterModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">Done</button>
               </div>
             )}
           </div>

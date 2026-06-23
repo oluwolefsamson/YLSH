@@ -4,9 +4,8 @@ import { AdminLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { useSuperDashboard, useUserGrowth, useRoleDistribution, useTopStates } from '@/services/hooks/analytics/analytics'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const SuperAdminAnalyticsPage: NextPageWithLayout = () => {
   const { data: dashboard, isLoading: loadingDash } = useSuperDashboard()
@@ -98,7 +97,7 @@ const SuperAdminAnalyticsPage: NextPageWithLayout = () => {
           )}
         </div>
 
-        <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.98) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
+        <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(6,30,53,0.98) 0%, rgba(8,47,73,0.98) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
           <h2 className="text-xl font-bold mb-4">Top States</h2>
           {loadingStates ? (
             <div className="flex items-center justify-center py-8"><Loader2 size={20} className="animate-spin" style={{ color: 'rgba(255,255,255,0.7)' }} /></div>

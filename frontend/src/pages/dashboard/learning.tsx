@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { GraduationCap, PlayCircle, FileText, CheckCircle, X, Download, ExternalLink, Loader2 } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
@@ -7,9 +7,8 @@ import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
 import { useResources, useUpdateProgress } from '@/services/hooks/learning/learning'
 import type { LearningResource, ResourceType } from '@/services/endpoints/learning/learning'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const typeIcon: Record<ResourceType, React.ReactNode> = {
   video: <PlayCircle size={22} />, pdf: <FileText size={22} />, article: <FileText size={22} />,
@@ -103,7 +102,7 @@ const LearningPage: NextPageWithLayout = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <p className="font-bold">{resource.title}</p>
-                    {resource.completed && <CheckCircle size={18} className="text-green-600 flex-shrink-0" />}
+                    {resource.completed && <CheckCircle size={18} className="text-[#082F49] flex-shrink-0" />}
                   </div>
                   <div className="flex gap-2 flex-wrap mb-2">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground">{resource.category}</span>
@@ -117,7 +116,7 @@ const LearningPage: NextPageWithLayout = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">{resource.progress}% complete</span>
-                    <button onClick={() => handleAction(resource)} className={cn('flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-bold transition-colors', resource.completed ? 'border border-border hover:bg-muted' : 'bg-primary text-white hover:bg-[#0d5c54]')}>
+                    <button onClick={() => handleAction(resource)} className={cn('flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-bold transition-colors', resource.completed ? 'border border-border hover:bg-muted' : 'bg-primary text-white hover:bg-[#061e35]')}>
                       {resource.type === 'pdf' && <Download size={12} />}
                       {resource.type === 'video' && <PlayCircle size={12} />}
                       {resource.type === 'article' && <ExternalLink size={12} />}
@@ -157,20 +156,20 @@ const LearningPage: NextPageWithLayout = () => {
                   </div>
                 ) : activeResource.url ? (
                   <div className="p-5 text-center">
-                    <a href={activeResource.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">
+                    <a href={activeResource.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">
                       <ExternalLink size={16} /> Watch Video
                     </a>
                   </div>
                 ) : null}
                 <div className="p-5">
                   <div className="flex items-center gap-2 mb-2">
-                    {activeResource.duration && <><span className="text-xs font-medium text-muted-foreground">{activeResource.duration}</span><span className="text-muted-foreground">·</span></>}
+                    {activeResource.duration && <><span className="text-xs font-medium text-muted-foreground">{activeResource.duration}</span><span className="text-muted-foreground">Â·</span></>}
                     <span className="text-xs font-medium text-muted-foreground">{activeResource.progress}% watched</span>
                   </div>
                   <div className="h-[6px] rounded-full overflow-hidden mb-4" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }}>
                     <div className="h-full rounded-full bg-primary" style={{ width: `${activeResource.progress}%` }} />
                   </div>
-                  <button onClick={() => handleMarkRead(activeResource)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">
+                  <button onClick={() => handleMarkRead(activeResource)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">
                     Mark as completed
                   </button>
                 </div>
@@ -194,7 +193,7 @@ const LearningPage: NextPageWithLayout = () => {
                   )}
                 </div>
                 <div className="mt-6 pt-4 border-t border-border">
-                  <button onClick={() => handleMarkRead(activeResource)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">
+                  <button onClick={() => handleMarkRead(activeResource)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">
                     Mark as read
                   </button>
                 </div>

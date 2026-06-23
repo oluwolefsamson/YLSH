@@ -20,7 +20,7 @@ const portals = [
     description: "Events, certificates, learning & opportunities",
     href: "/dashboard",
     icon: <LayoutDashboard size={22} />,
-    color: "#127C71",
+    color: "#082F49",
     role: "participant",
   },
   {
@@ -101,6 +101,11 @@ const SignInPage: NextPage = () => {
     setIsLoading(true)
     try {
       const { token, user } = await apiLogin(email, password) as AuthResponse
+
+      if (selectedPortal && user.role !== selectedPortal.role) {
+        toast.error(`These credentials are not registered as a ${selectedPortal.label}`)
+        return
+      }
 
       if (user.role === "mentor" && user.approvalStatus !== "approved") {
         storeAndSetUser(token, user)
@@ -256,7 +261,7 @@ const SignInPage: NextPage = () => {
               type="submit"
               disabled={isLoading}
               className="w-full h-11 rounded-full text-white font-semibold text-sm disabled:opacity-60 transition-colors"
-              style={{ backgroundColor: selectedPortal?.color ?? "#127C71" }}
+              style={{ backgroundColor: selectedPortal?.color ?? "#082F49" }}
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </button>

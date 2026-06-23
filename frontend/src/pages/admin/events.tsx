@@ -1,20 +1,20 @@
 ﻿import React, { useState, useRef, useEffect } from 'react'
-import { CalendarCheck, Calendar, MapPin, Users, MoreVertical, Plus, X, Loader2, Search } from 'lucide-react'
+import { CalendarCheck, Calendar, MapPin, Users, MoreVertical, Plus, X, Loader2, Search, Download } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
 import { useEvents, useEvent, useCreateEvent, useDeleteEvent } from '@/services/hooks/events/events'
+import { getEventAttendees } from '@/services/endpoints/events/events'
 import { toast } from 'sonner'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import DatePicker from '@/components/ui/date-picker'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const categoryBadge: Record<string, string> = {
   Summit: 'bg-primary/10 text-primary',
-  Workshop: 'bg-green-100 text-green-700',
+  Workshop: 'bg-blue-100 text-[#082F49]',
   Masterclass: 'bg-amber-100 text-amber-700',
   Bootcamp: 'bg-purple-100 text-purple-700',
   Forum: 'bg-muted text-muted-foreground',
@@ -78,6 +78,39 @@ const AdminEventsPage: NextPageWithLayout = () => {
     })
   }
 
+  const [exportingId, setExportingId] = useState<string | null>(null)
+
+  const handleExportCSV = async (eventId: string, eventTitle: string) => {
+    setExportingId(eventId)
+    setMenuId(null)
+    try {
+      const { data } = await getEventAttendees(eventId)
+      const rows = [
+        ['Name', 'Email', 'Phone', 'Status', 'Checked In At', 'Registered At'],
+        ...data.map((r) => [
+          `${r.user.firstName} ${r.user.lastName}`,
+          r.user.email,
+          r.user.phone ?? '',
+          r.status,
+          r.checkedInAt ? new Date(r.checkedInAt).toLocaleString() : '',
+          new Date(r.createdAt).toLocaleString(),
+        ]),
+      ]
+      const csv = rows.map((row) => row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${eventTitle.replace(/\s+/g, '_')}_attendees.csv`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      toast.error('Failed to export attendees')
+    } finally {
+      setExportingId(null)
+    }
+  }
+
   const handleDelete = () => {
     if (!confirmDelete) return
     deleteEvent.mutate(confirmDelete.id, {
@@ -134,7 +167,7 @@ const AdminEventsPage: NextPageWithLayout = () => {
                     <div className="flex items-center gap-2 flex-wrap mb-2">
                       <p className="font-bold">{event.title}</p>
                       <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', categoryBadge[event.category] ?? 'bg-muted text-muted-foreground')}>{event.category}</span>
-                      <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border', event.status === 'upcoming' ? 'border-green-300 text-green-700' : 'border-border text-muted-foreground')}>{event.status}</span>
+                      <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border', event.status === 'upcoming' ? 'border-blue-300 text-[#082F49]' : 'border-border text-muted-foreground')}>{event.status}</span>
                     </div>
                     <div className="flex gap-4 flex-wrap mb-3">
                       <div className="flex items-center gap-1.5"><Calendar size={13} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{new Date(event.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
@@ -157,8 +190,11 @@ const AdminEventsPage: NextPageWithLayout = () => {
                       <MoreVertical size={16} className="text-muted-foreground" />
                     </button>
                     {menuId === event._id && (
-                      <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-xl shadow-lg py-1 z-50 min-w-[160px]">
+                      <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-xl shadow-lg py-1 z-50 min-w-[180px]">
                         <button onClick={() => { setViewId(event._id); setMenuId(null) }} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">View details</button>
+                        <button onClick={() => handleExportCSV(event._id, event.title)} disabled={exportingId === event._id} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors flex items-center gap-2 disabled:opacity-50">
+                          {exportingId === event._id ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />} Export CSV
+                        </button>
                         <button onClick={() => { setConfirmDelete({ id: event._id, title: event.title }); setMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete event</button>
                       </div>
                     )}
@@ -201,7 +237,7 @@ const AdminEventsPage: NextPageWithLayout = () => {
                   <>
                     <div className="flex items-center gap-2 flex-wrap mb-1.5">
                       <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', categoryBadge[viewEvent?.category ?? ''] ?? 'bg-muted text-muted-foreground')}>{viewEvent?.category}</span>
-                      <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border', viewEvent?.status === 'upcoming' ? 'border-green-300 text-green-700' : 'border-border text-muted-foreground')}>{viewEvent?.status}</span>
+                      <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border', viewEvent?.status === 'upcoming' ? 'border-blue-300 text-[#082F49]' : 'border-border text-muted-foreground')}>{viewEvent?.status}</span>
                     </div>
                     <h2 className="text-xl font-bold leading-snug">{viewEvent?.title}</h2>
                   </>
@@ -344,7 +380,7 @@ const AdminEventsPage: NextPageWithLayout = () => {
               </div>
               <div className="flex gap-3 pt-2">
                 <button onClick={() => setShowCreate(false)} className="flex-1 h-11 rounded-full border border-border font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-                <button onClick={handleCreate} disabled={createEvent.isPending} className="flex-1 h-11 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+                <button onClick={handleCreate} disabled={createEvent.isPending} className="flex-1 h-11 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
                   {createEvent.isPending ? <Loader2 size={16} className="animate-spin" /> : 'Create event'}
                 </button>
               </div>

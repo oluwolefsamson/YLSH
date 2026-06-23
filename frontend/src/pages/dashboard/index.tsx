@@ -1,4 +1,4 @@
-﻿import React from "react"
+import React from "react"
 import NextLink from "next/link"
 import { LayoutDashboard, CalendarCheck, Award, GraduationCap, Trophy, Users, ArrowRight, CheckCircle, Calendar } from "lucide-react"
 import { DashboardLayout } from "@/components/layout"
@@ -8,23 +8,23 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useEvents } from "@/services/hooks/events/events"
 import { useMyRegistrations } from "@/services/hooks/registrations/registrations"
 import { useMyCertificates } from "@/services/hooks/certificates/certificates"
+import { useMyApplications } from "@/services/hooks/opportunities/opportunities"
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 import type { QuickAction } from "@/types"
 
 const quickActions: QuickAction[] = [
-  { label: "Browse Events", href: "/dashboard/events", icon: <CalendarCheck size={20} />, color: "#127C71" },
+  { label: "Browse Events", href: "/dashboard/events", icon: <CalendarCheck size={20} />, color: "#082F49" },
   { label: "View Certificates", href: "/dashboard/certificates", icon: <Award size={20} />, color: "#f59e0b" },
   { label: "Find a Mentor", href: "/dashboard/mentorship", icon: <Users size={20} />, color: "#8b5cf6" },
   { label: "Opportunities", href: "/dashboard/opportunities", icon: <Trophy size={20} />, color: "#3b82f6" },
 ]
 
-const CARD = "p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16"
-const CARD_STYLE = { backgroundColor: "rgba(255,255,255,0.88)", boxShadow: "0 12px 30px rgba(15,23,42,0.06)" }
-
 const DashboardOverviewPage: NextPageWithLayout = () => {
   const { user } = useAuth()
-  const { data: eventsData } = useEvents({ status: "upcoming", limit: 3 })
-  const { data: registrations = [] } = useMyRegistrations()
+  const { data: eventsData, isLoading: eventsLoading } = useEvents({ status: "upcoming", limit: 3 })
+  const { data: registrations = [], isLoading: regsLoading } = useMyRegistrations()
   const { data: certificates = [] } = useMyCertificates()
+  const { data: applications = [] } = useMyApplications()
 
   const upcomingCount = registrations.filter((r) => r.event?.status === "upcoming").length
   const attendedCount = registrations.filter((r) => r.status === "attended").length
@@ -34,7 +34,33 @@ const DashboardOverviewPage: NextPageWithLayout = () => {
   const upcomingEvents = eventsData?.data?.slice(0, 3) ?? []
   const recentRegs = registrations.slice(0, 4)
 
-  const displayName = user ? `${user.firstName} ${user.lastName}` : "..."
+  const eventsSkeleton = (
+    <div className="flex flex-col gap-3">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 animate-pulse flex-wrap">
+          <div className="flex-1">
+            <div className="h-4 w-40 bg-muted rounded mb-2" />
+            <div className="h-3 w-32 bg-muted rounded" />
+          </div>
+          <div className="h-6 w-20 bg-muted rounded-full" />
+        </div>
+      ))}
+    </div>
+  )
+
+  const regsSkeleton = (
+    <div className="flex flex-col">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="flex items-start gap-4 py-3 border-b border-slate-200/12 animate-pulse last:border-0">
+          <div className="w-[18px] h-[18px] rounded-full bg-muted mt-0.5 flex-shrink-0" />
+          <div className="flex-1">
+            <div className="h-4 w-48 bg-muted rounded mb-1.5" />
+            <div className="h-3 w-28 bg-muted rounded" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 
   return (
     <div>
@@ -44,7 +70,7 @@ const DashboardOverviewPage: NextPageWithLayout = () => {
         <StatCard label="Events Registered" value={String(registrations.length)} icon={<CalendarCheck size={20} />} progress={Math.min(registrations.length * 20, 100)} change={`${upcomingCount} upcoming`} />
         <StatCard label="Certificates Earned" value={String(issuedCerts)} icon={<Award size={20} />} progress={issuedCerts > 0 ? 60 : 0} change={pendingCerts > 0 ? `${pendingCerts} pending` : "All issued"} accent="#f59e0b" />
         <StatCard label="Attended Events" value={String(attendedCount)} icon={<GraduationCap size={20} />} progress={attendedCount > 0 ? 68 : 0} change={`${attendedCount} checked in`} accent="#8b5cf6" />
-        <StatCard label="Applications" value="0" icon={<Trophy size={20} />} progress={0} change="None yet" accent="#3b82f6" />
+        <StatCard label="Applications" value={String(applications.length)} icon={<Trophy size={20} />} progress={Math.min(applications.length * 20, 100)} change={applications.length === 0 ? "None yet" : `${applications.length} submitted`} accent="#3b82f6" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-5 mb-5">
@@ -69,30 +95,32 @@ const DashboardOverviewPage: NextPageWithLayout = () => {
             <h2 className="font-bold text-lg tracking-tight">Upcoming Events</h2>
             <NextLink href="/dashboard/events" className="flex items-center gap-1 text-sm font-semibold text-primary hover:underline">View all <ArrowRight size={14} /></NextLink>
           </div>
-          <div className="flex flex-col gap-3">
-            {upcomingEvents.length === 0 && <p className="text-sm text-muted-foreground">No upcoming events right now.</p>}
-            {upcomingEvents.map((e) => {
-              const reg = registrations.find((r) => r.event?._id === e._id)
-              return (
-                <div key={e._id} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 flex-wrap">
-                  <div>
-                    <p className="font-bold text-sm">{e.title}</p>
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <Calendar size={12} className="text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">{new Date(e.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-                      <span className="text-xs text-muted-foreground">·</span>
-                      <span className="text-xs text-muted-foreground">{e.venue}</span>
+          {eventsLoading ? eventsSkeleton : (
+            <div className="flex flex-col gap-3">
+              {upcomingEvents.length === 0 && <p className="text-sm text-muted-foreground">No upcoming events right now.</p>}
+              {upcomingEvents.map((e) => {
+                const reg = registrations.find((r) => r.event?._id === e._id)
+                return (
+                  <div key={e._id} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 flex-wrap">
+                    <div>
+                      <p className="font-bold text-sm">{e.title}</p>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <Calendar size={12} className="text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">{new Date(e.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                        <span className="text-xs text-muted-foreground">·</span>
+                        <span className="text-xs text-muted-foreground">{e.venue}</span>
+                      </div>
                     </div>
+                    {reg ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ backgroundColor: "rgba(8,47,73,0.1)", color: "#082F49" }}><CheckCircle size={11} /> Registered</span>
+                    ) : (
+                      <NextLink href="/dashboard/events" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors">Register</NextLink>
+                    )}
                   </div>
-                  {reg ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ backgroundColor: "rgba(18,124,113,0.1)", color: "#127C71" }}><CheckCircle size={11} /> Registered</span>
-                  ) : (
-                    <NextLink href="/dashboard/events" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors">Register</NextLink>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -113,7 +141,7 @@ const DashboardOverviewPage: NextPageWithLayout = () => {
                     <NextLink href="/dashboard/profile" className="text-sm font-semibold text-primary hover:underline">Complete now →</NextLink>
                   </div>
                   <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "rgba(148,163,184,0.18)" }}>
-                    <div className="h-full rounded-full" style={{ width: `${pct}%`, background: "linear-gradient(90deg, #127C71aa, #127C71)" }} />
+                    <div className="h-full rounded-full" style={{ width: `${pct}%`, background: "linear-gradient(90deg, #082F49aa, #082F49)" }} />
                   </div>
                 </div>
                 {missing.map((item) => (<div key={String(item)} className="flex items-center gap-2 mt-2"><div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: "rgba(148,163,184,0.5)" }} /><p className="text-sm text-muted-foreground">{item}</p></div>))}
@@ -124,18 +152,20 @@ const DashboardOverviewPage: NextPageWithLayout = () => {
 
         <div className={CARD} style={CARD_STYLE}>
           <h2 className="font-bold text-lg tracking-tight mb-4">My Recent Registrations</h2>
-          <div>
-            {recentRegs.length === 0 && <p className="text-sm text-muted-foreground">No registrations yet. <NextLink href="/dashboard/events" className="text-primary font-semibold hover:underline">Browse events →</NextLink></p>}
-            {recentRegs.map((r, i) => (
-              <div key={r._id} className={`flex items-start gap-4 py-3 ${i < recentRegs.length - 1 ? "border-b border-slate-200/12" : ""}`}>
-                <div className="mt-0.5 flex-shrink-0"><CheckCircle size={18} color="#127C71" /></div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium leading-snug">{r.event?.title}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{r.status} · {new Date(r.createdAt).toLocaleDateString()}</p>
+          {regsLoading ? regsSkeleton : (
+            <div>
+              {recentRegs.length === 0 && <p className="text-sm text-muted-foreground">No registrations yet. <NextLink href="/dashboard/events" className="text-primary font-semibold hover:underline">Browse events →</NextLink></p>}
+              {recentRegs.map((r, i) => (
+                <div key={r._id} className={`flex items-start gap-4 py-3 ${i < recentRegs.length - 1 ? "border-b border-slate-200/12" : ""}`}>
+                  <div className="mt-0.5 flex-shrink-0"><CheckCircle size={18} color="#082F49" /></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium leading-snug">{r.event?.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{r.status} · {new Date(r.createdAt).toLocaleDateString()}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

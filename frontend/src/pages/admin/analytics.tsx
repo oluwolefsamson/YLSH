@@ -4,9 +4,8 @@ import { AdminLayout } from "@/components/layout"
 import { PageHeader } from "@/components/dashboard"
 import { NextPageWithLayout } from "@/interfaces/layout"
 import { useDashboardStats, useUserGrowth, useEventStats } from "@/services/hooks/analytics/analytics"
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = "p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16"
-const CARD_STYLE = { backgroundColor: "rgba(255,255,255,0.88)", boxShadow: "0 12px 30px rgba(15,23,42,0.06)" }
 
 const AdminAnalyticsPage: NextPageWithLayout = () => {
   const { data: stats, isLoading: statsLoading } = useDashboardStats()

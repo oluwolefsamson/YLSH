@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+﻿import React, { useState, useEffect } from 'react'
 import { UserCircle, Lock, Eye, EyeOff, X, CheckCircle, Pencil, Save, Loader2 } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
@@ -6,9 +6,8 @@ import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
 import { useMyProfile, useUpdateMyProfile, useChangePassword } from '@/services/hooks/users/users'
 import { toast } from 'sonner'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 disabled:bg-muted transition-colors'
 
 const AdminProfilePage: NextPageWithLayout = () => {
@@ -77,13 +76,13 @@ const AdminProfilePage: NextPageWithLayout = () => {
       <PageHeader eyebrow="Profile" title="My Profile" subtitle="Manage your personal information and account security." icon={<UserCircle size={14} />} />
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-5">
-        {/* Left — avatar card */}
+        {/* Left â€” avatar card */}
         <div className={CARD} style={CARD_STYLE}>
           <div className="flex flex-col items-center gap-3">
             {user?.profilePhoto ? (
               <img src={user.profilePhoto} alt="Profile" className="rounded-full object-cover border-4 border-primary/20" style={{ width: 88, height: 88 }} />
             ) : (
-              <div className="rounded-full flex items-center justify-center text-white font-bold text-3xl" style={{ width: 88, height: 88, background: 'linear-gradient(135deg, #082F49 0%, #127C71 100%)' }}>
+              <div className="rounded-full flex items-center justify-center text-white font-bold text-3xl" style={{ width: 88, height: 88, background: 'linear-gradient(135deg, #061e35 0%, #082F49 100%)' }}>
                 {initials}
               </div>
             )}
@@ -106,7 +105,7 @@ const AdminProfilePage: NextPageWithLayout = () => {
               {editing ? (
                 <div className="flex gap-2">
                   <button onClick={() => { setEditing(false); if (user) setForm({ firstName: user.firstName, lastName: user.lastName, phone: user.phone ?? '', state: user.state ?? '', bio: user.bio ?? '', organization: user.organization ?? '' }) }} className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors">Cancel</button>
-                  <button onClick={handleSave} disabled={updateProfile.isPending} className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold hover:bg-[#0d5c54] disabled:opacity-60 transition-colors">
+                  <button onClick={handleSave} disabled={updateProfile.isPending} className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold hover:bg-[#061e35] disabled:opacity-60 transition-colors">
                     {updateProfile.isPending ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save
                   </button>
                 </div>
@@ -186,17 +185,17 @@ const AdminProfilePage: NextPageWithLayout = () => {
                 </div>
                 <div className="flex gap-3">
                   <button onClick={closePwModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-                  <button onClick={handleChangePassword} disabled={!pwForm.current || !pwForm.next || pwForm.next !== pwForm.confirm || changePassword.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
+                  <button onClick={handleChangePassword} disabled={!pwForm.current || !pwForm.next || pwForm.next !== pwForm.confirm || changePassword.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
                     {changePassword.isPending ? <Loader2 size={16} className="animate-spin" /> : 'Update Password'}
                   </button>
                 </div>
               </>
             ) : (
               <div className="flex flex-col items-center text-center py-4">
-                <div className="w-16 h-16 rounded-full bg-green-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-green-600" /></div>
+                <div className="w-16 h-16 rounded-full bg-blue-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-[#082F49]" /></div>
                 <h3 className="font-bold text-lg mb-1">Password Updated!</h3>
                 <p className="text-sm text-muted-foreground mb-5">Your password has been changed successfully.</p>
-                <button onClick={closePwModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Done</button>
+                <button onClick={closePwModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">Done</button>
               </div>
             )}
           </div>

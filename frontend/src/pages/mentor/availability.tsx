@@ -7,9 +7,8 @@ import { cn } from '@/utils'
 import { useMyMentorProfile, useUpdateAvailability } from '@/services/hooks/mentors/mentors'
 import type { AvailabilitySlots } from '@/types'
 import { toast } from 'sonner'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors'
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -87,7 +86,7 @@ const AvailabilityPage: NextPageWithLayout = () => {
                 <span className={cn('font-medium', availability[day] ? 'text-foreground' : 'text-muted-foreground')}>{day}</span>
                 <div className="flex items-center gap-2">
                   {availability[day] && (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">Available</span>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-[#082F49]">Available</span>
                   )}
                   <Toggle checked={availability[day]} onChange={() => toggle(day)} />
                 </div>
@@ -119,7 +118,7 @@ const AvailabilityPage: NextPageWithLayout = () => {
             </div>
           </div>
 
-          <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.97) 0%, rgba(18,124,113,0.97) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
+          <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(6,30,53,0.97) 0%, rgba(8,47,73,0.97) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
             <p className="font-bold mb-2">Summary</p>
             <p className="text-sm mb-4" style={{ color: 'rgba(255,255,255,0.8)' }}>
               You are available on <strong>{availableDaysList.join(', ') || 'no days'}</strong> between <strong>{slots.from}</strong> and <strong>{slots.to}</strong>, with <strong>{sessionDuration}-minute</strong> sessions, up to <strong>{maxPerWeek} per week</strong>.

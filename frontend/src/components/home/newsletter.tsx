@@ -16,8 +16,8 @@ const HomeNewsLetter: FC = () => {
         <div
           className="rounded-3xl py-10 md:py-14 px-5 sm:px-8 md:px-16"
           style={{
-            background: 'linear-gradient(135deg, #082F49 0%, #0d5c54 50%, #127C71 100%)',
-            boxShadow: '0 30px 70px rgba(18,124,113,0.22)',
+            background: 'linear-gradient(135deg, #061e35 0%, #082F49 50%, #0d3d6e 100%)',
+            boxShadow: '0 30px 70px rgba(8,47,73,0.22)',
           }}
         >
           <div className="max-w-3xl mx-auto text-center">
@@ -52,7 +52,7 @@ const HomeNewsLetter: FC = () => {
                 placeholder="Enter your email"
                 className="w-full flex-1 h-16 sm:h-12 px-5 rounded-full bg-white text-foreground placeholder:text-muted-foreground outline-none border-0 text-base sm:text-sm shadow-inner"
               />
-              <button className="w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-7 h-16 sm:h-12 rounded-full bg-primary text-white font-bold text-base sm:text-sm tracking-wide hover:bg-[#0d5c54] transition-colors shadow-lg">
+              <button className="w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-7 h-16 sm:h-12 rounded-full bg-primary text-white font-bold text-base sm:text-sm tracking-wide hover:bg-[#061e35] transition-colors shadow-lg">
                 Join Free
                 <ArrowRight size={15} />
               </button>

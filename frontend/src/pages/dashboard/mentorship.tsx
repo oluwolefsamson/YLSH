@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { Users, Calendar, CheckCircle, Video, Hourglass, Star, Briefcase, X, ExternalLink, Loader2 } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
@@ -12,9 +12,8 @@ import type { MentorProfile } from '@/services/endpoints/mentors/mentors'
 import type { MentorSession } from '@/services/endpoints/sessions/sessions'
 import type { User } from '@/services/endpoints/users/users'
 import { toast } from 'sonner'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const MENTOR_TABS = ['All', 'Tech & Engineering', 'Entrepreneurship', 'Policy & Governance', 'Marketing & Growth', 'General']
 
@@ -35,7 +34,7 @@ function getInitials(user: User | null): string {
   return `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase()
 }
 
-const COLORS = ['#127C71', '#082F49', '#7C3AED', '#D97706', '#B91C1C', '#0891B2']
+const COLORS = ['#082F49', '#0d3d6e', '#7C3AED', '#D97706', '#B91C1C', '#0891B2']
 
 const MENTOR_TAB_VALUES = ['all', 'Tech & Engineering', 'Entrepreneurship', 'Policy & Governance', 'Marketing & Growth', 'General']
 
@@ -114,18 +113,18 @@ const MentorshipPage: NextPageWithLayout = () => {
                     <div className="flex items-center gap-4 flex-wrap">
                       <div className="flex items-center gap-1.5">
                         <Calendar size={13} className="text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">{new Date(session.scheduledAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} · {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span className="text-xs text-muted-foreground">{new Date(session.scheduledAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} Â· {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Video size={13} className="text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">Video call · {session.duration} min</span>
+                        <span className="text-xs text-muted-foreground">Video call Â· {session.duration} min</span>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className={cn('inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold',
                       session.status === 'scheduled' ? 'bg-amber-100 text-amber-700' :
-                      session.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500')}>
+                      session.status === 'completed' ? 'bg-blue-100 text-[#082F49]' : 'bg-slate-100 text-slate-500')}>
                       {session.status === 'scheduled' ? <Hourglass size={11} /> : <CheckCircle size={11} />}
                       {session.status === 'scheduled' ? 'Upcoming' : session.status === 'completed' ? 'Completed' : 'Cancelled'}
                     </span>
@@ -180,7 +179,7 @@ const MentorshipPage: NextPageWithLayout = () => {
                       <p className="font-bold">{name}</p>
                       <div className="flex items-center gap-1.5 mb-1">
                         <Briefcase size={13} className="text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground">{mentor.headline || 'Mentor'}{user?.organization ? ` · ${user.organization}` : ''}</span>
+                        <span className="text-sm text-muted-foreground">{mentor.headline || 'Mentor'}{user?.organization ? ` Â· ${user.organization}` : ''}</span>
                       </div>
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground">{mentor.category}</span>
                     </div>
@@ -196,7 +195,7 @@ const MentorshipPage: NextPageWithLayout = () => {
                   </div>
                   <button
                     onClick={() => setBookModal(mentor)}
-                    className="w-full h-10 rounded-full font-bold text-sm bg-primary text-white hover:bg-[#0d5c54] transition-colors flex items-center justify-center gap-2"
+                    className="w-full h-10 rounded-full font-bold text-sm bg-primary text-white hover:bg-[#061e35] transition-colors flex items-center justify-center gap-2"
                   >
                     Book Session
                   </button>
@@ -229,7 +228,7 @@ const MentorshipPage: NextPageWithLayout = () => {
             </div>
             <div className="flex gap-3">
               <button onClick={() => setBookModal(null)} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-              <button onClick={handleBook} disabled={requestSession.isPending || !topic.trim() || !scheduledAt} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+              <button onClick={handleBook} disabled={requestSession.isPending || !topic.trim() || !scheduledAt} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
                 {requestSession.isPending ? <Loader2 size={16} className="animate-spin" /> : 'Send Request'}
               </button>
             </div>
@@ -254,13 +253,13 @@ const MentorshipPage: NextPageWithLayout = () => {
                 <span className="text-xs text-muted-foreground">{new Date(joinModal.scheduledAt).toLocaleString()}</span>
               </div>
             </div>
-            <div className="p-4 rounded-xl border border-primary/20 mb-5" style={{ backgroundColor: 'rgba(18,124,113,0.05)' }}>
+            <div className="p-4 rounded-xl border border-primary/20 mb-5" style={{ backgroundColor: 'rgba(8,47,73,0.05)' }}>
               <div className="flex items-center gap-2 mb-2"><Video size={16} className="text-primary" /><p className="text-sm font-semibold text-primary">Google Meet</p></div>
               <p className="font-mono text-sm text-muted-foreground">{joinModal.meetLink}</p>
             </div>
             <div className="flex gap-3">
               <button onClick={() => setJoinModal(null)} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-              <a href={joinModal.meetLink} target="_blank" rel="noopener noreferrer" onClick={() => setJoinModal(null)} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors flex items-center justify-center gap-2">
+              <a href={joinModal.meetLink} target="_blank" rel="noopener noreferrer" onClick={() => setJoinModal(null)} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors flex items-center justify-center gap-2">
                 <ExternalLink size={14} /> Join Now
               </a>
             </div>

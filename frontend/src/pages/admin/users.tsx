@@ -6,9 +6,10 @@ import { PageHeader } from "@/components/dashboard"
 import { NextPageWithLayout } from "@/interfaces/layout"
 import { cn } from "@/utils"
 import { useUsers, useUpdateUserStatus, useDeleteUser } from "@/services/hooks/users/users"
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
 const statusStyles: Record<string, string> = {
-  verified: "bg-green-100 text-green-700",
+  verified: "bg-blue-100 text-[#082F49]",
   pending: "bg-amber-100 text-amber-700",
   suspended: "bg-red-100 text-red-700",
 }
@@ -21,8 +22,6 @@ const statusIcon: Record<string, React.ReactNode> = {
 const TABS = ["All", "Verified", "Pending", "Suspended"]
 const STATUS_MAP = ["", "verified", "pending", "suspended"]
 
-const CARD = "p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16"
-const CARD_STYLE = { backgroundColor: "rgba(255,255,255,0.88)", boxShadow: "0 12px 30px rgba(15,23,42,0.06)" }
 
 const AdminUsersPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
@@ -115,7 +114,7 @@ const AdminUsersPage: NextPageWithLayout = () => {
                           {user.verificationStatus !== "suspended" ? (
                             <button onClick={() => { setConfirmModal({ type: 'suspend', id: user._id, name: `${user.firstName} ${user.lastName}`, suspended: false }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">Suspend account</button>
                           ) : (
-                            <button onClick={() => { setConfirmModal({ type: 'suspend', id: user._id, name: `${user.firstName} ${user.lastName}`, suspended: true }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50 transition-colors">Activate account</button>
+                            <button onClick={() => { setConfirmModal({ type: 'suspend', id: user._id, name: `${user.firstName} ${user.lastName}`, suspended: true }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-[#082F49] hover:bg-blue-50 transition-colors">Activate account</button>
                           )}
                           <button onClick={() => { setConfirmModal({ type: 'delete', id: user._id, name: `${user.firstName} ${user.lastName}` }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete account</button>
                         </div>
@@ -152,7 +151,7 @@ const AdminUsersPage: NextPageWithLayout = () => {
               <button
                 onClick={handleConfirm}
                 disabled={deleteUser.isPending || updateStatus.isPending}
-                className={`flex-1 h-11 rounded-full text-white font-bold text-sm disabled:opacity-50 transition-colors flex items-center justify-center gap-2 ${confirmModal.type === 'delete' ? 'bg-red-600 hover:bg-red-700' : confirmModal.suspended ? 'bg-green-600 hover:bg-green-700' : 'bg-amber-600 hover:bg-amber-700'}`}
+                className={`flex-1 h-11 rounded-full text-white font-bold text-sm disabled:opacity-50 transition-colors flex items-center justify-center gap-2 ${confirmModal.type === 'delete' ? 'bg-red-600 hover:bg-red-700' : confirmModal.suspended ? 'bg-[#082F49] hover:bg-[#061e35]' : 'bg-amber-600 hover:bg-amber-700'}`}
               >
                 {(deleteUser.isPending || updateStatus.isPending) ? <Loader2 size={15} className="animate-spin" /> : confirmModal.type === 'delete' ? 'Delete' : confirmModal.suspended ? 'Activate' : 'Suspend'}
               </button>

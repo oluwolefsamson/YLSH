@@ -17,7 +17,7 @@ const STATUS_CONFIG = {
   approved: {
     icon: <CheckCircle size={40} style={{ color: '#22C55E' }} />,
     badge: 'Approved',
-    badgeColor: 'bg-green-100 text-green-700',
+    badgeColor: 'bg-blue-100 text-[#082F49]',
     title: 'Application Approved!',
     message:
       'Congratulations! Your mentor application has been approved. You now have full access to your Mentor Portal.',
@@ -50,14 +50,14 @@ const MentorPendingPage: NextPage = () => {
   const appliedDate = user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '—'
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12" style={{ background: 'linear-gradient(135deg, #f0fdf9 0%, #f8fafc 60%, #eff6ff 100%)' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12" style={{ background: 'linear-gradient(135deg, #f0f4f8 0%, #f8fafc 60%, #eff6ff 100%)' }}>
 
       {/* Card */}
       <div className="w-full max-w-lg rounded-3xl border border-slate-200/60 shadow-xl p-8 md:p-10" style={{ backgroundColor: 'rgba(255,255,255,0.96)' }}>
 
         {/* Logo */}
         <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-black text-sm" style={{ background: 'linear-gradient(135deg, #127C71, #082F49)' }}>Y</div>
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-black text-sm" style={{ background: 'linear-gradient(135deg, #061e35, #082F49)' }}>Y</div>
           <span className="font-bold text-slate-800">YLSH Summit</span>
         </div>
 
@@ -117,7 +117,7 @@ const MentorPendingPage: NextPage = () => {
 
         {/* Action button */}
         {status === 'approved' ? (
-          <button onClick={() => void router.push('/mentor')} className="w-full h-11 rounded-full bg-primary text-white font-semibold text-sm flex items-center justify-center gap-2 hover:bg-[#0d5c54] transition-colors">
+          <button onClick={() => void router.push('/mentor')} className="w-full h-11 rounded-full bg-primary text-white font-semibold text-sm flex items-center justify-center gap-2 hover:bg-[#061e35] transition-colors">
             Go to Mentor Portal <ArrowRight size={16} />
           </button>
         ) : (

@@ -56,7 +56,7 @@ const HomeHero: FC = () => {
           {/* Feature badge pills — desktop only */}
           <div className="hidden sm:flex flex-wrap gap-2 justify-center mb-10">
             {badges.map((b) => (
-              <span key={b} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/20 text-white text-sm font-medium" style={{ backgroundColor: '#127C71' }}>
+              <span key={b} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/20 text-white text-sm font-medium" style={{ backgroundColor: '#082F49' }}>
                 <CheckCircle2 size={13} className="text-white/80" />
                 {b}
               </span>
@@ -66,13 +66,13 @@ const HomeHero: FC = () => {
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 justify-center mt-4 sm:mt-0 mb-4 md:mb-14">
             <Link href="/signup">
-              <button className="inline-flex items-center gap-2 px-7 py-3 sm:px-8 sm:py-3.5 bg-white text-[#082F49] font-bold text-[14px] sm:text-[15px] shadow-lg hover:bg-white/90 transition-colors">
+              <button className="inline-flex items-center gap-2 px-7 py-3 sm:px-8 sm:py-3.5 rounded-full bg-white text-[#082F49] font-bold text-[14px] sm:text-[15px] shadow-lg hover:bg-white/90 transition-colors">
                 Get Started Free
                 <ArrowRight size={16} />
               </button>
             </Link>
             <Link href="/signin">
-              <button className="inline-flex items-center gap-2 px-7 py-3 sm:px-8 sm:py-3.5 border-2 border-white/60 text-white font-bold text-[14px] sm:text-[15px] hover:bg-white/10 transition-colors">
+              <button className="inline-flex items-center gap-2 px-7 py-3 sm:px-8 sm:py-3.5 rounded-full border-2 border-white/60 text-white font-bold text-[14px] sm:text-[15px] hover:bg-white/10 transition-colors">
                 Sign In
               </button>
             </Link>

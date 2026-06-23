@@ -181,9 +181,9 @@ const SignUpPage: NextPage = () => {
           <div className="flex items-center justify-between gap-3 pt-1">
             <button type="button" onClick={handleBack} disabled={isBusy || activeStep === 0} className="px-5 py-2.5 rounded-full border-2 border-slate-300 text-foreground font-semibold text-sm hover:bg-muted disabled:opacity-50 transition-colors">Back</button>
             {activeStep < steps.length - 1 ? (
-              <button type="button" onClick={handleNext} disabled={isBusy} className="px-5 py-2.5 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#0d5c54] disabled:opacity-50 transition-colors">{isSubmitting ? "Verifying..." : "Continue"}</button>
+              <button type="button" onClick={handleNext} disabled={isBusy} className="px-5 py-2.5 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors">{isSubmitting ? "Verifying..." : "Continue"}</button>
             ) : (
-              <button type="button" onClick={handleSubmit} disabled={isBusy} className="px-5 py-2.5 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#0d5c54] disabled:opacity-50 transition-colors">{isSubmitting ? "Creating..." : "Create Account"}</button>
+              <button type="button" onClick={handleSubmit} disabled={isBusy} className="px-5 py-2.5 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors">{isSubmitting ? "Creating..." : "Create Account"}</button>
             )}
           </div>
           {activeStep === steps.length - 1 && (<label className="flex items-start gap-2 text-sm cursor-pointer"><input type="checkbox" defaultChecked className="accent-primary mt-0.5" />I agree to the YLSH terms and data verification policy.</label>)}

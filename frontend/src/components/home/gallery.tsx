@@ -10,7 +10,7 @@ const HomeGallery: FC = () => {
   const items = gallery.items?.slice(4, 12) ?? []
 
   return (
-    <section className="py-16 md:py-24 bg-[#127C71]">
+    <section className="py-16 md:py-24 bg-[#082F49]">
       <div className="container">
 
         {/* Header */}

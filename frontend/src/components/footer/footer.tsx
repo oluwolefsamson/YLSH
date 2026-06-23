@@ -3,7 +3,7 @@ import { FooterNavigation, FooterSocialLinks } from '@/components/footer'
 
 const Footer: FC = () => {
   return (
-    <footer className="bg-[#127C71] py-12 md:py-16 text-white">
+    <footer className="bg-[#082F49] py-12 md:py-16 text-white">
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-10 mb-10">
           <div className="w-full md:w-[360px]">

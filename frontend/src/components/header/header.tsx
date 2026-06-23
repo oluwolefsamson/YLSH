@@ -86,7 +86,7 @@ const Header: FC = () => {
               <NextLink
                 href="/signup"
                 onClick={close}
-                className="flex items-center justify-center py-2.5 bg-primary text-white font-semibold text-sm tracking-wide hover:bg-[#0d5c54] transition-colors rounded-sm shadow-sm"
+                className="flex items-center justify-center py-2.5 bg-primary text-white font-semibold text-sm tracking-wide hover:bg-[#061e35] transition-colors rounded-sm shadow-sm"
               >
                 Sign Up
               </NextLink>

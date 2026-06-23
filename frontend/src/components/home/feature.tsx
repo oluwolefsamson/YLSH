@@ -24,7 +24,7 @@ const HomeFeature: FC = () => {
             <div className="hidden sm:block absolute -top-6 -right-4 md:right-4 rounded-2xl bg-white shadow-xl border border-slate-100 px-5 py-4 w-[210px]">
               <p className="text-sm font-bold text-[#082F49] mb-3">Platform Readiness</p>
               {[
-                { label: 'Auth & Identity', pct: 65, color: '#127C71' },
+                { label: 'Auth & Identity', pct: 65, color: '#082F49' },
                 { label: 'Event Engine', pct: 50, color: '#082F49' },
                 { label: 'Certificates', pct: 40, color: '#0891b2' },
               ].map((bar) => (

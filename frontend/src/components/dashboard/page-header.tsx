@@ -13,8 +13,8 @@ const PageHeader: FC<Props> = ({ eyebrow, title, subtitle, icon, action }) => {
     <div
       className="relative overflow-hidden rounded-2xl mb-6 p-6 md:p-8"
       style={{
-        background: 'linear-gradient(135deg, #127C71 0%, #0d5c54 100%)',
-        boxShadow: '0 20px 60px rgba(18,124,113,0.25)',
+        background: 'linear-gradient(135deg, #082F49 0%, #0d3d6e 100%)',
+        boxShadow: '0 20px 60px rgba(8,47,73,0.25)',
       }}
     >
       {/* Decorative circles */}

@@ -73,7 +73,7 @@ const modules = [
 
 const HomePopularCourse: FC = () => {
   return (
-    <section id="popular-course" className="py-16 md:py-24 bg-[#127C71]">
+    <section id="popular-course" className="py-16 md:py-24 bg-[#082F49]">
       <div className="container">
 
         {/* Header */}
@@ -100,7 +100,7 @@ const HomePopularCourse: FC = () => {
               {/* Icon */}
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center text-white mb-4 flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, #082F49 0%, #127C71 100%)' }}
+                style={{ background: 'linear-gradient(135deg, #061e35 0%, #082F49 100%)' }}
               >
                 {mod.icon}
               </div>
@@ -118,7 +118,7 @@ const HomePopularCourse: FC = () => {
 
         {/* Bottom CTA */}
         <div className="mt-12 text-center">
-          <Link href="/signup" className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors shadow-md">
+          <Link href="/signup" className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors shadow-md">
             Get started — it&apos;s free
             <ArrowRight size={15} />
           </Link>

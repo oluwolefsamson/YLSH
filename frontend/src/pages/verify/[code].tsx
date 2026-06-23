@@ -16,7 +16,7 @@ const VerifyPage: NextPageWithLayout = () => {
   const cert = registry[code] ?? null
 
   return (
-    <div className="min-h-screen flex items-center py-12 px-4" style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.97) 0%, rgba(18,124,113,0.97) 100%)' }}>
+    <div className="min-h-screen flex items-center py-12 px-4" style={{ background: 'linear-gradient(135deg, rgba(6,30,53,0.97) 0%, rgba(8,47,73,0.97) 100%)' }}>
       <div className="w-full max-w-lg mx-auto">
         <div className="flex flex-col items-center gap-2 mb-6 text-center">
           <Award size={48} className="text-white" />
@@ -24,15 +24,15 @@ const VerifyPage: NextPageWithLayout = () => {
           <p style={{ color: 'rgba(255,255,255,0.75)' }}>Young Leaders Summit Hub — Official Certificate Registry</p>
         </div>
         <div className="p-6 md:p-8 rounded-2xl" style={{ backgroundColor: 'rgba(255,255,255,0.97)' }}>
-          <div className="flex items-center gap-2 p-3 rounded-xl mb-5" style={{ backgroundColor: 'rgba(18,124,113,0.06)', border: '1px solid rgba(18,124,113,0.2)' }}>
+          <div className="flex items-center gap-2 p-3 rounded-xl mb-5" style={{ backgroundColor: 'rgba(8,47,73,0.06)', border: '1px solid rgba(8,47,73,0.2)' }}>
             <QrCode size={18} className="text-primary flex-shrink-0" />
             <span className="font-mono text-sm font-bold text-primary">{code || 'No code provided'}</span>
           </div>
           {cert ? (
             <>
               <div className="flex flex-col items-center gap-3 mb-5">
-                <div className="w-16 h-16 rounded-full grid place-items-center bg-green-100"><ShieldCheck size={32} className="text-green-600" /></div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-700"><ShieldCheck size={14} /> Certificate Verified</span>
+                <div className="w-16 h-16 rounded-full grid place-items-center bg-blue-100"><ShieldCheck size={32} className="text-[#082F49]" /></div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold bg-blue-100 text-[#082F49]"><ShieldCheck size={14} /> Certificate Verified</span>
                 <p className="text-sm text-muted-foreground text-center">This certificate is authentic and was issued by YLSH.</p>
               </div>
               <hr className="border-border mb-5" />

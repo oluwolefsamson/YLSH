@@ -45,6 +45,24 @@ export const updateEvent = (id: string, payload: Partial<CreateEventPayload>) =>
 
 export const deleteEvent = (id: string) => del<{ message: string }>(`/api/events/${id}`)
 
+export interface Attendee {
+  _id: string
+  user: { firstName: string; lastName: string; email: string; phone?: string }
+  status: string
+  checkedInAt?: string
+  createdAt: string
+}
+
+export interface PaginatedAttendees {
+  data: Attendee[]
+  total: number
+  page: number
+  limit: number
+}
+
+export const getEventAttendees = (eventId: string, page = 1, limit = 1000) =>
+  get<PaginatedAttendees>(`/api/registrations/event/${eventId}`, { page, limit })
+
 export const registerForEvent = (id: string) =>
   post<{ registration: object; status: string }>(`/api/events/${id}/register`)
 

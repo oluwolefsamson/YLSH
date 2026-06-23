@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import NextLink from 'next/link'
 import { Users, Calendar, Star, CheckCircle, Video, Hourglass, LayoutDashboard, Loader2 } from 'lucide-react'
 import { MentorLayout } from '@/components/layout'
@@ -8,9 +8,8 @@ import { useMentorStats } from '@/services/hooks/mentors/mentors'
 import { useMySessions } from '@/services/hooks/sessions/sessions'
 import { useMyProfile } from '@/services/hooks/users/users'
 import type { User } from '@/services/endpoints/users/users'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const MentorOverviewPage: NextPageWithLayout = () => {
   const { data: user } = useMyProfile()
@@ -30,10 +29,10 @@ const MentorOverviewPage: NextPageWithLayout = () => {
       <PageHeader eyebrow="Mentor Portal" title={`Welcome back, ${firstName}!`} subtitle="Manage your mentee sessions, availability, and impact from your mentor portal." icon={<LayoutDashboard size={14} />} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard label="Total mentees" value={loadingStats ? '—' : String(stats.totalMentees)} icon={<Users size={20} />} progress={Math.min((stats.totalMentees / 50) * 100, 100)} />
-        <StatCard label="Sessions this month" value={loadingStats ? '—' : String(stats.sessionsThisMonth)} icon={<Calendar size={20} />} progress={Math.min((stats.sessionsThisMonth / 20) * 100, 100)} />
-        <StatCard label="Average rating" value={loadingStats ? '—' : stats.rating > 0 ? stats.rating.toFixed(1) : 'New'} icon={<Star size={20} />} progress={stats.rating > 0 ? (stats.rating / 5) * 100 : 0} />
-        <StatCard label="Sessions completed" value={loadingStats ? '—' : String(stats.totalCompleted)} icon={<CheckCircle size={20} />} progress={100} />
+        <StatCard label="Total mentees" value={loadingStats ? 'â€”' : String(stats.totalMentees)} icon={<Users size={20} />} progress={Math.min((stats.totalMentees / 50) * 100, 100)} />
+        <StatCard label="Sessions this month" value={loadingStats ? 'â€”' : String(stats.sessionsThisMonth)} icon={<Calendar size={20} />} progress={Math.min((stats.sessionsThisMonth / 20) * 100, 100)} />
+        <StatCard label="Average rating" value={loadingStats ? 'â€”' : stats.rating > 0 ? stats.rating.toFixed(1) : 'New'} icon={<Star size={20} />} progress={stats.rating > 0 ? (stats.rating / 5) * 100 : 0} />
+        <StatCard label="Sessions completed" value={loadingStats ? 'â€”' : String(stats.totalCompleted)} icon={<CheckCircle size={20} />} progress={100} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[7fr_5fr] gap-5">
@@ -54,7 +53,7 @@ const MentorOverviewPage: NextPageWithLayout = () => {
                       <p className="font-bold text-sm">{menteeName}</p>
                       <p className="text-sm text-muted-foreground">{session.topic}</p>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(session.scheduledAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} · {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(session.scheduledAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} Â· {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                     <NextLink href="/mentor/sessions" className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors flex-shrink-0">
@@ -67,7 +66,7 @@ const MentorOverviewPage: NextPageWithLayout = () => {
           )}
         </div>
 
-        <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.98) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
+        <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(6,30,53,0.98) 0%, rgba(8,47,73,0.98) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
           <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
           {loadingSessions ? (
             <div className="flex items-center justify-center py-8"><Loader2 size={20} className="animate-spin" style={{ color: 'rgba(255,255,255,0.7)' }} /></div>

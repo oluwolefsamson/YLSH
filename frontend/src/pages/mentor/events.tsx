@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { toast } from 'sonner'
 import { CalendarCheck, MapPin, Calendar, Users, Clock, X, CheckCircle } from 'lucide-react'
 import { MentorLayout } from '@/components/layout'
@@ -8,13 +8,12 @@ import { cn } from '@/utils'
 import { useEvents, useRegisterForEvent, useCancelRegistration } from '@/services/hooks/events/events'
 import { useMyRegistrations } from '@/services/hooks/registrations/registrations'
 import type { Event } from '@/services/endpoints/events/events'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const categoryBadge: Record<string, string> = {
   Summit: 'bg-primary/10 text-primary',
-  Workshop: 'bg-green-100 text-green-700',
+  Workshop: 'bg-blue-100 text-[#082F49]',
   Masterclass: 'bg-amber-100 text-amber-700',
   Bootcamp: 'bg-blue-100 text-blue-700',
   Conference: 'bg-purple-100 text-purple-700',
@@ -89,7 +88,7 @@ const MentorEventsPage: NextPageWithLayout = () => {
                 <div key={event._id} className="flex flex-col p-5 rounded-xl border border-slate-200/18">
                   <div className="flex items-start justify-between mb-3">
                     <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', categoryBadge[event.category] ?? 'bg-muted text-muted-foreground')}>{event.category}</span>
-                    <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border', isFull ? 'border-red-300 text-red-600' : 'border-green-300 text-green-700')}>{isFull ? 'Full' : 'Open'}</span>
+                    <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border', isFull ? 'border-red-300 text-red-600' : 'border-blue-300 text-[#082F49]')}>{isFull ? 'Full' : 'Open'}</span>
                   </div>
                   <h3 className="font-bold mb-1">{event.title}</h3>
                   <p className="text-sm text-muted-foreground mb-3 flex-1">{event.description}</p>
@@ -100,16 +99,16 @@ const MentorEventsPage: NextPageWithLayout = () => {
                       {event.time && <><Clock size={14} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{event.time}</span></>}
                     </div>
                     <div className="flex items-center gap-2"><MapPin size={14} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{event.venue}</span></div>
-                    <div className="flex items-center gap-2"><Users size={14} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{event.capacity ? `${event.registeredCount}/${event.capacity} registered` : `${event.registeredCount} registered · Unlimited`}</span></div>
+                    <div className="flex items-center gap-2"><Users size={14} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{event.capacity ? `${event.registeredCount}/${event.capacity} registered` : `${event.registeredCount} registered Â· Unlimited`}</span></div>
                   </div>
                   {isPast ? (
                     <button disabled className="w-full h-10 rounded-full border border-border text-muted-foreground font-bold text-sm cursor-default">Event ended</button>
                   ) : isRegistered && !isWaitlisted ? (
-                    <button disabled className="w-full h-10 rounded-full bg-green-100 text-green-700 font-bold text-sm flex items-center justify-center gap-2 cursor-default"><CheckCircle size={15} /> Registered</button>
+                    <button disabled className="w-full h-10 rounded-full bg-blue-100 text-[#082F49] font-bold text-sm flex items-center justify-center gap-2 cursor-default"><CheckCircle size={15} /> Registered</button>
                   ) : isWaitlisted ? (
                     <button disabled className="w-full h-10 rounded-full bg-amber-100 text-amber-700 font-bold text-sm cursor-default">On waitlist</button>
                   ) : (
-                    <button onClick={() => openRegisterModal(event)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">
+                    <button onClick={() => openRegisterModal(event)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">
                       {isFull ? 'Join waitlist' : 'Register'}
                     </button>
                   )}
@@ -133,7 +132,7 @@ const MentorEventsPage: NextPageWithLayout = () => {
                 <div className="p-4 rounded-xl bg-muted mb-4">
                   <p className="font-bold mb-1">{registerModal.title}</p>
                   <div className="flex flex-col gap-1 mt-2">
-                    <div className="flex items-center gap-2"><Calendar size={13} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{new Date(registerModal.date).toLocaleDateString()} {registerModal.time && `· ${registerModal.time}`}</span></div>
+                    <div className="flex items-center gap-2"><Calendar size={13} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{new Date(registerModal.date).toLocaleDateString()} {registerModal.time && `Â· ${registerModal.time}`}</span></div>
                     <div className="flex items-center gap-2"><MapPin size={13} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{registerModal.venue}</span></div>
                   </div>
                 </div>
@@ -142,17 +141,17 @@ const MentorEventsPage: NextPageWithLayout = () => {
                 )}
                 <div className="flex gap-3">
                   <button onClick={closeRegisterModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-                  <button onClick={() => handleRegisterConfirm(registerModal)} disabled={registerMutation.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-60 transition-colors">
+                  <button onClick={() => handleRegisterConfirm(registerModal)} disabled={registerMutation.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-60 transition-colors">
                     {registerMutation.isPending ? 'Processing...' : registerModal.capacity != null && registerModal.registeredCount >= registerModal.capacity ? 'Join Waitlist' : 'Confirm'}
                   </button>
                 </div>
               </>
             ) : (
               <div className="flex flex-col items-center text-center py-4">
-                <div className="w-16 h-16 rounded-full bg-green-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-green-600" /></div>
+                <div className="w-16 h-16 rounded-full bg-blue-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-[#082F49]" /></div>
                 <h3 className="font-bold text-lg mb-1">{resultStatus === 'waitlisted' ? 'Added to Waitlist!' : 'Registration Confirmed!'}</h3>
                 <p className="text-sm text-muted-foreground mb-5">{resultStatus === 'waitlisted' ? "We'll notify you when a slot becomes available." : 'Your QR code is ready in My Registrations.'}</p>
-                <button onClick={closeRegisterModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Done</button>
+                <button onClick={closeRegisterModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">Done</button>
               </div>
             )}
           </div>

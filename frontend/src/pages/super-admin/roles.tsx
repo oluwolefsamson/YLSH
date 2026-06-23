@@ -7,14 +7,13 @@ import { cn } from '@/utils'
 import { useUsers, useUpdateUserRole } from '@/services/hooks/users/users'
 import type { User } from '@/services/endpoints/users/users'
 import { toast } from 'sonner'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 disabled:bg-muted transition-colors'
 
 const rbacRoles = [
   { name: 'Participant', color: 'bg-muted text-muted-foreground', permissions: ['Register for events', 'View and download certificates', 'Access learning resources', 'Apply to opportunities', 'Book mentorship sessions'] },
-  { name: 'Mentor', color: 'bg-green-100 text-green-700', permissions: ['All Participant permissions', 'Manage mentorship sessions', 'Set availability', 'View assigned mentees'] },
+  { name: 'Mentor', color: 'bg-blue-100 text-[#082F49]', permissions: ['All Participant permissions', 'Manage mentorship sessions', 'Set availability', 'View assigned mentees'] },
   { name: 'Admin', color: 'bg-primary/10 text-primary', permissions: ['All Mentor permissions', 'Manage users and events', 'Issue certificates', 'View analytics', 'Handle identity verifications'] },
   { name: 'Super Admin', color: 'bg-red-100 text-red-700', permissions: ['Full system access', 'Manage admin accounts', 'Assign/revoke roles', 'View audit logs', 'System configuration'] },
 ]
@@ -22,7 +21,7 @@ const rbacRoles = [
 const roleBadge: Record<string, string> = {
   'super-admin': 'bg-red-100 text-red-700',
   admin: 'bg-primary/10 text-primary',
-  mentor: 'bg-green-100 text-green-700',
+  mentor: 'bg-blue-100 text-[#082F49]',
   participant: 'bg-muted text-muted-foreground',
 }
 const roleLabel: Record<string, string> = {
@@ -159,7 +158,7 @@ const RoleManagementPage: NextPageWithLayout = () => {
             </div>
             <div className="flex justify-end gap-3">
               <button onClick={() => setEditUser(null)} className="px-5 py-2.5 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-              <button onClick={handleSave} disabled={updateRole.isPending} className="px-5 py-2.5 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 transition-colors flex items-center gap-2">
+              <button onClick={handleSave} disabled={updateRole.isPending} className="px-5 py-2.5 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors flex items-center gap-2">
                 {updateRole.isPending ? <Loader2 size={14} className="animate-spin" /> : 'Save'}
               </button>
             </div>

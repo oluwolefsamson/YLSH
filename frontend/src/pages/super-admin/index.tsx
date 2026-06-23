@@ -6,9 +6,8 @@ import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
 import { useSuperDashboard, useAdminList, useAuditLog } from '@/services/hooks/analytics/analytics'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const SuperAdminOverviewPage: NextPageWithLayout = () => {
   const { data: dashboard, isLoading: loadingStats } = useSuperDashboard()
@@ -22,23 +21,44 @@ const SuperAdminOverviewPage: NextPageWithLayout = () => {
     <div>
       <PageHeader eyebrow="Super Admin Portal" title="Super Admin Overview" subtitle="Full system access — manage all users, admins, roles, events, and view platform-wide audit logs." icon={<Shield size={14} />} />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <StatCard label="Total users" value={v(dashboard?.totalUsers)} icon={<Users size={20} />} progress={Math.min(((dashboard?.totalUsers ?? 0) / 10000) * 100, 100)} />
-        <StatCard label="Verified" value={v(dashboard?.verifiedUsers)} icon={<ShieldCheck size={20} />} progress={dashboard?.totalUsers ? (dashboard.verifiedUsers / dashboard.totalUsers) * 100 : 0} />
-        <StatCard label="Events" value={v(dashboard?.activeEvents)} icon={<CalendarCheck size={20} />} progress={70} />
-        <StatCard label="Certificates" value={v(dashboard?.totalCertificates)} icon={<Award size={20} />} progress={62} />
-        <StatCard label="Total sessions" value={v(dashboard?.totalSessions)} icon={<GraduationCap size={20} />} progress={55} />
-        <StatCard label="Admins" value={v(dashboard?.adminCount)} icon={<ShieldAlert size={20} />} progress={30} />
-      </div>
+      {(() => {
+        const total = dashboard?.totalUsers ?? 0
+        const verified = dashboard?.verifiedUsers ?? 0
+        const certs = dashboard?.totalCertificates ?? 0
+        const sessions = dashboard?.totalSessions ?? 0
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <StatCard label="Total users" value={v(total)} icon={<Users size={20} />} progress={undefined} />
+            <StatCard label="Verified" value={v(verified)} icon={<ShieldCheck size={20} />} progress={total ? (verified / total) * 100 : 0} change={total ? `${Math.round((verified / total) * 100)}% rate` : undefined} />
+            <StatCard label="Active events" value={v(dashboard?.activeEvents)} icon={<CalendarCheck size={20} />} progress={undefined} />
+            <StatCard label="Certificates" value={v(certs)} icon={<Award size={20} />} progress={total ? Math.min((certs / total) * 100, 100) : 0} change={total ? `of ${total} users` : undefined} />
+            <StatCard label="Total sessions" value={v(sessions)} icon={<GraduationCap size={20} />} progress={Math.min((sessions / 200) * 100, 100)} change={`of 200 target`} />
+            <StatCard label="Admins" value={v(dashboard?.adminCount)} icon={<ShieldAlert size={20} />} progress={undefined} />
+          </div>
+        )
+      })()}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className={CARD} style={CARD_STYLE}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">Admin Accounts</h2>
-            <NextLink href="/super-admin/roles" className="px-4 py-2 rounded-full bg-primary text-white text-sm font-bold hover:bg-[#0d5c54] transition-colors">+ Add admin</NextLink>
+            <NextLink href="/super-admin/roles" className="px-4 py-2 rounded-full bg-primary text-white text-sm font-bold hover:bg-[#061e35] transition-colors">Change Role</NextLink>
           </div>
           {loadingAdmins ? (
-            <div className="flex items-center justify-center py-8"><Loader2 size={20} className="animate-spin text-primary" /></div>
+            <div className="flex flex-col gap-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 animate-pulse">
+                  <div className="flex-1">
+                    <div className="h-4 w-28 bg-muted rounded mb-2" />
+                    <div className="h-3 w-40 bg-muted rounded" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-6 w-20 bg-muted rounded-full" />
+                    <div className="h-6 w-12 bg-muted rounded-full" />
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="flex flex-col gap-3">
               {admins.slice(0, 5).map((admin) => (
@@ -60,7 +80,7 @@ const SuperAdminOverviewPage: NextPageWithLayout = () => {
           )}
         </div>
 
-        <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.98) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
+        <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(6,30,53,0.98) 0%, rgba(8,47,73,0.98) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
           <div className="flex items-center gap-2 mb-4">
             <Shield size={18} />
             <h2 className="text-xl font-bold">Audit Log</h2>

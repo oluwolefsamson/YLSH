@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { UserCheck, Search, CheckCircle, Clock, XCircle, Calendar, Mail, Loader2 } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
@@ -6,9 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { toast } from 'sonner'
 import { usePendingMentors, useApproveMentor, useDeclineMentor } from '@/services/hooks/users/users'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const FILTER_OPTIONS = ['Pending', 'All Processed']
 const FILTER_VALUES = ['pending', 'processed']
@@ -75,7 +74,7 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name or email…"
+              placeholder="Search by name or emailâ€¦"
               className="w-full h-10 pl-9 pr-4 rounded-full border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
             />
           </div>
@@ -98,7 +97,7 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
           <div className="flex flex-col gap-3">
             {isLoading && (
               <div className="py-12 flex items-center justify-center gap-3 text-muted-foreground">
-                <Loader2 size={18} className="animate-spin" /> Loading pending mentors…
+                <Loader2 size={18} className="animate-spin" /> Loading pending mentorsâ€¦
               </div>
             )}
             {isError && <div className="py-12 text-center text-red-500">Failed to load mentor applications.</div>}
@@ -133,7 +132,7 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
                     <button
                       onClick={() => void handleApprove(mentor._id, `${mentor.firstName} ${mentor.lastName}`)}
                       disabled={approve.isPending}
-                      className="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-bold hover:bg-[#0d5c54] disabled:opacity-60 transition-colors flex items-center gap-1.5"
+                      className="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-bold hover:bg-[#061e35] disabled:opacity-60 transition-colors flex items-center gap-1.5"
                     >
                       {approve.isPending ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle size={11} />}
                       Approve
@@ -181,7 +180,7 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
                 disabled={decline.isPending}
                 className="flex-1 h-10 rounded-full bg-red-600 text-white text-sm font-semibold hover:bg-red-700 disabled:opacity-60 transition-colors"
               >
-                {decline.isPending ? 'Declining…' : 'Confirm Decline'}
+                {decline.isPending ? 'Decliningâ€¦' : 'Confirm Decline'}
               </button>
             </div>
           </div>

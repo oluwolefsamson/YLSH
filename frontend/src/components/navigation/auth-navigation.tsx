@@ -12,7 +12,7 @@ const AuthNavigation: FC = () => {
       </NextLink>
       <NextLink
         href="/signup"
-        className="inline-flex items-center justify-center px-5 py-2 bg-primary text-white font-semibold text-sm tracking-wide shadow-[0_6px_22px_0_rgb(18_124_113_/_12%)] hover:bg-[#0d5c54] transition-colors"
+        className="inline-flex items-center justify-center px-5 py-2 bg-primary text-white font-semibold text-sm tracking-wide shadow-[0_6px_22px_0_rgb(8_47_73_/_12%)] hover:bg-[#061e35] transition-colors"
       >
         Sign Up
       </NextLink>

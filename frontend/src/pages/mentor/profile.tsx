@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+﻿import React, { useState, useEffect } from 'react'
 import { UserCircle, Pencil, Save, Star, Users, Calendar, Briefcase, Loader2, Lock, Eye, EyeOff, X, CheckCircle } from 'lucide-react'
 import { MentorLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
@@ -7,9 +7,8 @@ import { cn } from '@/utils'
 import { useMyMentorProfile, useUpdateMyMentorProfile, useMentorStats } from '@/services/hooks/mentors/mentors'
 import { useMyProfile, useChangePassword } from '@/services/hooks/users/users'
 import { toast } from 'sonner'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 disabled:bg-muted transition-colors'
 
 const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
@@ -99,7 +98,7 @@ const MentorProfilePage: NextPageWithLayout = () => {
           <div className="flex flex-col gap-5">
             <div className={CARD} style={CARD_STYLE}>
               <div className="flex flex-col items-center gap-3">
-                <div className="rounded-full flex items-center justify-center text-white font-bold text-3xl overflow-hidden" style={{ width: 88, height: 88, backgroundColor: '#127C71' }}>
+                <div className="rounded-full flex items-center justify-center text-white font-bold text-3xl overflow-hidden" style={{ width: 88, height: 88, backgroundColor: '#082F49' }}>
                   {user?.profilePhoto
                     ? <img src={user.profilePhoto} alt="avatar" className="w-full h-full object-cover" />
                     : initials}
@@ -107,26 +106,26 @@ const MentorProfilePage: NextPageWithLayout = () => {
                 <div className="text-center">
                   <p className="font-bold text-lg">{user?.firstName} {user?.lastName}</p>
                   <p className="text-sm text-muted-foreground">
-                    {form.headline || 'Mentor'}{user?.organization ? ` · ${user.organization}` : ''}
+                    {form.headline || 'Mentor'}{user?.organization ? ` Â· ${user.organization}` : ''}
                   </p>
                   {form.category && <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground mt-1">{form.category}</span>}
                 </div>
                 {profile && profile.rating > 0 && (
                   <div className="flex items-center gap-2">
                     <StarRating rating={profile.rating} />
-                    <span className="text-sm text-muted-foreground">{profile.rating.toFixed(1)} · {profile.totalSessions} sessions</span>
+                    <span className="text-sm text-muted-foreground">{profile.rating.toFixed(1)} Â· {profile.totalSessions} sessions</span>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.98) 0%, rgba(18,124,113,0.98) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
+            <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(6,30,53,0.98) 0%, rgba(8,47,73,0.98) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
               <p className="font-bold mb-3">Mentor Impact</p>
               {[
-                { icon: <Users size={16} />, label: 'Total mentees', value: stats ? String(stats.totalMentees) : '—' },
-                { icon: <Calendar size={16} />, label: 'Sessions completed', value: stats ? String(stats.totalCompleted) : '—' },
+                { icon: <Users size={16} />, label: 'Total mentees', value: stats ? String(stats.totalMentees) : 'â€”' },
+                { icon: <Calendar size={16} />, label: 'Sessions completed', value: stats ? String(stats.totalCompleted) : 'â€”' },
                 { icon: <Star size={16} />, label: 'Average rating', value: stats && stats.rating > 0 ? `${stats.rating.toFixed(1)} / 5` : 'New' },
-                { icon: <Briefcase size={16} />, label: 'Years experience', value: form.yearsExperience ? `${form.yearsExperience}+` : '—' },
+                { icon: <Briefcase size={16} />, label: 'Years experience', value: form.yearsExperience ? `${form.yearsExperience}+` : 'â€”' },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
@@ -145,7 +144,7 @@ const MentorProfilePage: NextPageWithLayout = () => {
               <button
                 onClick={editing ? handleSave : () => setEditing(true)}
                 disabled={updateProfile.isPending}
-                className={cn('flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-colors disabled:opacity-50', editing ? 'bg-primary text-white hover:bg-[#0d5c54]' : 'border border-border hover:bg-muted')}
+                className={cn('flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-colors disabled:opacity-50', editing ? 'bg-primary text-white hover:bg-[#061e35]' : 'border border-border hover:bg-muted')}
               >
                 {updateProfile.isPending
                   ? <Loader2 size={14} className="animate-spin" />
@@ -239,17 +238,17 @@ const MentorProfilePage: NextPageWithLayout = () => {
                 </div>
                 <div className="flex gap-3">
                   <button onClick={closePwModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-                  <button onClick={handleChangePassword} disabled={!pwForm.current || !pwForm.next || pwForm.next !== pwForm.confirm || changePassword.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
+                  <button onClick={handleChangePassword} disabled={!pwForm.current || !pwForm.next || pwForm.next !== pwForm.confirm || changePassword.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
                     {changePassword.isPending ? <Loader2 size={16} className="animate-spin" /> : 'Update Password'}
                   </button>
                 </div>
               </>
             ) : (
               <div className="flex flex-col items-center text-center py-4">
-                <div className="w-16 h-16 rounded-full bg-green-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-green-600" /></div>
+                <div className="w-16 h-16 rounded-full bg-blue-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-[#082F49]" /></div>
                 <h3 className="font-bold text-lg mb-1">Password Updated!</h3>
                 <p className="text-sm text-muted-foreground mb-5">Your password has been changed successfully.</p>
-                <button onClick={closePwModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Done</button>
+                <button onClick={closePwModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">Done</button>
               </div>
             )}
           </div>

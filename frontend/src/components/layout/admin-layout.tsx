@@ -56,10 +56,10 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
   const initials = user ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase() : (superAdmin ? 'SA' : 'AD')
   const displayName = user ? `${user.firstName} ${user.lastName}` : portalLabel
   const roleName = superAdmin ? 'System Administrator' : 'Platform Admin'
-  const activeColor = superAdmin ? '#7c3aed' : '#127C71'
+  const activeColor = superAdmin ? '#7c3aed' : '#082F49'
   const sidebarBg = superAdmin
     ? 'linear-gradient(135deg, rgba(30,10,60,0.98) 0%, rgba(90,40,140,0.97) 100%)'
-    : '#127C71'
+    : '#082F49'
 
   const handleConfirmSignOut = (): void => {
     setSignOutOpen(false)
@@ -181,7 +181,7 @@ const AdminLayout: FC<Props> = ({ children, superAdmin = false }) => {
             <p className="text-muted-foreground mb-6">You will be taken back to the sign-in page.</p>
             <div className="flex justify-end gap-3">
               <button onClick={() => setSignOutOpen(false)} className="px-5 py-2 rounded-full border-2 border-slate-300 text-foreground font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-              <button onClick={handleConfirmSignOut} className="px-5 py-2 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#0d5c54] transition-colors">Sign out</button>
+              <button onClick={handleConfirmSignOut} className="px-5 py-2 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#061e35] transition-colors">Sign out</button>
             </div>
           </div>
         </div>

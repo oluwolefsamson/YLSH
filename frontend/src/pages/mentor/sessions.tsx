@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { Calendar, CheckCircle, Video, XCircle, Clock, Loader2, X, AlertTriangle } from 'lucide-react'
 import { MentorLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
@@ -8,15 +8,14 @@ import { useMySessions, useUpdateSessionStatus, useCancelSession, useAddOutcome 
 import type { MentorSession, SessionStatus } from '@/services/endpoints/sessions/sessions'
 import type { User } from '@/services/endpoints/users/users'
 import { toast } from 'sonner'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const TABS = ['All', 'Upcoming', 'Completed', 'Cancelled']
 
 const statusBadge: Record<string, string> = {
   scheduled: 'bg-amber-100 text-amber-700',
-  completed: 'bg-green-100 text-green-700',
+  completed: 'bg-blue-100 text-[#082F49]',
   cancelled: 'bg-red-100 text-red-700',
 }
 const statusIcon: Record<string, React.ReactNode> = {
@@ -116,7 +115,7 @@ const MentorSessionsPage: NextPageWithLayout = () => {
                         <div className="flex items-center gap-1.5">
                           <Calendar size={13} className="text-muted-foreground" />
                           <span className="text-xs text-muted-foreground">
-                            {new Date(session.scheduledAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} · {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(session.scheduledAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} Â· {new Date(session.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
                         <div className="flex items-center gap-1.5">
@@ -125,7 +124,7 @@ const MentorSessionsPage: NextPageWithLayout = () => {
                         </div>
                       </div>
                       {session.outcome && (
-                        <div className="mt-3 p-3 rounded-xl" style={{ backgroundColor: 'rgba(18,124,113,0.06)', border: '1px solid rgba(18,124,113,0.15)' }}>
+                        <div className="mt-3 p-3 rounded-xl" style={{ backgroundColor: 'rgba(8,47,73,0.06)', border: '1px solid rgba(8,47,73,0.15)' }}>
                           <p className="text-sm font-semibold text-primary mb-0.5">Outcome:</p>
                           <p className="text-sm text-muted-foreground">{session.outcome}</p>
                         </div>
@@ -134,7 +133,7 @@ const MentorSessionsPage: NextPageWithLayout = () => {
                     {session.status === 'scheduled' && (
                       <div className="flex gap-2 flex-shrink-0 flex-wrap">
                         {session.meetLink && (
-                          <a href={session.meetLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-white text-sm font-bold hover:bg-[#0d5c54] transition-colors">
+                          <a href={session.meetLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-white text-sm font-bold hover:bg-[#061e35] transition-colors">
                             <Video size={14} /> Join
                           </a>
                         )}
@@ -185,7 +184,7 @@ const MentorSessionsPage: NextPageWithLayout = () => {
               <button onClick={() => setOutcomeModal(null)} className="p-1.5 rounded-lg hover:bg-muted"><X size={18} /></button>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Session with <strong>{(outcomeModal.mentee as User)?.firstName} {(outcomeModal.mentee as User)?.lastName}</strong> — {outcomeModal.topic}
+              Session with <strong>{(outcomeModal.mentee as User)?.firstName} {(outcomeModal.mentee as User)?.lastName}</strong> â€” {outcomeModal.topic}
             </p>
             <div className="mb-5">
               <label className="block text-xs font-medium text-muted-foreground mb-1">Outcome notes <span className="text-red-500">*</span></label>
@@ -193,7 +192,7 @@ const MentorSessionsPage: NextPageWithLayout = () => {
             </div>
             <div className="flex gap-3">
               <button onClick={() => setOutcomeModal(null)} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-              <button onClick={handleAddOutcome} disabled={!outcomeText.trim() || addOutcomeMutation.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+              <button onClick={handleAddOutcome} disabled={!outcomeText.trim() || addOutcomeMutation.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
                 {addOutcomeMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : 'Save outcome'}
               </button>
             </div>

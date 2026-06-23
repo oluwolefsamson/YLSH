@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { CalendarCheck, MapPin, Calendar, Clock, QrCode, Download, CheckCircle, Clock3, XCircle } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
@@ -6,12 +6,11 @@ import { PageHeader, StatCard } from '@/components/dashboard'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
 import { useMyRegistrations } from '@/services/hooks/registrations/registrations'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 
 const statusConfig = {
-  registered: { label: 'Confirmed', color: 'bg-green-100 text-green-700 border-green-200', icon: CheckCircle, iconColor: 'text-green-600' },
+  registered: { label: 'Confirmed', color: 'bg-blue-100 text-[#082F49] border-blue-200', icon: CheckCircle, iconColor: 'text-[#082F49]' },
   waitlisted: { label: 'Waitlisted', color: 'bg-amber-100 text-amber-700 border-amber-200', icon: Clock3, iconColor: 'text-amber-500' },
   attended: { label: 'Attended', color: 'bg-primary/10 text-primary border-primary/20', icon: CheckCircle, iconColor: 'text-primary' },
   cancelled: { label: 'Cancelled', color: 'bg-slate-100 text-slate-500 border-slate-200', icon: XCircle, iconColor: 'text-slate-400' },
@@ -65,7 +64,7 @@ const RegistrationsPage: NextPageWithLayout = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <StatCard label="Confirmed" value={String(confirmed)} icon={<CheckCircle size={20} />} progress={Math.min(confirmed * 20, 100)} />
-        <StatCard label="Attended" value={String(attended)} icon={<CalendarCheck size={20} />} progress={attended > 0 ? 75 : 0} accent="#127C71" />
+        <StatCard label="Attended" value={String(attended)} icon={<CalendarCheck size={20} />} progress={attended > 0 ? 75 : 0} accent="#082F49" />
         <StatCard label="Waitlisted" value={String(waitlisted)} icon={<Clock3 size={20} />} progress={waitlisted > 0 ? 40 : 0} accent="#f59e0b" />
       </div>
 
@@ -133,7 +132,7 @@ const RegistrationsPage: NextPageWithLayout = () => {
                       {showQR && (
                         <button
                           onClick={() => setExpandedId(isExpanded ? null : reg._id)}
-                          className="px-4 py-1.5 rounded-full bg-primary text-white text-sm font-semibold hover:bg-[#0d5c54] transition-colors"
+                          className="px-4 py-1.5 rounded-full bg-primary text-white text-sm font-semibold hover:bg-[#061e35] transition-colors"
                         >
                           {isExpanded ? 'Hide' : 'View QR'}
                         </button>
@@ -150,7 +149,7 @@ const RegistrationsPage: NextPageWithLayout = () => {
                   )}
 
                   {showQR && isExpanded && (
-                    <div className="border-t border-slate-200/18 p-6 flex flex-col items-center" style={{ backgroundColor: 'rgba(18,124,113,0.03)' }}>
+                    <div className="border-t border-slate-200/18 p-6 flex flex-col items-center" style={{ backgroundColor: 'rgba(8,47,73,0.03)' }}>
                       <p className="text-sm font-semibold text-muted-foreground mb-5 text-center">Present this QR code at the event entrance</p>
 
                       <div className="p-5 bg-white rounded-2xl shadow-md border border-slate-200/50 inline-block mb-4">

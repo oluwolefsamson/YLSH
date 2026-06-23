@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+﻿import React, { useState, useRef, useEffect } from 'react'
 import { Users, Search, MoreVertical, CheckCircle, Clock, Ban, Loader2, UserPlus, X, Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
@@ -7,13 +7,12 @@ import { cn } from '@/utils'
 import { useUsers, useUpdateUserStatus, useDeleteUser, useCreateAdmin } from '@/services/hooks/users/users'
 import type { User as UserType } from '@/services/endpoints/users/users'
 import { toast } from 'sonner'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 const INPUT = 'w-full h-11 pl-9 pr-4 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors disabled:opacity-50'
 
 const statusStyles: Record<string, string> = {
-  verified: 'bg-green-100 text-green-700',
+  verified: 'bg-blue-100 text-[#082F49]',
   pending: 'bg-amber-100 text-amber-700',
   suspended: 'bg-red-100 text-red-700',
 }
@@ -25,7 +24,7 @@ const statusIcon: Record<string, React.ReactNode> = {
 const roleBadge: Record<string, string> = {
   'super-admin': 'bg-red-100 text-red-700',
   admin: 'bg-primary/10 text-primary',
-  mentor: 'bg-green-100 text-green-700',
+  mentor: 'bg-blue-100 text-[#082F49]',
   participant: 'bg-muted text-muted-foreground',
 }
 const roleLabel: Record<string, string> = {
@@ -136,17 +135,17 @@ const SuperAdminUsersPage: NextPageWithLayout = () => {
 
   return (
     <div>
-      <PageHeader eyebrow="All Users" title="Users" subtitle="Full system access to all user accounts across every role — Participant, Mentor, Admin, and Super Admin." icon={<Users size={14} />} />
+      <PageHeader eyebrow="All Users" title="Users" subtitle="Full system access to all user accounts across every role â€” Participant, Mentor, Admin, and Super Admin." icon={<Users size={14} />} />
 
       <div className={CARD} style={CARD_STYLE}>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-5">
           <div className="relative flex-1 max-w-sm">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or email…" className="w-full h-10 pl-9 pr-4 rounded-full border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors" />
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or emailâ€¦" className="w-full h-10 pl-9 pr-4 rounded-full border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors" />
           </div>
           <button
             onClick={() => setModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#0d5c54] transition-colors shrink-0"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#061e35] transition-colors shrink-0"
           >
             <UserPlus size={15} />
             Add Admin
@@ -169,7 +168,7 @@ const SuperAdminUsersPage: NextPageWithLayout = () => {
               <div key={user._id} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 flex-wrap">
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-sm">{user.firstName} {user.lastName}</p>
-                  <p className="text-xs text-muted-foreground">{user.email}{user.state ? ` · ${user.state}` : ''}</p>
+                  <p className="text-xs text-muted-foreground">{user.email}{user.state ? ` Â· ${user.state}` : ''}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <span className={cn('inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold', roleBadge[user.role] ?? 'bg-muted text-muted-foreground')}>
                       {roleLabel[user.role] ?? user.role}
@@ -226,7 +225,7 @@ const SuperAdminUsersPage: NextPageWithLayout = () => {
               <button
                 onClick={handleConfirm}
                 disabled={deleteUser.isPending || updateStatus.isPending}
-                className={`flex-1 h-11 rounded-full text-white font-bold text-sm disabled:opacity-50 transition-colors flex items-center justify-center gap-2 ${confirmModal.type === 'delete' ? 'bg-red-600 hover:bg-red-700' : confirmModal.suspended ? 'bg-green-600 hover:bg-green-700' : 'bg-amber-600 hover:bg-amber-700'}`}
+                className={`flex-1 h-11 rounded-full text-white font-bold text-sm disabled:opacity-50 transition-colors flex items-center justify-center gap-2 ${confirmModal.type === 'delete' ? 'bg-red-600 hover:bg-red-700' : confirmModal.suspended ? 'bg-[#082F49] hover:bg-[#061e35]' : 'bg-amber-600 hover:bg-amber-700'}`}
               >
                 {(deleteUser.isPending || updateStatus.isPending) ? <Loader2 size={15} className="animate-spin" /> : confirmModal.type === 'delete' ? 'Delete' : confirmModal.suspended ? 'Activate' : 'Suspend'}
               </button>
@@ -340,8 +339,8 @@ const SuperAdminUsersPage: NextPageWithLayout = () => {
                 <button type="button" onClick={closeModal} disabled={createAdmin.isPending} className="flex-1 h-11 rounded-full border-2 border-slate-200 text-foreground font-semibold text-sm hover:bg-muted disabled:opacity-50 transition-colors">
                   Cancel
                 </button>
-                <button type="submit" disabled={createAdmin.isPending} className="flex-1 h-11 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#0d5c54] disabled:opacity-60 transition-colors flex items-center justify-center gap-2">
-                  {createAdmin.isPending ? <><Loader2 size={15} className="animate-spin" /> Creating…</> : 'Create Admin'}
+                <button type="submit" disabled={createAdmin.isPending} className="flex-1 h-11 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#061e35] disabled:opacity-60 transition-colors flex items-center justify-center gap-2">
+                  {createAdmin.isPending ? <><Loader2 size={15} className="animate-spin" /> Creatingâ€¦</> : 'Create Admin'}
                 </button>
               </div>
             </form>

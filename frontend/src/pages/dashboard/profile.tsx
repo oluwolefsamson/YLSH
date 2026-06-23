@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+﻿import React, { useEffect, useRef, useState } from 'react'
 import { UserCircle, ShieldCheck, Pencil, Save, Lock, CheckCircle, Hourglass, CreditCard, X, Eye, EyeOff, Monitor, Smartphone, LogOut, Loader2 } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
@@ -7,9 +7,8 @@ import { cn } from '@/utils'
 import type { ModalType, TfaStep, ProfileCompletionItem } from '@/types'
 import { useMyProfile, useUpdateMyProfile, useChangePassword } from '@/services/hooks/users/users'
 import { toast } from 'sonner'
+import { CARD, CARD_STYLE } from '@/utils/card-styles'
 
-const CARD = 'p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16'
-const CARD_STYLE = { backgroundColor: 'rgba(255,255,255,0.88)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }
 const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 disabled:bg-muted transition-colors'
 
 const ProfilePage: NextPageWithLayout = () => {
@@ -116,14 +115,14 @@ const ProfilePage: NextPageWithLayout = () => {
               {(photoPreview ?? user?.profilePhoto) ? (
                 <img src={photoPreview ?? user?.profilePhoto} alt="Profile" className="rounded-full object-cover border-4 border-primary/20" style={{ width: 88, height: 88 }} />
               ) : (
-                <div className="rounded-full flex items-center justify-center text-white font-bold text-3xl" style={{ width: 88, height: 88, background: 'linear-gradient(135deg, #082F49 0%, #127C71 100%)' }}>{initials}</div>
+                <div className="rounded-full flex items-center justify-center text-white font-bold text-3xl" style={{ width: 88, height: 88, background: 'linear-gradient(135deg, #061e35 0%, #082F49 100%)' }}>{initials}</div>
               )}
               <div className="text-center">
                 <p className="font-bold text-lg">{user?.firstName} {user?.lastName}</p>
-                <p className="text-sm text-muted-foreground capitalize">{user?.role}{user?.organization ? ` · ${user.organization}` : ''}</p>
+                <p className="text-sm text-muted-foreground capitalize">{user?.role}{user?.organization ? ` Â· ${user.organization}` : ''}</p>
               </div>
               {user?.ninVerified && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-[#082F49]">
                   <ShieldCheck size={11} /> NIN Verified
                 </span>
               )}
@@ -142,14 +141,14 @@ const ProfilePage: NextPageWithLayout = () => {
             <div className="flex flex-col gap-2">
               {completionItems.map((item) => (
                 <div key={item.label} className="flex items-center gap-2">
-                  {item.done ? <CheckCircle size={16} className="text-green-600 flex-shrink-0" /> : <Hourglass size={16} className="text-muted-foreground/40 flex-shrink-0" />}
+                  {item.done ? <CheckCircle size={16} className="text-[#082F49] flex-shrink-0" /> : <Hourglass size={16} className="text-muted-foreground/40 flex-shrink-0" />}
                   <span className={cn('text-sm', item.done ? 'text-foreground' : 'text-muted-foreground/60')}>{item.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(8,47,73,0.97) 0%, rgba(18,124,113,0.97) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
+          <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(6,30,53,0.97) 0%, rgba(8,47,73,0.97) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
             <div className="flex items-center gap-2 mb-3"><CreditCard size={18} /><p className="font-bold">Identity Verification</p></div>
             <p className="text-sm text-white/80 mb-3">Your NIN has been verified. Your identity reference is securely encrypted.</p>
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border border-white/20 text-white" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
@@ -166,7 +165,7 @@ const ProfilePage: NextPageWithLayout = () => {
               {editing ? (
                 <div className="flex gap-2">
                   <button onClick={() => { setEditing(false); if (user) setForm({ firstName: user.firstName, lastName: user.lastName, phone: user.phone ?? '', state: user.state ?? '', bio: user.bio ?? '', organization: user.organization ?? '' }) }} className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors">Cancel</button>
-                  <button onClick={handleSave} disabled={updateProfile.isPending} className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold hover:bg-[#0d5c54] disabled:opacity-60 transition-colors">
+                  <button onClick={handleSave} disabled={updateProfile.isPending} className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold hover:bg-[#061e35] disabled:opacity-60 transition-colors">
                     {updateProfile.isPending ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save
                   </button>
                 </div>
@@ -248,17 +247,17 @@ const ProfilePage: NextPageWithLayout = () => {
                 </div>
                 <div className="flex gap-3">
                   <button onClick={closeModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-                  <button onClick={handleChangePassword} disabled={!pwForm.current || !pwForm.next || pwForm.next !== pwForm.confirm || changePassword.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
+                  <button onClick={handleChangePassword} disabled={!pwForm.current || !pwForm.next || pwForm.next !== pwForm.confirm || changePassword.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2">
                     {changePassword.isPending ? <Loader2 size={16} className="animate-spin" /> : 'Update Password'}
                   </button>
                 </div>
               </>
             ) : (
               <div className="flex flex-col items-center text-center py-4">
-                <div className="w-16 h-16 rounded-full bg-green-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-green-600" /></div>
+                <div className="w-16 h-16 rounded-full bg-blue-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-[#082F49]" /></div>
                 <h3 className="font-bold text-lg mb-1">Password Updated!</h3>
                 <p className="text-sm text-muted-foreground mb-5">Your password has been changed successfully.</p>
-                <button onClick={closeModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Done</button>
+                <button onClick={closeModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">Done</button>
               </div>
             )}
           </div>
@@ -274,19 +273,19 @@ const ProfilePage: NextPageWithLayout = () => {
             {tfaStep === 'phone' && (<>
               <p className="text-sm text-muted-foreground mb-4">Enter your phone number to receive a verification code via SMS.</p>
               <div className="mb-4"><label className="block text-xs font-medium text-muted-foreground mb-1">Phone number</label><input value={tfaPhone || user?.phone || ''} onChange={(e) => setTfaPhone(e.target.value)} className={INPUT} /></div>
-              <div className="flex gap-3"><button onClick={closeModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button><button onClick={() => setTfaStep('code')} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Send Code</button></div>
+              <div className="flex gap-3"><button onClick={closeModal} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Cancel</button><button onClick={() => setTfaStep('code')} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">Send Code</button></div>
             </>)}
             {tfaStep === 'code' && (<>
               <p className="text-sm text-muted-foreground mb-4">Enter the 6-digit code sent to <strong>{tfaPhone || user?.phone}</strong>.</p>
               <div className="mb-4"><label className="block text-xs font-medium text-muted-foreground mb-1">Verification code</label><input value={tfaCode} onChange={(e) => setTfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="000000" className={cn(INPUT, 'tracking-widest text-center font-mono text-lg')} /></div>
-              <div className="flex gap-3"><button onClick={() => setTfaStep('phone')} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Back</button><button onClick={() => setTfaStep('done')} disabled={tfaCode.length !== 6} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] disabled:opacity-50 transition-colors">Verify</button></div>
+              <div className="flex gap-3"><button onClick={() => setTfaStep('phone')} className="flex-1 h-10 rounded-full border-2 border-slate-300 font-semibold text-sm hover:bg-muted transition-colors">Back</button><button onClick={() => setTfaStep('done')} disabled={tfaCode.length !== 6} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors">Verify</button></div>
             </>)}
             {tfaStep === 'done' && (
               <div className="flex flex-col items-center text-center py-4">
-                <div className="w-16 h-16 rounded-full bg-green-100 grid place-items-center mb-4"><ShieldCheck size={32} className="text-green-600" /></div>
+                <div className="w-16 h-16 rounded-full bg-blue-100 grid place-items-center mb-4"><ShieldCheck size={32} className="text-[#082F49]" /></div>
                 <h3 className="font-bold text-lg mb-1">2FA Enabled!</h3>
                 <p className="text-sm text-muted-foreground mb-5">Two-factor authentication is now active.</p>
-                <button onClick={closeModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Done</button>
+                <button onClick={closeModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">Done</button>
               </div>
             )}
           </div>
@@ -304,13 +303,13 @@ const ProfilePage: NextPageWithLayout = () => {
                 <div key={i} className="flex items-center justify-between gap-4 p-4 rounded-xl border border-slate-200/18">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-muted grid place-items-center text-muted-foreground flex-shrink-0">{s.icon}</div>
-                    <div><p className="font-semibold text-sm">{s.device}</p><p className="text-xs text-muted-foreground">{s.location} · {s.time}</p></div>
+                    <div><p className="font-semibold text-sm">{s.device}</p><p className="text-xs text-muted-foreground">{s.location} Â· {s.time}</p></div>
                   </div>
-                  <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">Current</span>
+                  <span className="text-xs font-bold text-[#082F49] bg-blue-100 px-2 py-0.5 rounded-full">Current</span>
                 </div>
               ))}
             </div>
-            <button onClick={closeModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#0d5c54] transition-colors">Close</button>
+            <button onClick={closeModal} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">Close</button>
           </div>
         </div>
       )}
