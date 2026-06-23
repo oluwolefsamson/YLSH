@@ -13,8 +13,6 @@ const badges = [
 const HomeHero: FC = () => {
   return (
     <section id="hero" className="relative min-h-[70vh] md:min-h-[92vh] flex flex-col justify-center overflow-hidden bg-black">
-
-      {/* Video background */}
       <video
         autoPlay
         muted
@@ -25,13 +23,10 @@ const HomeHero: FC = () => {
         <source src="https://res.cloudinary.com/duk9xwahb/video/upload/v1781685160/j0psnlm9e0jmxazrn0on.mp4" type="video/mp4" />
       </video>
 
-      {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/55" />
 
-      {/* Content */}
       <div className="relative z-10 container py-7 md:py-32">
         <div className="max-w-3xl mx-auto text-center">
-
           <div className="hidden sm:inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white text-sm font-semibold mb-6">
             <span className="w-2 h-2 rounded-full bg-white animate-pulse inline-block" />
             Youth Platform · Free Access
@@ -42,7 +37,7 @@ const HomeHero: FC = () => {
             <span className="relative inline-block">
               youth programs
               <svg className="absolute -bottom-1 left-0 w-full" viewBox="0 0 300 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M2 6 C60 2, 140 2, 298 6" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                <path d="M2 6 C60 2, 140 2, 298 6" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" fill="none" />
               </svg>
             </span>
             {' '}and events
@@ -50,10 +45,9 @@ const HomeHero: FC = () => {
 
           <p className="hidden sm:block text-[17px] text-white/85 leading-relaxed mb-8 max-w-xl mx-auto">
             YLSH unifies identity verification, event management, attendance, certificates,
-            mentorship, and analytics — all in one place, completely free.
+            mentorship, and analytics - all in one place, completely free.
           </p>
 
-          {/* Feature badge pills — desktop only */}
           <div className="hidden sm:flex flex-wrap gap-2 justify-center mb-10">
             {badges.map((b) => (
               <span key={b} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/20 text-white text-sm font-medium" style={{ backgroundColor: '#082F49' }}>
@@ -63,7 +57,6 @@ const HomeHero: FC = () => {
             ))}
           </div>
 
-          {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 justify-center mt-4 sm:mt-0 mb-4 md:mb-14">
             <Link href="/signup">
               <button className="inline-flex items-center gap-2 px-7 py-3 sm:px-8 sm:py-3.5 rounded-full bg-white text-[#082F49] font-bold text-[14px] sm:text-[15px] shadow-lg hover:bg-white/90 transition-colors">
@@ -77,10 +70,8 @@ const HomeHero: FC = () => {
               </button>
             </Link>
           </div>
-
         </div>
       </div>
-
     </section>
   )
 }
