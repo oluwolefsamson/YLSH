@@ -66,9 +66,13 @@ const MentorEventsPage: NextPageWithLayout = () => {
       </div>
 
       <div className={CARD} style={CARD_STYLE}>
-        <div className="flex gap-1 border-b border-slate-200/18 mb-5 overflow-x-auto">
+        <div className="flex flex-wrap gap-2 mb-5">
           {TABS.map((label, i) => (
-            <button key={label} onClick={() => setTabValue(TAB_VALUES[i])} className={cn('px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors whitespace-nowrap', tabValue === TAB_VALUES[i] ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
+            <button key={label} onClick={() => setTabValue(TAB_VALUES[i])}
+              className={cn('px-4 py-2 rounded-lg text-sm font-semibold border transition-colors whitespace-nowrap',
+                tabValue === TAB_VALUES[i] ? 'bg-primary text-white border-primary' : 'bg-background text-foreground border-input hover:bg-muted'
+              )}
+            >
               {label}
             </button>
           ))}
@@ -85,7 +89,7 @@ const MentorEventsPage: NextPageWithLayout = () => {
               const isFull = event.capacity != null && event.registeredCount >= event.capacity
               const isPast = event.status === 'past'
               return (
-                <div key={event._id} className="flex flex-col p-5 rounded-xl border border-slate-200/18">
+                <div key={event._id} className="flex flex-col p-5 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between mb-3">
                     <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', categoryBadge[event.category] ?? 'bg-muted text-muted-foreground')}>{event.category}</span>
                     <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border', isFull ? 'border-red-300 text-red-600' : 'border-blue-300 text-[#082F49]')}>{isFull ? 'Full' : 'Open'}</span>

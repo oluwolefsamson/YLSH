@@ -42,6 +42,7 @@ export interface IEvent extends Document {
   title: string
   description?: string
   date: Date
+  endDate?: Date
   time?: string
   venue: string
   category: EventCategory

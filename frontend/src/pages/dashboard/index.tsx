@@ -9,15 +9,22 @@ import { useEvents } from "@/services/hooks/events/events"
 import { useMyRegistrations } from "@/services/hooks/registrations/registrations"
 import { useMyCertificates } from "@/services/hooks/certificates/certificates"
 import { useMyApplications } from "@/services/hooks/opportunities/opportunities"
-import { CARD, CARD_STYLE } from '@/utils/card-styles'
+import { CARD, CARD_STYLE, ROW } from '@/utils/card-styles'
 import type { QuickAction } from "@/types"
 
 const quickActions: QuickAction[] = [
-  { label: "Browse Events", href: "/dashboard/events", icon: <CalendarCheck size={20} />, color: "#082F49" },
-  { label: "View Certificates", href: "/dashboard/certificates", icon: <Award size={20} />, color: "#f59e0b" },
+  { label: "Browse Events", href: "/dashboard/events", icon: <CalendarCheck size={20} />, color: "#127C71" },
+  { label: "Certificates", href: "/dashboard/certificates", icon: <Award size={20} />, color: "#f59e0b" },
   { label: "Find a Mentor", href: "/dashboard/mentorship", icon: <Users size={20} />, color: "#8b5cf6" },
   { label: "Opportunities", href: "/dashboard/opportunities", icon: <Trophy size={20} />, color: "#3b82f6" },
 ]
+
+const statusDot: Record<string, string> = {
+  attended: 'bg-emerald-500',
+  registered: 'bg-brand-teal',
+  waitlisted: 'bg-amber-500',
+  cancelled: 'bg-slate-400',
+}
 
 const DashboardOverviewPage: NextPageWithLayout = () => {
   const { user } = useAuth()
@@ -35,27 +42,27 @@ const DashboardOverviewPage: NextPageWithLayout = () => {
   const recentRegs = registrations.slice(0, 4)
 
   const eventsSkeleton = (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col divide-y divide-slate-100">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 animate-pulse flex-wrap">
+        <div key={i} className="flex items-center justify-between gap-4 py-3.5 animate-pulse">
           <div className="flex-1">
-            <div className="h-4 w-40 bg-muted rounded mb-2" />
-            <div className="h-3 w-32 bg-muted rounded" />
+            <div className="h-4 w-40 bg-slate-100 rounded-lg mb-2" />
+            <div className="h-3 w-32 bg-slate-100 rounded-lg" />
           </div>
-          <div className="h-6 w-20 bg-muted rounded-full" />
+          <div className="h-6 w-20 bg-slate-100 rounded-lg" />
         </div>
       ))}
     </div>
   )
 
   const regsSkeleton = (
-    <div className="flex flex-col">
+    <div className="flex flex-col divide-y divide-slate-100">
       {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="flex items-start gap-4 py-3 border-b border-slate-200/12 animate-pulse last:border-0">
-          <div className="w-[18px] h-[18px] rounded-full bg-muted mt-0.5 flex-shrink-0" />
+        <div key={i} className="flex items-start gap-3 py-3.5 animate-pulse">
+          <div className="w-8 h-8 rounded-xl bg-slate-100 flex-shrink-0" />
           <div className="flex-1">
-            <div className="h-4 w-48 bg-muted rounded mb-1.5" />
-            <div className="h-3 w-28 bg-muted rounded" />
+            <div className="h-4 w-48 bg-slate-100 rounded-lg mb-1.5" />
+            <div className="h-3 w-28 bg-slate-100 rounded-lg" />
           </div>
         </div>
       ))}
@@ -64,57 +71,75 @@ const DashboardOverviewPage: NextPageWithLayout = () => {
 
   return (
     <div>
-      <PageHeader eyebrow="Participant Dashboard" title={`Welcome back, ${user?.firstName ?? "..."}!`} subtitle="Track your events, certificates, learning progress, and opportunities — all in one place." icon={<LayoutDashboard size={14} />} />
+      <PageHeader
+        eyebrow="Participant Dashboard"
+        title={`Welcome back, ${user?.firstName ?? "..."}!`}
+        subtitle="Track your events, certificates, learning progress, and opportunities."
+        icon={<LayoutDashboard size={14} />}
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard label="Events Registered" value={String(registrations.length)} icon={<CalendarCheck size={20} />} progress={Math.min(registrations.length * 20, 100)} change={`${upcomingCount} upcoming`} />
         <StatCard label="Certificates Earned" value={String(issuedCerts)} icon={<Award size={20} />} progress={issuedCerts > 0 ? 60 : 0} change={pendingCerts > 0 ? `${pendingCerts} pending` : "All issued"} accent="#f59e0b" />
-        <StatCard label="Attended Events" value={String(attendedCount)} icon={<GraduationCap size={20} />} progress={attendedCount > 0 ? 68 : 0} change={`${attendedCount} checked in`} accent="#8b5cf6" />
+        <StatCard label="Events Attended" value={String(attendedCount)} icon={<GraduationCap size={20} />} progress={attendedCount > 0 ? 68 : 0} change={`${attendedCount} checked in`} accent="#8b5cf6" />
         <StatCard label="Applications" value={String(applications.length)} icon={<Trophy size={20} />} progress={Math.min(applications.length * 20, 100)} change={applications.length === 0 ? "None yet" : `${applications.length} submitted`} accent="#3b82f6" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-5 mb-5">
+        {/* Quick Actions */}
         <div className={CARD} style={CARD_STYLE}>
-          <h2 className="font-bold text-lg tracking-tight mb-4">Quick Actions</h2>
+          <p className="text-base font-bold text-slate-800 mb-4">Quick Actions</p>
           <div className="grid grid-cols-2 gap-3">
             {quickActions.map((a) => (
               <NextLink key={a.label} href={a.href}>
-                <div className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-[1.5px] border-slate-200/20 text-center transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = a.color; (e.currentTarget as HTMLElement).style.backgroundColor = `${a.color}0d` }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = ""; (e.currentTarget as HTMLElement).style.backgroundColor = "" }}>
-                  <span style={{ color: a.color }}>{a.icon}</span>
-                  <p className="text-xs font-semibold text-foreground">{a.label}</p>
+                <div
+                  className="flex flex-col items-center justify-center gap-2.5 p-4 rounded-2xl border border-slate-100 text-center cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                  style={{ backgroundColor: `${a.color}08` }}
+                >
+                  <div className="w-10 h-10 rounded-xl grid place-items-center" style={{ backgroundColor: `${a.color}15`, color: a.color }}>
+                    {a.icon}
+                  </div>
+                  <p className="text-xs font-semibold text-slate-700">{a.label}</p>
                 </div>
               </NextLink>
             ))}
           </div>
         </div>
 
+        {/* Upcoming Events */}
         <div className={CARD} style={CARD_STYLE}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-bold text-lg tracking-tight">Upcoming Events</h2>
-            <NextLink href="/dashboard/events" className="flex items-center gap-1 text-sm font-semibold text-primary hover:underline">View all <ArrowRight size={14} /></NextLink>
+            <p className="text-base font-bold text-slate-800">Upcoming Events</p>
+            <NextLink href="/dashboard/events" className="flex items-center gap-1 text-xs font-semibold text-brand-teal hover:underline">
+              View all <ArrowRight size={13} />
+            </NextLink>
           </div>
           {eventsLoading ? eventsSkeleton : (
-            <div className="flex flex-col gap-3">
-              {upcomingEvents.length === 0 && <p className="text-sm text-muted-foreground">No upcoming events right now.</p>}
+            <div className="divide-y divide-slate-100">
+              {upcomingEvents.length === 0 && <p className="text-sm text-slate-400 py-4">No upcoming events right now.</p>}
               {upcomingEvents.map((e) => {
                 const reg = registrations.find((r) => r.event?._id === e._id)
                 return (
-                  <div key={e._id} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 flex-wrap">
-                    <div>
-                      <p className="font-bold text-sm">{e.title}</p>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        <Calendar size={12} className="text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">{new Date(e.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-                        <span className="text-xs text-muted-foreground">·</span>
-                        <span className="text-xs text-muted-foreground">{e.venue}</span>
+                  <div key={e._id} className="flex items-center justify-between gap-4 py-3.5">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-xl bg-brand-teal/10 text-brand-teal grid place-items-center flex-shrink-0">
+                        <Calendar size={16} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-sm text-slate-800 truncate">{e.title}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          {new Date(e.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · {e.venue}
+                        </p>
                       </div>
                     </div>
                     {reg ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ backgroundColor: "rgba(8,47,73,0.1)", color: "#082F49" }}><CheckCircle size={11} /> Registered</span>
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-teal/10 text-brand-teal text-xs font-semibold flex-shrink-0">
+                        <CheckCircle size={11} /> Registered
+                      </span>
                     ) : (
-                      <NextLink href="/dashboard/events" className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors">Register</NextLink>
+                      <NextLink href="/dashboard/events" className="px-2.5 py-1 rounded-lg bg-slate-800 text-white text-xs font-semibold hover:bg-slate-700 transition-colors flex-shrink-0">
+                        Register
+                      </NextLink>
                     )}
                   </div>
                 )
@@ -125,42 +150,64 @@ const DashboardOverviewPage: NextPageWithLayout = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-5">
+        {/* Profile Completion */}
         <div className={CARD} style={CARD_STYLE}>
-          <h2 className="font-bold text-lg tracking-tight mb-0.5">Profile Completion</h2>
-          <p className="text-sm text-muted-foreground mb-4">A complete profile gets more visibility with mentors and event organisers.</p>
+          <p className="text-base font-bold text-slate-800 mb-0.5">Profile Completion</p>
+          <p className="text-sm text-slate-400 mb-4">A complete profile gets more visibility with mentors and organisers.</p>
           {(() => {
             const fields = [user?.profilePhoto, user?.bio, user?.organization, user?.phone, user?.username]
             const filled = fields.filter(Boolean).length
             const pct = Math.round(((filled + 2) / (fields.length + 2)) * 100)
-            const missing = [!user?.profilePhoto && "Add profile photo", !user?.bio && "Complete bio", !user?.organization && "Add organization"].filter(Boolean)
+            const missing = [
+              !user?.profilePhoto && "Add profile photo",
+              !user?.bio && "Complete bio",
+              !user?.organization && "Add organization",
+            ].filter(Boolean)
             return (
               <>
-                <div className="mb-3">
+                <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-semibold">{pct}% complete</p>
-                    <NextLink href="/dashboard/profile" className="text-sm font-semibold text-primary hover:underline">Complete now →</NextLink>
+                    <p className="text-sm font-semibold text-slate-800">{pct}% complete</p>
+                    <NextLink href="/dashboard/profile" className="text-xs font-semibold text-brand-teal hover:underline">
+                      Complete now →
+                    </NextLink>
                   </div>
-                  <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: "rgba(148,163,184,0.18)" }}>
-                    <div className="h-full rounded-full" style={{ width: `${pct}%`, background: "linear-gradient(90deg, #082F49aa, #082F49)" }} />
+                  <div className="h-2 rounded-full overflow-hidden bg-slate-100">
+                    <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #1AAE9F, #127C71)' }} />
                   </div>
                 </div>
-                {missing.map((item) => (<div key={String(item)} className="flex items-center gap-2 mt-2"><div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: "rgba(148,163,184,0.5)" }} /><p className="text-sm text-muted-foreground">{item}</p></div>))}
+                <div className="flex flex-col gap-2">
+                  {missing.map((item) => (
+                    <div key={String(item)} className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-300 flex-shrink-0" />
+                      <p className="text-sm text-slate-400">{item}</p>
+                    </div>
+                  ))}
+                </div>
               </>
             )
           })()}
         </div>
 
+        {/* Recent Registrations */}
         <div className={CARD} style={CARD_STYLE}>
-          <h2 className="font-bold text-lg tracking-tight mb-4">My Recent Registrations</h2>
+          <p className="text-base font-bold text-slate-800 mb-4">My Recent Registrations</p>
           {regsLoading ? regsSkeleton : (
-            <div>
-              {recentRegs.length === 0 && <p className="text-sm text-muted-foreground">No registrations yet. <NextLink href="/dashboard/events" className="text-primary font-semibold hover:underline">Browse events →</NextLink></p>}
-              {recentRegs.map((r, i) => (
-                <div key={r._id} className={`flex items-start gap-4 py-3 ${i < recentRegs.length - 1 ? "border-b border-slate-200/12" : ""}`}>
-                  <div className="mt-0.5 flex-shrink-0"><CheckCircle size={18} color="#082F49" /></div>
+            <div className="divide-y divide-slate-100">
+              {recentRegs.length === 0 && (
+                <p className="text-sm text-slate-400 py-4">
+                  No registrations yet.{" "}
+                  <NextLink href="/dashboard/events" className="text-brand-teal font-semibold hover:underline">Browse events →</NextLink>
+                </p>
+              )}
+              {recentRegs.map((r) => (
+                <div key={r._id} className="flex items-center gap-3 py-3.5">
+                  <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 grid place-items-center flex-shrink-0">
+                    <span className={`w-2.5 h-2.5 rounded-full ${statusDot[r.status] ?? 'bg-slate-300'}`} />
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium leading-snug">{r.event?.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{r.status} · {new Date(r.createdAt).toLocaleDateString()}</p>
+                    <p className="text-sm font-semibold text-slate-800 truncate">{r.event?.title}</p>
+                    <p className="text-xs text-slate-400 mt-0.5 capitalize">{r.status} · {new Date(r.createdAt).toLocaleDateString()}</p>
                   </div>
                 </div>
               ))}

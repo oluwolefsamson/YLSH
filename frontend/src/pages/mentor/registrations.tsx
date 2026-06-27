@@ -88,7 +88,7 @@ const MentorRegistrationsPage: NextPageWithLayout = () => {
               const showQR = reg.status === 'registered' || reg.status === 'attended'
 
               return (
-                <div key={reg._id} className="rounded-2xl border border-slate-200/18 overflow-hidden">
+                <div key={reg._id} className="rounded-2xl border border-slate-100 overflow-hidden bg-white shadow-sm">
                   <div className="p-4 md:p-5 flex items-start gap-4 flex-wrap">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-2">
@@ -139,7 +139,7 @@ const MentorRegistrationsPage: NextPageWithLayout = () => {
                   )}
 
                   {showQR && isExpanded && (
-                    <div className="border-t border-slate-200/18 p-6 flex flex-col items-center" style={{ backgroundColor: 'rgba(8,47,73,0.03)' }}>
+                    <div className="border-t border-slate-100 p-6 flex flex-col items-center bg-slate-50/60">
                       <p className="text-sm font-semibold text-muted-foreground mb-5 text-center">Present this QR code at the event entrance</p>
                       <div className="p-5 bg-white rounded-2xl shadow-md border border-slate-200/50 inline-block mb-4">
                         <QRCodeSVG id={`qr-${reg.qrToken}`} value={reg.qrToken} size={200} bgColor="#ffffff" fgColor="#0f172a" level="M" />

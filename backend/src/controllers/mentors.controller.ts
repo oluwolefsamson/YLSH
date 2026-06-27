@@ -11,7 +11,7 @@ export const listMentors = async (req: Request, res: Response, next: NextFunctio
     const { category, page = '1', limit = '20' } = req.query as Record<string, string>
     const skip = (parseInt(page) - 1) * parseInt(limit)
 
-    const userFilter: Record<string, unknown> = { role: 'mentor', approvalStatus: 'approved', verificationStatus: 'verified' }
+    const userFilter: Record<string, unknown> = { role: 'mentor', approvalStatus: 'approved' }
 
     const mentorUsers = await User.find(userFilter).select('_id firstName lastName profilePhoto bio organization state').lean()
     const userIds = mentorUsers.map((u) => u._id)

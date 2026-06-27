@@ -11,41 +11,25 @@ interface Props {
 
 const StatCard: FC<Props> = ({ label, value, icon, progress, change, accent = '#082F49' }) => {
   return (
-    <div
-      className="p-5 md:p-6 rounded-2xl backdrop-blur-sm border border-slate-200/16 transition-transform duration-200 hover:-translate-y-0.5"
-      style={{
-        backgroundColor: 'rgba(255,255,255,0.88)',
-        boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
-      }}
-    >
-      <div className={`flex gap-4 items-center ${progress !== undefined ? 'mb-4' : ''}`}>
+    <div className="bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow duration-200">
+      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">{label}</p>
+      <div className="flex items-center gap-3">
         <div
-          className="w-12 h-12 rounded-[14px] grid place-items-center text-white flex-shrink-0"
-          style={{
-            background: `linear-gradient(135deg, ${accent}dd 0%, ${accent} 100%)`,
-            boxShadow: `0 6px 18px ${accent}33`,
-          }}
+          className="w-11 h-11 rounded-full grid place-items-center flex-shrink-0"
+          style={{ backgroundColor: `${accent}18`, color: accent }}
         >
           {icon}
         </div>
-        <div className="flex-1 min-w-0">
-          <p
-            className="text-[11px] font-medium mb-0.5 uppercase tracking-[0.5px] text-muted-foreground"
-          >
-            {label}
-          </p>
-          <p className="font-bold text-[28px] leading-none tracking-[-0.03em] text-foreground">{value}</p>
-          {change && <p className="text-xs font-semibold mt-0.5" style={{ color: '#082F49' }}>{change}</p>}
+        <div>
+          <p className="text-2xl font-extrabold text-slate-800 leading-none tracking-tight">{value}</p>
+          {change && <p className="text-xs font-semibold mt-1" style={{ color: accent }}>{change}</p>}
         </div>
       </div>
       {progress !== undefined && (
-        <div className="h-[5px] rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }}>
+        <div className="mt-4 h-1.5 rounded-full overflow-hidden bg-slate-100">
           <div
-            className="h-full rounded-full"
-            style={{
-              width: `${progress}%`,
-              background: `linear-gradient(90deg, ${accent}aa, ${accent})`,
-            }}
+            className="h-full rounded-full transition-all duration-500"
+            style={{ width: `${progress}%`, backgroundColor: accent }}
           />
         </div>
       )}

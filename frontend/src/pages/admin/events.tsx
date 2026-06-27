@@ -21,6 +21,26 @@ const categoryBadge: Record<string, string> = {
   Conference: 'bg-blue-100 text-blue-700',
 }
 
+function formatEventDate(date: string, endDate?: string): string {
+  const start = new Date(date + 'T00:00:00')
+  if (!endDate) return start.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  const end = new Date(endDate + 'T00:00:00')
+  if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+    return `${start.getDate()}–${end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`
+  }
+  return `${start.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} – ${end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`
+}
+
+function formatEventDateLong(date: string, endDate?: string): string {
+  const start = new Date(date + 'T00:00:00')
+  if (!endDate) return start.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  const end = new Date(endDate + 'T00:00:00')
+  if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+    return `${start.getDate()}–${end.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`
+  }
+  return `${start.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })} – ${end.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`
+}
+
 const TABS = ['All', 'Upcoming', 'Past']
 const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors'
 
@@ -28,7 +48,7 @@ const AdminEventsPage: NextPageWithLayout = () => {
   const [tab, setTab] = useState(0)
   const [menuId, setMenuId] = useState<string | null>(null)
   const [showCreate, setShowCreate] = useState(false)
-  const [createForm, setCreateForm] = useState({ title: '', date: '', venue: '', category: 'Summit', capacity: '' })
+  const [createForm, setCreateForm] = useState({ title: '', date: '', endDate: '', venue: '', category: 'Summit', capacity: '' })
   const [limitCapacity, setLimitCapacity] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; title: string } | null>(null)
   const [viewId, setViewId] = useState<string | null>(null)
@@ -66,14 +86,19 @@ const AdminEventsPage: NextPageWithLayout = () => {
       toast.error('Please fill all required fields')
       return
     }
+    if (createForm.endDate && createForm.endDate < createForm.date) {
+      toast.error('End date must be on or after the start date')
+      return
+    }
     if (limitCapacity && !createForm.capacity) {
       toast.error('Please enter a capacity or disable the limit')
       return
     }
     const payload: Parameters<typeof createEvent.mutate>[0] = { title: createForm.title, date: createForm.date, venue: createForm.venue, category: createForm.category }
+    if (createForm.endDate) payload.endDate = createForm.endDate
     if (limitCapacity && createForm.capacity) payload.capacity = Number(createForm.capacity)
     createEvent.mutate(payload, {
-      onSuccess: () => { toast.success('Event created'); setShowCreate(false); setCreateForm({ title: '', date: '', venue: '', category: 'Summit', capacity: '' }); setLimitCapacity(false) },
+      onSuccess: () => { toast.success('Event created'); setShowCreate(false); setCreateForm({ title: '', date: '', endDate: '', venue: '', category: 'Summit', capacity: '' }); setLimitCapacity(false) },
       onError: () => toast.error('Failed to create event'),
     })
   }
@@ -127,7 +152,7 @@ const AdminEventsPage: NextPageWithLayout = () => {
         subtitle="Create, edit, and manage all YLSH events and sessions."
         icon={<CalendarCheck size={14} />}
         action={
-          <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/50 text-white text-sm font-bold hover:bg-white/10 transition-colors">
+          <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#082F49] text-white text-sm font-bold shadow-md hover:bg-[#061e35] transition-colors">
             <Plus size={16} /> Create event
           </button>
         }
@@ -146,9 +171,18 @@ const AdminEventsPage: NextPageWithLayout = () => {
             <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by title, venue or category..." className="w-full h-10 pl-9 pr-4 rounded-full border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors" />
           </div>
         </div>
-        <div className="flex gap-1 border-b border-slate-200/18 mb-5 overflow-x-auto">
+        <div className="flex flex-wrap gap-2 mb-5">
           {TABS.map((label, i) => (
-            <button key={label} onClick={() => setTab(i)} className={cn('px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors whitespace-nowrap', tab === i ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
+            <button
+              key={label}
+              onClick={() => setTab(i)}
+              className={cn(
+                'px-4 py-2 rounded-lg text-sm font-semibold border transition-colors whitespace-nowrap',
+                tab === i
+                  ? 'bg-primary text-white border-primary'
+                  : 'bg-background text-foreground border-input hover:bg-muted'
+              )}
+            >
               {label} ({tabCounts[i]})
             </button>
           ))}
@@ -156,52 +190,58 @@ const AdminEventsPage: NextPageWithLayout = () => {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12"><Loader2 size={24} className="animate-spin text-primary" /></div>
-        ) : filtered.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-10 text-center">No events in this category.</p>
         ) : (
-          <div className="flex flex-col gap-3">
-            {filtered.map((event) => (
-              <div key={event._id} className="p-4 rounded-xl border border-slate-200/18">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-2">
-                      <p className="font-bold">{event.title}</p>
-                      <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', categoryBadge[event.category] ?? 'bg-muted text-muted-foreground')}>{event.category}</span>
-                      <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border', event.status === 'upcoming' ? 'border-blue-300 text-[#082F49]' : 'border-border text-muted-foreground')}>{event.status}</span>
-                    </div>
-                    <div className="flex gap-4 flex-wrap mb-3">
-                      <div className="flex items-center gap-1.5"><Calendar size={13} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{new Date(event.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
-                      <div className="flex items-center gap-1.5"><MapPin size={13} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{event.venue}</span></div>
-                    </div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-muted-foreground">Registration</span>
-                      <span className="text-xs text-muted-foreground">{event.capacity ? `${event.registeredCount}/${event.capacity}` : `${event.registeredCount} registered · Unlimited`}</span>
-                    </div>
-                    {event.capacity ? (
-                      <div className="h-[6px] rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }}>
-                        <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min((event.registeredCount / event.capacity) * 100, 100)}%` }} />
+          <div className="w-full overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Event</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Category</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Status</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Date</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Venue</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Registration</th>
+                  <th className="px-4 py-3 text-right font-semibold text-slate-600 whitespace-nowrap">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filtered.length === 0 ? (
+                  <tr><td colSpan={7} className="py-16 text-center text-muted-foreground">No events in this category.</td></tr>
+                ) : filtered.map((event) => (
+                  <tr key={event._id} className="transition-colors hover:bg-slate-50/60">
+                    <td className="px-4 py-3.5 font-semibold text-foreground">{event.title}</td>
+                    <td className="px-4 py-3.5">
+                      <span className={cn('inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold', categoryBadge[event.category] ?? 'bg-muted text-muted-foreground')}>{event.category}</span>
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <span className={cn('inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold capitalize border', event.status === 'upcoming' ? 'border-blue-200 bg-blue-50 text-[#082F49]' : 'border-slate-200 bg-slate-50 text-slate-600')}>
+                        {event.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3.5 text-muted-foreground whitespace-nowrap">{formatEventDate(event.date, event.endDate)}</td>
+                    <td className="px-4 py-3.5 text-muted-foreground whitespace-nowrap">{event.venue}</td>
+                    <td className="px-4 py-3.5 min-w-[220px]">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="text-xs text-muted-foreground">Registration</span>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">{event.capacity ? `${event.registeredCount}/${event.capacity}` : `${event.registeredCount} registered - Unlimited`}</span>
                       </div>
-                    ) : (
-                      <div className="h-[6px] rounded-full" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }} />
-                    )}
-                  </div>
-                  <div className="relative flex-shrink-0">
-                    <button onClick={() => setMenuId(menuId === event._id ? null : event._id)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
-                      <MoreVertical size={16} className="text-muted-foreground" />
-                    </button>
-                    {menuId === event._id && (
-                      <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-xl shadow-lg py-1 z-50 min-w-[180px]">
-                        <button onClick={() => { setViewId(event._id); setMenuId(null) }} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">View details</button>
-                        <button onClick={() => handleExportCSV(event._id, event.title)} disabled={exportingId === event._id} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors flex items-center gap-2 disabled:opacity-50">
-                          {exportingId === event._id ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />} Export CSV
-                        </button>
-                        <button onClick={() => { setConfirmDelete({ id: event._id, title: event.title }); setMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete event</button>
+                      {event.capacity ? (
+                        <div className="h-[6px] rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }}>
+                          <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min((event.registeredCount / event.capacity) * 100, 100)}%` }} />
+                        </div>
+                      ) : <div className="h-[6px] rounded-full" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }} />}
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button onClick={() => { setViewId(event._id); setMenuId(null) }} className="w-8 h-8 flex items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-primary hover:border-primary/40 transition-colors" title="View details"><MoreVertical size={14} /></button>
+                        <button onClick={() => handleExportCSV(event._id, event.title)} disabled={exportingId === event._id} className="w-8 h-8 flex items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-primary hover:border-primary/40 transition-colors disabled:opacity-50" title="Export CSV">{exportingId === event._id ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}</button>
+                        <button onClick={() => { setConfirmDelete({ id: event._id, title: event.title }); setMenuId(null) }} className="w-8 h-8 flex items-center justify-center rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition-colors" title="Delete event"><X size={14} /></button>
                       </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
@@ -258,7 +298,7 @@ const AdminEventsPage: NextPageWithLayout = () => {
                       <Calendar size={15} className="text-primary mt-0.5 flex-shrink-0" />
                       <div>
                         <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Date</p>
-                        <p className="text-sm font-semibold">{new Date(viewEvent.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                        <p className="text-sm font-semibold">{formatEventDateLong(viewEvent.date, viewEvent.endDate)}</p>
                         {viewEvent.time && <p className="text-xs text-muted-foreground mt-0.5">{viewEvent.time}</p>}
                       </div>
                     </div>
@@ -344,9 +384,15 @@ const AdminEventsPage: NextPageWithLayout = () => {
                 <label className="block text-sm font-semibold mb-1.5">Event title <span className="text-red-500">*</span></label>
                 <input value={createForm.title} onChange={(e) => setCreateForm((p) => ({ ...p, title: e.target.value }))} placeholder="e.g. Youth Innovation Forum 2026" className={INPUT} />
               </div>
-              <div>
-                <label className="block text-sm font-semibold mb-1.5">Date <span className="text-red-500">*</span></label>
-                <DatePicker value={createForm.date} onChange={(v) => setCreateForm((p) => ({ ...p, date: v }))} placeholder="Pick a date" />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5">Start date <span className="text-red-500">*</span></label>
+                  <DatePicker value={createForm.date} onChange={(v) => setCreateForm((p) => ({ ...p, date: v, endDate: p.endDate && p.endDate < v ? '' : p.endDate }))} placeholder="Pick start date" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5">End date <span className="text-muted-foreground font-normal">(optional)</span></label>
+                  <DatePicker value={createForm.endDate} onChange={(v) => setCreateForm((p) => ({ ...p, endDate: v }))} placeholder="Pick end date" />
+                </div>
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1.5">

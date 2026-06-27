@@ -106,7 +106,7 @@ const MentorshipPage: NextPageWithLayout = () => {
               const mentorUser = session.mentor as User
               const mentorName = mentorUser ? `${mentorUser.firstName} ${mentorUser.lastName}` : 'Mentor'
               return (
-                <div key={session._id} className="flex items-start justify-between gap-4 p-4 rounded-xl border border-slate-200/18 flex-wrap">
+                <div key={session._id} className="flex items-start justify-between gap-4 py-3.5 border-b border-slate-100 last:border-0 flex-wrap">
                   <div className="flex-1 min-w-0">
                     <p className="font-bold">{session.topic}</p>
                     <p className="text-sm text-muted-foreground mb-2">with {mentorName}</p>
@@ -170,7 +170,7 @@ const MentorshipPage: NextPageWithLayout = () => {
               const name = user ? `${user.firstName} ${user.lastName}` : 'Mentor'
               const bio = mentor.bio || user?.bio || ''
               return (
-                <div key={mentor._id} className="flex flex-col p-5 rounded-xl border border-slate-200/18">
+                <div key={mentor._id} className="flex flex-col p-5 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-start gap-3 mb-3">
                     <div className="w-13 h-13 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0" style={{ width: 52, height: 52, backgroundColor: color }}>
                       {user?.profilePhoto ? <img src={user.profilePhoto} alt={name} className="w-full h-full rounded-full object-cover" /> : initials}
@@ -253,7 +253,7 @@ const MentorshipPage: NextPageWithLayout = () => {
                 <span className="text-xs text-muted-foreground">{new Date(joinModal.scheduledAt).toLocaleString()}</span>
               </div>
             </div>
-            <div className="p-4 rounded-xl border border-primary/20 mb-5" style={{ backgroundColor: 'rgba(8,47,73,0.05)' }}>
+            <div className="p-4 rounded-xl border border-brand-teal/20 mb-5 bg-brand-teal/5">
               <div className="flex items-center gap-2 mb-2"><Video size={16} className="text-primary" /><p className="text-sm font-semibold text-primary">Google Meet</p></div>
               <p className="font-mono text-sm text-muted-foreground">{joinModal.meetLink}</p>
             </div>

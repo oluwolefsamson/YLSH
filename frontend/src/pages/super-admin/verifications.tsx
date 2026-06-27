@@ -2,7 +2,6 @@
 import { UserCheck, Search, CheckCircle, Clock, XCircle, Calendar, Mail, Loader2, Building } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
 import { toast } from 'sonner'
@@ -79,16 +78,15 @@ const SuperAdminVerificationsPage: NextPageWithLayout = () => {
               className="w-full h-10 pl-9 pr-4 rounded-full border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
             />
           </div>
-          <Select value={filterValue} onValueChange={setFilterValue}>
-            <SelectTrigger className="w-44">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {FILTER_OPTIONS.map((label, i) => (
-                <SelectItem key={label} value={FILTER_VALUES[i]}>{label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex flex-wrap gap-2">
+            {FILTER_OPTIONS.map((label, i) => (
+              <button key={label} onClick={() => setFilterValue(FILTER_VALUES[i])}
+                className={cn('px-4 py-2 rounded-lg text-sm font-semibold border transition-colors whitespace-nowrap',
+                  filterValue === FILTER_VALUES[i] ? 'bg-primary text-white border-primary' : 'bg-background text-foreground border-input hover:bg-muted'
+                )}
+              >{label}</button>
+            ))}
+          </div>
         </div>
 
         {filterValue === 'pending' && (
@@ -105,7 +103,7 @@ const SuperAdminVerificationsPage: NextPageWithLayout = () => {
               </div>
             )}
             {filtered.map((mentor) => (
-              <div key={mentor._id} className="flex items-start justify-between gap-4 p-4 rounded-xl border border-slate-200/18 flex-wrap">
+              <div key={mentor._id} className="flex items-start justify-between gap-4 p-4 rounded-2xl border border-slate-100 bg-white shadow-sm flex-wrap">
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-sm">{mentor.firstName} {mentor.lastName}</p>
                   <div className="flex items-center gap-1.5 mt-0.5">

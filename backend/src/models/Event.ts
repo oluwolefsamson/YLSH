@@ -6,6 +6,7 @@ const eventSchema = new Schema<IEvent>(
     title: { type: String, required: true, trim: true },
     description: { type: String },
     date: { type: Date, required: true },
+    endDate: { type: Date },
     time: { type: String },
     venue: { type: String, required: true },
     category: {

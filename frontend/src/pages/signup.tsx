@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect, Fragment } from "react"
+import { useState, Fragment } from "react"
 import type { NextPage } from "next"
 import { useRouter } from "next/router"
 import { toast } from "sonner"
 import {
   Mail, Lock, User, BadgeCheck, Eye, EyeOff,
-  ShieldCheck, ChevronDown, Check,
+  ShieldCheck, Check,
 } from "lucide-react"
 import AuthShell from "@/components/auth/auth-shell"
 import AuthFormCard from "@/components/auth/auth-form-card"
@@ -14,7 +14,7 @@ import { useAuth, ROLE_REDIRECTS } from "@/contexts/AuthContext"
 import { verifyNIN, register } from "@/services/endpoints/auth/auth"
 import type { SignupRole } from "@/types"
 
-const steps = ["Verify NIN", "Personal info", "Account details"]
+const steps = ["Choose role", "Verify NIN", "Personal info", "Account details"]
 
 const SignUpPage: NextPage = () => {
   const router = useRouter()
@@ -22,6 +22,8 @@ const SignUpPage: NextPage = () => {
   const [activeStep, setActiveStep] = useState(0)
   const [isCreated, setIsCreated] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [pendingStep, setPendingStep] = useState<number | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -33,33 +35,28 @@ const SignUpPage: NextPage = () => {
   const [organization, setOrganization] = useState("")
 
   const [role, setRole] = useState<SignupRole>("Participant")
-  const [roleOpen, setRoleOpen] = useState(false)
-  const roleRef = useRef<HTMLDivElement>(null)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const roles: SignupRole[] = ["Participant", "Mentor"]
 
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (roleRef.current && !roleRef.current.contains(e.target as Node)) setRoleOpen(false)
-    }
-    document.addEventListener("mousedown", handler)
-    return () => document.removeEventListener("mousedown", handler)
-  }, [])
-
   const isBusy = isCreated || isSubmitting
 
   const handleNext = async () => {
     if (isBusy) return
+    if (activeStep === 0) {
+      setPendingStep(1)
+      setConfirmOpen(true)
+      return
+    }
     setIsSubmitting(true)
     try {
-      if (activeStep === 0) {
+      if (activeStep === 1) {
         if (!/^\d{11}$/.test(nin.trim())) { toast.error("NIN must be exactly 11 digits"); return }
         await verifyNIN(nin.trim())
         toast.success("NIN verified")
       }
-      if (activeStep === 1) {
+      if (activeStep === 2) {
         if (!firstName || !lastName || !email) { toast.error("Please fill all required fields"); return }
       }
       setActiveStep((s) => Math.min(s + 1, steps.length - 1))
@@ -73,8 +70,6 @@ const SignUpPage: NextPage = () => {
 
   const handleSubmit = async () => {
     if (activeStep !== steps.length - 1 || isBusy) return
-    if (password !== confirmPassword) { toast.error("Passwords do not match"); return }
-    if (password.length < 6) { toast.error("Password must be at least 6 characters"); return }
     setIsSubmitting(true); setIsCreated(true)
     try {
       const { token, user } = await register({ firstName, lastName, email, phone, organization, nin, role: role.toLowerCase(), username, password })
@@ -128,6 +123,42 @@ const SignUpPage: NextPage = () => {
           </div>
 
           {activeStep === 0 && (
+            <div className="flex flex-col gap-4">
+              <div>
+                <p className="font-bold mb-1">Step 1: Choose your role</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">Pick whether you are creating a participant account or a mentor account.</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {roles.map((r) => {
+                  const selected = role === r
+                  return (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setRole(r)}
+                      disabled={isBusy}
+                      className={cn(
+                        'flex items-center justify-between gap-3 p-4 rounded-2xl border-2 text-left transition-colors',
+                        selected ? 'border-primary bg-primary/8' : 'border-slate-200 bg-white hover:bg-slate-50'
+                      )}
+                    >
+                      <div>
+                        <p className="font-bold text-sm">{r}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {r === 'Participant'
+                            ? 'Access events, learning, certificates, and opportunities.'
+                            : 'Create a mentor profile and get reviewed before appearing publicly.'}
+                        </p>
+                      </div>
+                      {selected && <Check size={16} className="text-primary flex-shrink-0" />}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {activeStep === 1 && (
             <div className="p-5 rounded-2xl bg-foreground/3 border border-slate-200/18 flex flex-col gap-4">
               <div><p className="font-bold mb-1">Step 1: Verify your NIN</p><p className="text-sm text-muted-foreground leading-relaxed">Start with identity verification. YLSH uses the NIN to support secure onboarding without storing raw sensitive values.</p></div>
               <div className="relative"><ShieldCheck size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" /><input type="text" placeholder="Enter your 11-digit NIN" value={nin} onChange={(e) => setNin(e.target.value.replace(/\D/g, "").slice(0, 11))} disabled={isBusy} maxLength={11} className={INPUT} /></div>
@@ -135,7 +166,7 @@ const SignUpPage: NextPage = () => {
             </div>
           )}
 
-          {activeStep === 1 && (
+          {activeStep === 2 && (
             <div className="flex flex-col gap-4">
               <div><p className="font-bold mb-1">Step 2: Personal information</p><p className="text-sm text-muted-foreground leading-relaxed">Add the profile details needed for your participant dashboard and future event interactions.</p></div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -148,21 +179,12 @@ const SignUpPage: NextPage = () => {
             </div>
           )}
 
-          {activeStep === 2 && (
+          {activeStep === 3 && (
             <div className="flex flex-col gap-4">
               <div><p className="font-bold mb-1">Step 3: Account details and review</p><p className="text-sm text-muted-foreground leading-relaxed">Finish by setting your role, password, and preferences.</p></div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div ref={roleRef} className="relative">
-                  <button type="button" disabled={isBusy} onClick={() => setRoleOpen((v) => !v)} className={cn("w-full h-11 px-4 rounded-xl border border-input bg-background text-sm text-left flex items-center justify-between gap-2 transition-colors disabled:opacity-50", roleOpen ? "border-primary ring-2 ring-primary/20" : "hover:border-slate-300")}>
-                    <span className="font-medium">{role}</span><ChevronDown size={15} className={cn("text-muted-foreground transition-transform", roleOpen && "rotate-180")} />
-                  </button>
-                  {roleOpen && (
-                    <div className="absolute z-30 top-[calc(100%+6px)] left-0 w-full rounded-xl border border-slate-200 bg-white shadow-lg overflow-hidden">
-                      {roles.map((r) => (<button key={r} type="button" onClick={() => { setRole(r); setRoleOpen(false) }} className={cn("w-full px-4 py-2.5 text-sm text-left flex items-center justify-between gap-2 transition-colors", r === role ? "bg-primary/8 text-primary font-semibold" : "hover:bg-slate-50 text-foreground")}>{r}{r === role && <Check size={14} className="text-primary" />}</button>))}
-                    </div>
-                  )}
-                </div>
                 <div className="relative"><BadgeCheck size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" /><input placeholder="@username" value={username} onChange={(e) => setUsername(e.target.value)} disabled={isBusy} className={INPUT} /></div>
+                <div className="h-11 px-4 rounded-xl border border-input bg-muted flex items-center text-sm text-muted-foreground">Role selected: <span className="ml-1 font-semibold text-foreground">{role}</span></div>
               </div>
               {[
                 { key: "pw", val: password, set: setPassword, show: showPassword, toggle: () => setShowPassword((v) => !v), placeholder: "Create a strong password" },
@@ -183,12 +205,58 @@ const SignUpPage: NextPage = () => {
             {activeStep < steps.length - 1 ? (
               <button type="button" onClick={handleNext} disabled={isBusy} className="px-5 py-2.5 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors">{isSubmitting ? "Verifying..." : "Continue"}</button>
             ) : (
-              <button type="button" onClick={handleSubmit} disabled={isBusy} className="px-5 py-2.5 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors">{isSubmitting ? "Creating..." : "Create Account"}</button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (password !== confirmPassword) { toast.error("Passwords do not match"); return }
+                  if (password.length < 6) { toast.error("Password must be at least 6 characters"); return }
+                  setConfirmOpen(true)
+                }}
+                disabled={isBusy}
+                className="px-5 py-2.5 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors"
+              >
+                {isSubmitting ? "Creating..." : "Create Account"}
+              </button>
             )}
           </div>
           {activeStep === steps.length - 1 && (<label className="flex items-start gap-2 text-sm cursor-pointer"><input type="checkbox" defaultChecked className="accent-primary mt-0.5" />I agree to the YLSH terms and data verification policy.</label>)}
         </div>
       </AuthFormCard>
+
+      {confirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}>
+          <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl p-6">
+            <h2 className="text-lg font-bold mb-2">Confirm account creation</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Are you sure you want to create a <span className="font-semibold text-foreground">{role.toLowerCase()}</span> account with this information?
+            </p>
+            <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 mb-5">
+              <p className="text-sm font-semibold">{firstName} {lastName}</p>
+              <p className="text-xs text-muted-foreground">{email}</p>
+              <p className="text-xs text-muted-foreground mt-1">Role: {role}</p>
+            </div>
+            <div className="flex gap-3">
+              <button type="button" onClick={() => setConfirmOpen(false)} className="flex-1 h-11 rounded-full border border-border font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmOpen(false)
+                  if (pendingStep !== null) {
+                    setActiveStep(pendingStep)
+                    setPendingStep(null)
+                  } else {
+                    void handleSubmit()
+                  }
+                }}
+                disabled={isBusy}
+                className="flex-1 h-11 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+              >
+                {pendingStep === 1 ? "Yes, continue" : isSubmitting ? "Creating..." : "Yes, create"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AuthShell>
   )
 }

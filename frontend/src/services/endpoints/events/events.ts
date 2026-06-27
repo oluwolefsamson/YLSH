@@ -5,6 +5,7 @@ export interface Event {
   title: string
   description: string
   date: string
+  endDate?: string
   time: string
   venue: string
   category: 'Summit' | 'Workshop' | 'Masterclass' | 'Bootcamp' | 'Conference'
@@ -27,6 +28,7 @@ export interface CreateEventPayload {
   title: string
   description?: string
   date: string
+  endDate?: string
   time?: string
   venue: string
   category?: string

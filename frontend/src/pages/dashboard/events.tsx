@@ -3,13 +3,12 @@ import { toast } from "sonner"
 import { CalendarCheck, MapPin, Calendar, Users, QrCode, Clock, X, CheckCircle } from "lucide-react"
 import { DashboardLayout } from "@/components/layout"
 import { PageHeader, StatCard } from "@/components/dashboard"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { NextPageWithLayout } from "@/interfaces/layout"
 import { cn } from "@/utils"
 import { useEvents, useRegisterForEvent, useCancelRegistration } from "@/services/hooks/events/events"
 import { useMyRegistrations } from "@/services/hooks/registrations/registrations"
 import type { Event } from "@/services/endpoints/events/events"
-import { CARD, CARD_STYLE } from '@/utils/card-styles'
+import { CARD, CARD_STYLE, ITEM_CARD } from '@/utils/card-styles'
 
 
 const categoryBadge: Record<string, string> = {
@@ -68,17 +67,16 @@ const EventsPage: NextPageWithLayout = () => {
       </div>
 
       <div className={cn(CARD, "mb-5")} style={CARD_STYLE}>
-        <div className="mb-5">
-          <Select value={tabValue} onValueChange={setTabValue}>
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {TABS.map((label, i) => (
-                <SelectItem key={label} value={TAB_VALUES[i]}>{label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex flex-wrap gap-2 mb-5">
+          {TABS.map((label, i) => (
+            <button key={label} onClick={() => setTabValue(TAB_VALUES[i])}
+              className={cn('px-4 py-2 rounded-lg text-sm font-semibold border transition-colors whitespace-nowrap',
+                tabValue === TAB_VALUES[i] ? 'bg-primary text-white border-primary' : 'bg-background text-foreground border-input hover:bg-muted'
+              )}
+            >
+              {label}
+            </button>
+          ))}
         </div>
         {eventsLoading ? <div className="text-center py-12 text-muted-foreground">Loading events...</div> : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -89,7 +87,7 @@ const EventsPage: NextPageWithLayout = () => {
               const isFull = event.capacity != null && event.registeredCount >= event.capacity
               const isPast = event.status === "past"
               return (
-                <div key={event._id} className="flex flex-col p-5 rounded-xl border border-slate-200/18">
+                <div key={event._id} className={ITEM_CARD}>
                   <div className="flex items-start justify-between mb-3">
                     <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold", categoryBadge[event.category] ?? "bg-muted text-muted-foreground")}>{event.category}</span>
                     <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border", isFull ? "border-red-300 text-red-600" : "border-blue-300 text-[#082F49]")}>{isFull ? "Full" : "Open"}</span>
@@ -130,11 +128,11 @@ const EventsPage: NextPageWithLayout = () => {
         ) : (
           <div className="flex flex-col gap-3">
             {registrations.map((reg) => (
-              <div key={reg._id} className="rounded-xl border border-slate-200/18 overflow-hidden">
+              <div key={reg._id} className="rounded-2xl border border-slate-100 overflow-hidden bg-white shadow-sm">
                 <div className="flex items-center justify-between gap-4 p-4 flex-wrap">
                   <div><p className="font-bold">{reg.event?.title}</p><p className="text-sm text-muted-foreground">{reg.event?.date ? new Date(reg.event.date).toLocaleDateString() : ""}</p></div>
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200/22 text-sm">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 text-sm">
                       <QrCode size={14} className="text-muted-foreground" />
                       <span className="font-mono text-xs font-semibold">{reg.qrToken}</span>
                     </div>
@@ -144,8 +142,8 @@ const EventsPage: NextPageWithLayout = () => {
                   </div>
                 </div>
                 {expandedQR === reg.qrToken && (
-                  <div className="border-t border-slate-200/18 p-5 text-center" style={{ backgroundColor: "rgba(8,47,73,0.04)" }}>
-                    <div className="w-28 h-28 mx-auto rounded-2xl border-4 border-primary/25 grid place-items-center mb-3" style={{ backgroundColor: "rgba(8,47,73,0.06)" }}>
+                  <div className="border-t border-slate-100 p-5 text-center bg-slate-50/60">
+                    <div className="w-28 h-28 mx-auto rounded-2xl border-4 border-brand-teal/25 bg-brand-teal/8 grid place-items-center mb-3">
                       <QrCode size={56} className="text-primary" />
                     </div>
                     <p className="font-mono text-sm font-bold text-primary mb-1">{reg.qrToken}</p>

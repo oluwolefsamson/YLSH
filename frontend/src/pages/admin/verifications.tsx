@@ -2,8 +2,8 @@
 import { UserCheck, Search, CheckCircle, Clock, XCircle, Calendar, Mail, Loader2 } from 'lucide-react'
 import { AdminLayout } from '@/components/layout'
 import { PageHeader, StatCard } from '@/components/dashboard'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { NextPageWithLayout } from '@/interfaces/layout'
+import { cn } from '@/utils'
 import { toast } from 'sonner'
 import { usePendingMentors, useApproveMentor, useDeclineMentor } from '@/services/hooks/users/users'
 import { CARD, CARD_STYLE } from '@/utils/card-styles'
@@ -80,74 +80,78 @@ const AdminVerificationsPage: NextPageWithLayout = () => {
           </div>
         </div>
 
-        <div className="mb-5">
-          <Select value={filterValue} onValueChange={setFilterValue}>
-            <SelectTrigger className="w-44">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {FILTER_OPTIONS.map((label, i) => (
-                <SelectItem key={label} value={FILTER_VALUES[i]}>{label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex flex-wrap gap-2 mb-5">
+          {FILTER_OPTIONS.map((label, i) => (
+            <button key={label} onClick={() => setFilterValue(FILTER_VALUES[i])}
+              className={cn('px-4 py-2 rounded-lg text-sm font-semibold border transition-colors whitespace-nowrap',
+                filterValue === FILTER_VALUES[i] ? 'bg-primary text-white border-primary' : 'bg-background text-foreground border-input hover:bg-muted'
+              )}
+            >{label}</button>
+          ))}
         </div>
 
         {filterValue === 'pending' && (
-          <div className="flex flex-col gap-3">
-            {isLoading && (
+          <div className="w-full overflow-x-auto">
+            {isLoading ? (
               <div className="py-12 flex items-center justify-center gap-3 text-muted-foreground">
-                <Loader2 size={18} className="animate-spin" /> Loading pending mentorsâ€¦
+                <Loader2 size={18} className="animate-spin" /> Loading pending mentors…
               </div>
+            ) : isError ? (
+              <div className="py-12 text-center text-red-500">Failed to load mentor applications.</div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200">
+                    <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Mentor</th>
+                    <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Email</th>
+                    <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Organization</th>
+                    <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Applied</th>
+                    <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Status</th>
+                    <th className="px-4 py-3 text-right font-semibold text-slate-600 whitespace-nowrap">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filtered.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-16 text-center text-muted-foreground">
+                        {search ? 'No results match your search.' : 'No pending mentor applications.'}
+                      </td>
+                    </tr>
+                  ) : filtered.map((mentor) => (
+                    <tr key={mentor._id} className="transition-colors hover:bg-slate-50/60">
+                      <td className="px-4 py-3.5 font-semibold text-foreground">{mentor.firstName} {mentor.lastName}</td>
+                      <td className="px-4 py-3.5 text-muted-foreground">{mentor.email}</td>
+                      <td className="px-4 py-3.5 text-muted-foreground">{mentor.organization ?? '—'}</td>
+                      <td className="px-4 py-3.5 text-muted-foreground whitespace-nowrap">{new Date(mentor.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                      <td className="px-4 py-3.5">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                          <Clock size={11} /> Pending
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => void handleApprove(mentor._id, `${mentor.firstName} ${mentor.lastName}`)}
+                            disabled={approve.isPending}
+                            className="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-bold hover:bg-[#061e35] disabled:opacity-60 transition-colors flex items-center gap-1.5"
+                          >
+                            {approve.isPending ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle size={11} />}
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => setDeclineId(mentor._id)}
+                            disabled={decline.isPending}
+                            className="px-4 py-1.5 rounded-full border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 disabled:opacity-60 transition-colors flex items-center gap-1.5"
+                          >
+                            <XCircle size={11} /> Decline
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
-            {isError && <div className="py-12 text-center text-red-500">Failed to load mentor applications.</div>}
-            {!isLoading && !isError && filtered.length === 0 && (
-              <div className="py-12 text-center text-muted-foreground">
-                {search ? 'No results match your search.' : 'No pending mentor applications.'}
-              </div>
-            )}
-            {filtered.map((mentor) => (
-              <div key={mentor._id} className="flex items-start justify-between gap-4 p-4 rounded-xl border border-slate-200/18 flex-wrap">
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm">{mentor.firstName} {mentor.lastName}</p>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <Mail size={12} className="text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">{mentor.email}</p>
-                  </div>
-                  <div className="flex flex-wrap gap-3 mt-2">
-                    {mentor.organization && (
-                      <span className="text-xs text-muted-foreground">{mentor.organization}</span>
-                    )}
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Calendar size={11} />
-                      Applied {new Date(mentor.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 flex-wrap justify-end">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
-                    <Clock size={11} /> Pending
-                  </span>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => void handleApprove(mentor._id, `${mentor.firstName} ${mentor.lastName}`)}
-                      disabled={approve.isPending}
-                      className="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-bold hover:bg-[#061e35] disabled:opacity-60 transition-colors flex items-center gap-1.5"
-                    >
-                      {approve.isPending ? <Loader2 size={11} className="animate-spin" /> : <CheckCircle size={11} />}
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => setDeclineId(mentor._id)}
-                      disabled={decline.isPending}
-                      className="px-4 py-1.5 rounded-full border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 disabled:opacity-60 transition-colors flex items-center gap-1.5"
-                    >
-                      <XCircle size={11} /> Decline
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         )}
 

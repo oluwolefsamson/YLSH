@@ -60,9 +60,9 @@ const CertificatesPage: NextPageWithLayout = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {certificates.map((cert) => (
-            <div key={cert._id} className={cn("flex flex-col p-5 md:p-6 rounded-2xl border border-slate-200/16", cert.status === "pending" ? "opacity-65" : "")} style={CARD_STYLE}>
+            <div key={cert._id} className={cn("flex flex-col p-5 md:p-6 rounded-2xl bg-white border border-slate-100", cert.status === "pending" ? "opacity-65" : "")} style={CARD_STYLE}>
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-[14px] grid place-items-center text-white flex-shrink-0" style={{ background: "linear-gradient(135deg, #061e35 0%, #082F49 100%)" }}>
+                <div className="w-12 h-12 rounded-2xl bg-brand-teal/10 text-brand-teal grid place-items-center flex-shrink-0">
                   <Award size={22} />
                 </div>
                 <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold", cert.status === "issued" ? "bg-blue-100 text-[#082F49]" : "bg-amber-100 text-amber-700")}>
@@ -76,7 +76,7 @@ const CertificatesPage: NextPageWithLayout = () => {
                 Issued: {cert.issuedDate ? new Date(cert.issuedDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Pending generation"}
               </p>
               {cert.verifyCode && (
-                <div className="flex items-center gap-2 p-3 rounded-xl mb-3" style={{ backgroundColor: "rgba(8,47,73,0.06)", border: "1px solid rgba(8,47,73,0.18)" }}>
+                <div className="flex items-center gap-2 p-3 rounded-xl mb-3 bg-slate-50 border border-slate-100">
                   <QrCode size={16} className="text-primary flex-shrink-0" />
                   <span className="font-mono text-xs font-bold text-primary">{cert.verifyCode}</span>
                 </div>
@@ -102,7 +102,7 @@ const CertificatesPage: NextPageWithLayout = () => {
               <h3 className="font-bold text-lg">Certificate Verification</h3>
               <button onClick={() => setVerifyModal(null)} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X size={18} /></button>
             </div>
-            <div className="w-24 h-24 mx-auto rounded-2xl border-4 border-primary/20 grid place-items-center mb-5" style={{ backgroundColor: "rgba(8,47,73,0.06)" }}>
+            <div className="w-24 h-24 mx-auto rounded-2xl border-4 border-brand-teal/20 bg-brand-teal/8 grid place-items-center mb-5">
               <QrCode size={48} className="text-primary" />
             </div>
             <div className="flex flex-col gap-3 mb-5">
@@ -111,7 +111,7 @@ const CertificatesPage: NextPageWithLayout = () => {
                 <div className="p-3 rounded-xl bg-muted"><p className="text-xs text-muted-foreground mb-0.5">Type</p><p className="font-semibold text-sm">{verifyModal.type}</p></div>
                 <div className="p-3 rounded-xl bg-muted"><p className="text-xs text-muted-foreground mb-0.5">Issued</p><p className="font-semibold text-sm">{verifyModal.issuedDate ? new Date(verifyModal.issuedDate).toLocaleDateString() : "Pending"}</p></div>
               </div>
-              <div className="p-3 rounded-xl border border-primary/20" style={{ backgroundColor: "rgba(8,47,73,0.05)" }}>
+              <div className="p-3 rounded-xl border border-brand-teal/15 bg-brand-teal/5">
                 <p className="text-xs text-muted-foreground mb-0.5">Verification Code</p>
                 <p className="font-mono font-bold text-primary">{verifyModal.verifyCode}</p>
               </div>

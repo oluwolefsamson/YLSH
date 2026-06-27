@@ -32,13 +32,16 @@ const AdminAnalyticsPage: NextPageWithLayout = () => {
         {kpis.map((kpi) => (
           <div key={kpi.label} className={CARD} style={CARD_STYLE}>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-11 h-11 rounded-xl grid place-items-center text-white flex-shrink-0 bg-primary">{kpi.icon}</div>
-              <div><p className="text-xs text-muted-foreground">{kpi.label}</p><p className="text-2xl font-bold">{kpi.value}</p></div>
+              <div className="w-11 h-11 rounded-xl bg-brand-teal/10 text-brand-teal grid place-items-center flex-shrink-0">{kpi.icon}</div>
+              <div>
+                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.5px]">{kpi.label}</p>
+                <p className="text-2xl font-extrabold text-slate-800 tracking-tight">{kpi.value}</p>
+              </div>
             </div>
-            <div className="h-[6px] rounded-full overflow-hidden mb-1.5" style={{ backgroundColor: "rgba(148,163,184,0.18)" }}>
-              <div className="h-full rounded-full bg-primary" style={{ width: `${kpi.pct}%` }} />
+            <div className="h-1.5 rounded-full overflow-hidden mb-1.5 bg-slate-100">
+              <div className="h-full rounded-full bg-brand-teal" style={{ width: `${kpi.pct}%` }} />
             </div>
-            <p className="text-xs text-muted-foreground">{kpi.change}</p>
+            <p className="text-xs text-slate-400">{kpi.change}</p>
           </div>
         ))}
       </div>
@@ -54,8 +57,8 @@ const AdminAnalyticsPage: NextPageWithLayout = () => {
                     <span className="text-sm text-muted-foreground">{row.month}</span>
                     <span className="text-sm font-bold">{row.count.toLocaleString()}</span>
                   </div>
-                  <div className="h-2.5 rounded-full overflow-hidden" style={{ backgroundColor: "rgba(148,163,184,0.18)" }}>
-                    <div className="h-full rounded-full bg-primary" style={{ width: `${(row.count / maxGrowth) * 100}%` }} />
+                  <div className="h-2 rounded-full overflow-hidden bg-slate-100">
+                    <div className="h-full rounded-full bg-brand-teal" style={{ width: `${(row.count / maxGrowth) * 100}%` }} />
                   </div>
                 </div>
               ))}
@@ -74,8 +77,8 @@ const AdminAnalyticsPage: NextPageWithLayout = () => {
                     <p className="text-sm font-semibold flex-1 pr-2">{event.title}</p>
                     <span className="text-xs text-muted-foreground flex-shrink-0">{event.attendees}/{event.capacity}</span>
                   </div>
-                  <div className="h-2 rounded-full overflow-hidden mb-1" style={{ backgroundColor: "rgba(148,163,184,0.18)" }}>
-                    <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min((event.attendees / Math.max(event.capacity, 1)) * 100, 100)}%` }} />
+                  <div className="h-2 rounded-full overflow-hidden mb-1 bg-slate-100">
+                    <div className="h-full rounded-full bg-brand-teal" style={{ width: `${Math.min((event.attendees / Math.max(event.capacity, 1)) * 100, 100)}%` }} />
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-muted-foreground">{Math.round((event.attendees / Math.max(event.capacity, 1)) * 100)}% attendance</span>

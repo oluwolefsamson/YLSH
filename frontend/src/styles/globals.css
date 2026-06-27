@@ -4,7 +4,6 @@
 
 @layer base {
   :root {
-    /* shadcn/ui CSS variables — YLSH brand theme */
     --background: 210 40% 98%;
     --foreground: 222 47% 11%;
 
@@ -18,7 +17,6 @@
     --primary: 207 73% 16%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary: #082F49 navy */
     --secondary: 207 73% 16%;
     --secondary-foreground: 0 0% 100%;
 
@@ -37,8 +35,6 @@
 
     --radius: 0.75rem;
 
-    /* Scrollbar */
-    --color-background: #f3f6fb;
     --color-scrollbar: rgb(196, 205, 220);
     --color-scrollbar-hover: #9aa8bc;
   }
@@ -46,28 +42,20 @@
   .dark {
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
-
     --card: 222 47% 14%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222 47% 14%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 207 73% 28%;
     --primary-foreground: 0 0% 100%;
-
     --secondary: 207 40% 25%;
     --secondary-foreground: 0 0% 100%;
-
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
-
     --accent: 207 30% 18%;
     --accent-foreground: 207 73% 70%;
-
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 100%;
-
     --border: 217 33% 22%;
     --input: 217 33% 22%;
     --ring: 207 73% 28%;
@@ -80,13 +68,9 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
     font-family: 'Cabin', system-ui, sans-serif;
-    background:
-      radial-gradient(circle at top left, rgba(8, 47, 73, 0.06), transparent 28%),
-      radial-gradient(circle at top right, rgba(8, 47, 73, 0.05), transparent 24%),
-      linear-gradient(180deg, #f8fbff 0%, #f3f6fb 100%);
-    background-attachment: fixed;
+    background-color: #f1f5f9;
   }
 }
 
@@ -97,7 +81,7 @@
 }
 ::-webkit-scrollbar-track,
 ::-webkit-scrollbar-corner {
-  background: var(--color-background);
+  background: #f1f5f9;
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb {

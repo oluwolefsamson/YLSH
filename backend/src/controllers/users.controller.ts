@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import User from '../models/User'
+import MentorProfile from '../models/MentorProfile'
 import AuditLog from '../models/AuditLog'
 import { UserListQuery, CreateAdminBody } from '../types'
 
@@ -142,6 +143,11 @@ export const approveMentor = async (req: Request, res: Response, next: NextFunct
     user.approvedBy = req.user!._id
     user.approvedAt = new Date()
     await user.save()
+
+    const existingProfile = await MentorProfile.findOne({ user: user._id })
+    if (!existingProfile) {
+      await MentorProfile.create({ user: user._id, isPublic: true })
+    }
 
     await AuditLog.create({
       action: `Mentor approved: ${user.firstName} ${user.lastName} (${user.email})`,

@@ -86,7 +86,7 @@ const OpportunitiesPage: NextPageWithLayout = () => {
                 const opp = app.opportunity
                 const status = (app.status ?? 'pending') as ApplicationStatus
                 return (
-                  <div key={app._id} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 flex-wrap">
+                  <div key={app._id} className="flex items-center justify-between gap-4 py-3.5 border-b border-slate-100 last:border-0 flex-wrap">
                     <div>
                       <p className="font-bold">{opp?.title ?? 'â€”'}</p>
                       <p className="text-sm text-muted-foreground">{opp?.organization ?? 'â€”'} Â· Applied {new Date(app.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
@@ -127,9 +127,9 @@ const OpportunitiesPage: NextPageWithLayout = () => {
             {opportunities.map((opp) => {
               const alreadyApplied = appliedIds.has(opp._id)
               return (
-                <div key={opp._id} className="flex flex-col p-5 rounded-xl border border-slate-200/18">
+                <div key={opp._id} className="flex flex-col p-5 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between mb-3">
-                    <div className="w-11 h-11 rounded-xl flex items-center justify-center text-white flex-shrink-0 bg-primary">{typeIcon[opp.type]}</div>
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${['#127C71','#8b5cf6','#3b82f6','#f59e0b'][['job','internship','grant','scholarship'].indexOf(opp.type)] ?? '#127C71'}15`, color: ['#127C71','#8b5cf6','#3b82f6','#f59e0b'][['job','internship','grant','scholarship'].indexOf(opp.type)] ?? '#127C71' }}>{typeIcon[opp.type]}</div>
                     <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', typeBadge[opp.type])}>
                       {opp.type.charAt(0).toUpperCase() + opp.type.slice(1)}
                     </span>
@@ -138,7 +138,7 @@ const OpportunitiesPage: NextPageWithLayout = () => {
                   <div className="flex items-center gap-1.5 mb-2"><Building size={14} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{opp.organization}</span></div>
                   <p className="text-sm text-muted-foreground mb-3 flex-1 line-clamp-3">{opp.description}</p>
                   {opp.amount && (
-                    <div className="p-3 rounded-xl mb-3" style={{ backgroundColor: 'rgba(8,47,73,0.06)', border: '1px solid rgba(8,47,73,0.18)' }}>
+                    <div className="p-3 rounded-xl mb-3 bg-brand-teal/8 border border-brand-teal/15">
                       <p className="text-sm font-bold text-primary">Award: {opp.amount}</p>
                     </div>
                   )}

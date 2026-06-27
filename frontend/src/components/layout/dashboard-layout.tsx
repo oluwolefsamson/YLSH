@@ -14,6 +14,9 @@ import {
   ShieldCheck,
   X,
   QrCode,
+  Search,
+  Bell,
+  ChevronDown,
 } from 'lucide-react'
 import { cn } from '@/utils'
 import { useAuth, ROLE_REDIRECTS } from '@/contexts/AuthContext'
@@ -21,7 +24,9 @@ import type { NavItem } from '@/types'
 
 interface Props { children: ReactNode }
 
-const drawerWidth = 288
+const SIDEBAR_W = 260
+const COLLAPSED_W = 68
+const ACCENT = '#127C71'
 
 const navItems: NavItem[] = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -39,6 +44,7 @@ const DashboardLayout: FC<Props> = ({ children }) => {
   const { user, isLoading, logout } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [signOutOpen, setSignOutOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(false)
 
   useEffect(() => {
     if (!isLoading && user && user.role !== 'participant') {
@@ -54,34 +60,60 @@ const DashboardLayout: FC<Props> = ({ children }) => {
 
   if (!isLoading && user && user.role !== 'participant') return null
 
-  const sidebar = (
+  const initials = `${user?.firstName?.[0] ?? ''}${user?.lastName?.[0] ?? ''}`.toUpperCase() || '?'
+  const fullName = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'Participant'
+
+  const sidebarContent = (isCollapsed: boolean, allowCollapse = true) => (
     <div className="h-full flex flex-col">
-      {/* Header */}
-      <div
-        className="px-6 py-5 relative overflow-hidden"
-        style={{ background: '#082F49' }}
-      >
-        <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/6 pointer-events-none" />
-        <div className="relative z-10 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-[15px] border-2 border-white/25" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}>
-            {`${user?.firstName?.[0] ?? ''}${user?.lastName?.[0] ?? ''}`.toUpperCase() || '?'}
-          </div>
-          <div className="min-w-0">
-            <p className="text-white font-bold text-sm leading-snug">{user?.firstName} {user?.lastName}</p>
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck size={11} className="text-white/80" />
-              <p className="text-[11px] font-semibold text-white/80">
-                {user?.verificationStatus === 'verified' ? 'Verified' : 'Unverified'} Participant
-              </p>
+      {/* Brand */}
+      <div className={cn('flex items-center h-16 border-b border-slate-100 flex-shrink-0', isCollapsed ? 'px-4 justify-center' : 'px-5 justify-between')}>
+        {!isCollapsed && (
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-8 h-8 rounded-lg grid place-items-center text-white font-extrabold text-sm flex-shrink-0"
+              style={{ backgroundColor: ACCENT }}
+            >
+              Y
             </div>
+            <span className="text-[18px] font-extrabold tracking-tight text-slate-800">
+              YL<span style={{ color: ACCENT }}>SH</span>
+            </span>
           </div>
-        </div>
+        )}
+        {isCollapsed && (
+          <div
+            className="w-8 h-8 rounded-lg grid place-items-center text-white font-extrabold text-sm"
+            style={{ backgroundColor: ACCENT }}
+          >
+            Y
+          </div>
+        )}
+        {allowCollapse && !isCollapsed && (
+          <button
+            onClick={() => setCollapsed(true)}
+            className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+          >
+            <Menu size={17} />
+          </button>
+        )}
+        {allowCollapse && isCollapsed && (
+          <button
+            onClick={() => setCollapsed(false)}
+            className="absolute -right-3 top-[72px] w-6 h-6 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors z-10"
+          >
+            <ChevronDown size={12} className="-rotate-90" />
+          </button>
+        )}
       </div>
 
       {/* Nav */}
-      <div className="px-3 pt-4 pb-2 flex-1 overflow-y-auto">
-        <p className="px-3 text-[10px] font-bold uppercase tracking-[1px] text-muted-foreground mb-2">Navigation</p>
-        <nav className="mt-1 flex flex-col gap-0.5">
+      <div className={cn('flex-1 overflow-y-auto py-4', isCollapsed ? 'px-2' : 'px-3')}>
+        {!isCollapsed && (
+          <p className="px-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">
+            Navigation
+          </p>
+        )}
+        <nav className="flex flex-col gap-0.5">
           {navItems.map((item) => {
             const active = router.pathname === item.href
             const Icon = item.icon
@@ -90,16 +122,18 @@ const DashboardLayout: FC<Props> = ({ children }) => {
                 key={item.label}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
+                title={isCollapsed ? item.label : undefined}
                 className={cn(
-                  'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150',
+                  'flex items-center gap-3 rounded-lg text-sm transition-colors',
+                  isCollapsed ? 'justify-center w-10 h-10 mx-auto' : 'px-3 py-2.5',
                   active
-                    ? 'bg-blue-50 border-l-[3px] border-[#082F49] pl-[9px] text-[#082F49] font-bold'
-                    : 'text-muted-foreground hover:bg-[#082F49]/8 hover:text-[#082F49]'
+                    ? 'font-semibold text-white'
+                    : 'text-slate-600 font-medium hover:bg-slate-100 hover:text-slate-900'
                 )}
+                style={active ? { backgroundColor: ACCENT } : undefined}
               >
-                <Icon size={16} />
-                {item.label}
-                {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#082F49]" />}
+                <Icon size={17} className="flex-shrink-0" />
+                {!isCollapsed && <span className="truncate">{item.label}</span>}
               </NextLink>
             )
           })}
@@ -107,63 +141,101 @@ const DashboardLayout: FC<Props> = ({ children }) => {
       </div>
 
       {/* Footer */}
-      <div className="p-3">
-        <hr className="border-border mb-3" />
+      <div className={cn('py-3 border-t border-slate-100', isCollapsed ? 'px-2' : 'px-3')}>
         <button
           onClick={() => setSignOutOpen(true)}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors"
+          title={isCollapsed ? 'Sign out' : undefined}
+          className={cn(
+            'flex items-center gap-3 rounded-lg text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors w-full',
+            isCollapsed ? 'justify-center w-10 h-10 mx-auto' : 'px-3 py-2.5'
+          )}
         >
-          <LogOut size={16} />
-          Sign out
+          <LogOut size={17} className="flex-shrink-0" />
+          {!isCollapsed && <span>Sign out</span>}
         </button>
       </div>
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Mobile drawer overlay */}
+    <div className="min-h-screen bg-[#f1f5f9]">
+      {/* Mobile overlay */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <div className="relative z-10 bg-white/95 backdrop-blur-xl h-full overflow-y-auto" style={{ width: drawerWidth }}>
-            <button className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-muted" onClick={() => setMobileOpen(false)}>
-              <X size={18} />
+          <div className="relative z-10 bg-white h-full overflow-y-auto shadow-xl" style={{ width: SIDEBAR_W }}>
+            <button className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-slate-100" onClick={() => setMobileOpen(false)}>
+              <X size={17} className="text-slate-500" />
             </button>
-            {sidebar}
+            {sidebarContent(false, false)}
           </div>
         </div>
       )}
 
       <div className="flex min-h-screen">
         {/* Desktop sidebar */}
-        <div
-          className="hidden md:block flex-shrink-0 sticky top-0 h-screen overflow-y-auto border-r border-slate-200/14 bg-white/95 backdrop-blur-xl"
-          style={{ width: drawerWidth }}
+        <aside
+          className="hidden md:flex flex-col flex-shrink-0 sticky top-0 h-screen bg-white border-r border-slate-200 transition-all duration-200"
+          style={{ width: collapsed ? COLLAPSED_W : SIDEBAR_W }}
         >
-          {sidebar}
-        </div>
+          {sidebarContent(collapsed)}
+        </aside>
 
-        <div className="flex-1 min-w-0">
-          {/* Mobile topbar */}
-          <div
-            className="md:hidden flex items-center justify-between px-4 py-3 sticky top-0 z-40"
-            style={{ background: '#082F49' }}
-          >
+        {/* Main content */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Sticky top bar */}
+          <header className="sticky top-0 z-30 bg-white border-b border-slate-200 h-16 px-4 md:px-6 flex items-center justify-between flex-shrink-0">
+            {/* Left */}
             <div className="flex items-center gap-3">
-              <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg text-white hover:bg-white/10">
+              <button
+                className="md:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+                onClick={() => setMobileOpen(true)}
+              >
                 <Menu size={20} />
               </button>
-              <span className="text-white font-bold text-base tracking-wide">YLSH</span>
+              <div className="hidden md:block">
+                <p className="text-sm font-semibold text-slate-800">Participant Portal</p>
+                <div className="flex items-center gap-1">
+                  <ShieldCheck size={11} style={{ color: ACCENT }} />
+                  <p className="text-xs text-slate-400">
+                    {user?.verificationStatus === 'verified' ? 'Verified' : 'Unverified'} Participant
+                  </p>
+                </div>
+              </div>
+              <span className="md:hidden text-slate-800 font-extrabold text-base tracking-tight">
+                YL<span style={{ color: ACCENT }}>SH</span>
+              </span>
             </div>
-            <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full border border-white/20 text-white" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
-              Participant
-            </span>
-          </div>
 
-          <div className="py-6 md:py-8 px-4 md:px-8">
+            {/* Right */}
+            <div className="flex items-center gap-1">
+              <button className="w-9 h-9 grid place-items-center rounded-lg text-slate-500 hover:bg-slate-100 transition-colors">
+                <Search size={18} />
+              </button>
+              <button className="relative w-9 h-9 grid place-items-center rounded-lg text-slate-500 hover:bg-slate-100 transition-colors">
+                <Bell size={18} />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 border-2 border-white" />
+              </button>
+              <div className="flex items-center gap-2 ml-1 pl-2 border-l border-slate-200">
+                <div
+                  className="w-8 h-8 rounded-full grid place-items-center text-white font-bold text-xs flex-shrink-0"
+                  style={{ backgroundColor: ACCENT }}
+                >
+                  {initials}
+                </div>
+                <div className="hidden lg:block leading-tight">
+                  <p className="text-sm font-semibold text-slate-800">{fullName}</p>
+                  <p className="text-[11px] text-slate-400">Participant</p>
+                </div>
+                <ChevronDown size={14} className="text-slate-400 hidden lg:block" />
+              </div>
+            </div>
+          </header>
+
+          {/* Page content */}
+          <main className="flex-1 p-4 md:p-8">
             {children}
-          </div>
+          </main>
         </div>
       </div>
 
@@ -173,17 +245,17 @@ const DashboardLayout: FC<Props> = ({ children }) => {
           <div className="absolute inset-0 bg-black/40" onClick={() => setSignOutOpen(false)} />
           <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6">
             <h2 className="text-lg font-bold mb-2">Sign out of YLSH?</h2>
-            <p className="text-muted-foreground mb-6">You will be taken back to the sign-in page.</p>
+            <p className="text-slate-500 mb-6">You will be taken back to the sign-in page.</p>
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setSignOutOpen(false)}
-                className="px-5 py-2 rounded-full border-2 border-slate-300 text-foreground font-semibold text-sm hover:bg-muted transition-colors"
+                className="px-5 py-2 rounded-lg border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmSignOut}
-                className="px-5 py-2 rounded-full bg-primary text-white font-semibold text-sm hover:bg-[#061e35] transition-colors"
+                className="px-5 py-2 rounded-lg bg-primary text-white font-semibold text-sm hover:bg-[#061e35] transition-colors"
               >
                 Sign out
               </button>

@@ -80,51 +80,80 @@ const AdminUsersPage: NextPageWithLayout = () => {
           </div>
         </div>
 
-        <div className="flex gap-1 border-b border-slate-200/18 mb-5 overflow-x-auto">
+        <div className="flex flex-wrap gap-2 mb-5">
           {TABS.map((label, i) => (
-            <button key={label} onClick={() => setTab(i)} className={cn("px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors whitespace-nowrap", tab === i ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}>
+            <button
+              key={label}
+              onClick={() => setTab(i)}
+              className={cn(
+                'px-4 py-2 rounded-lg text-sm font-semibold border transition-colors whitespace-nowrap',
+                tab === i
+                  ? 'bg-primary text-white border-primary'
+                  : 'bg-background text-foreground border-input hover:bg-muted'
+              )}
+            >
               {label} {i === 0 ? `(${total})` : ""}
             </button>
           ))}
         </div>
 
         {isLoading ? <div className="py-12 text-center text-muted-foreground">Loading users...</div> : (
-          <div className="flex flex-col gap-3" ref={menuRef}>
-            {users.map((user) => (
-              <div key={user._id} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 flex-wrap">
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm">{user.firstName} {user.lastName}</p>
-                  <p className="text-xs text-muted-foreground">{user.email} · {user.state ?? "—"}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs border border-border capitalize">{user.role}</span>
-                    <span className="text-xs text-muted-foreground">Joined {new Date(user.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold capitalize", statusStyles[user.verificationStatus])}>
-                    {statusIcon[user.verificationStatus]} {user.verificationStatus}
-                  </span>
-                  {user.role !== 'super-admin' && (
-                    <div className="relative">
-                      <button onClick={() => setOpenMenuId(openMenuId === user._id ? null : user._id)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
-                        <MoreVertical size={16} className="text-muted-foreground" />
-                      </button>
-                      {openMenuId === user._id && (
-                        <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-xl shadow-lg py-1 z-50 min-w-[160px]">
-                          {user.verificationStatus !== "suspended" ? (
-                            <button onClick={() => { setConfirmModal({ type: 'suspend', id: user._id, name: `${user.firstName} ${user.lastName}`, suspended: false }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">Suspend account</button>
-                          ) : (
-                            <button onClick={() => { setConfirmModal({ type: 'suspend', id: user._id, name: `${user.firstName} ${user.lastName}`, suspended: true }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-[#082F49] hover:bg-blue-50 transition-colors">Activate account</button>
-                          )}
-                          <button onClick={() => { setConfirmModal({ type: 'delete', id: user._id, name: `${user.firstName} ${user.lastName}` }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete account</button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-            {users.length === 0 && <div className="py-12 text-center text-muted-foreground">No users match your search.</div>}
+          <div className="w-full overflow-x-auto" ref={menuRef}>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">User</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Email</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Role</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Status</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Joined</th>
+                  <th className="px-4 py-3 text-right font-semibold text-slate-600 whitespace-nowrap">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {users.length === 0 ? (
+                  <tr><td colSpan={6} className="py-16 text-center text-muted-foreground">No users match your search.</td></tr>
+                ) : users.map((user) => (
+                  <tr key={user._id} className="transition-colors hover:bg-slate-50/60">
+                    <td className="px-4 py-3.5">
+                      <p className="font-semibold text-foreground">{user.firstName} {user.lastName}</p>
+                      <p className="text-xs text-muted-foreground">{user.state ?? '—'}</p>
+                    </td>
+                    <td className="px-4 py-3.5 text-muted-foreground">{user.email}</td>
+                    <td className="px-4 py-3.5">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs border border-border capitalize">{user.role}</span>
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold capitalize", statusStyles[user.verificationStatus])}>
+                        {statusIcon[user.verificationStatus]} {user.verificationStatus}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3.5 text-muted-foreground whitespace-nowrap">{new Date(user.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</td>
+                    <td className="px-4 py-3.5">
+                      <div className="flex items-center justify-end gap-2">
+                        {user.role !== 'super-admin' && (
+                          <div className="relative">
+                            <button onClick={() => setOpenMenuId(openMenuId === user._id ? null : user._id)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors">
+                              <MoreVertical size={16} className="text-muted-foreground" />
+                            </button>
+                            {openMenuId === user._id && (
+                              <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200/50 rounded-xl shadow-lg py-1 z-50 min-w-[160px]">
+                                {user.verificationStatus !== "suspended" ? (
+                                  <button onClick={() => { setConfirmModal({ type: 'suspend', id: user._id, name: `${user.firstName} ${user.lastName}`, suspended: false }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors">Suspend account</button>
+                                ) : (
+                                  <button onClick={() => { setConfirmModal({ type: 'suspend', id: user._id, name: `${user.firstName} ${user.lastName}`, suspended: true }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-[#082F49] hover:bg-blue-50 transition-colors">Activate account</button>
+                                )}
+                                <button onClick={() => { setConfirmModal({ type: 'delete', id: user._id, name: `${user.firstName} ${user.lastName}` }); setOpenMenuId(null) }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Delete account</button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

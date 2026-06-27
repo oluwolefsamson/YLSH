@@ -95,7 +95,7 @@ const LearningPage: NextPageWithLayout = () => {
         ) : (
           <div className="flex flex-col gap-3">
             {filtered.map((resource) => (
-              <div key={resource._id} className="flex gap-4 items-start p-4 rounded-xl border border-slate-200/18">
+              <div key={resource._id} className="flex gap-4 items-start p-4 rounded-2xl border border-slate-100 bg-white hover:shadow-sm transition-shadow">
                 <div className="w-12 h-12 rounded-[14px] grid place-items-center flex-shrink-0" style={{ backgroundColor: `${typeColor[resource.type]}18`, color: typeColor[resource.type] }}>
                   {typeIcon[resource.type]}
                 </div>

@@ -29,8 +29,10 @@ const roleLabel: Record<string, string> = {
 }
 
 const ROLES = ['participant', 'mentor', 'admin', 'super-admin'] as const
+const ROLE_TABS = ['All Roles', 'Participant', 'Mentor', 'Admin', 'Super Admin']
 
 const RoleManagementPage: NextPageWithLayout = () => {
+  const [tab, setTab] = useState(0)
   const [editUser, setEditUser] = useState<User | null>(null)
   const [newRole, setNewRole] = useState('')
   const [roleOpen, setRoleOpen] = useState(false)
@@ -45,6 +47,18 @@ const RoleManagementPage: NextPageWithLayout = () => {
   const { data: usersData, isLoading } = useUsers({ limit: 50 })
   const updateRole = useUpdateUserRole()
   const users: User[] = usersData?.data ?? []
+  const filteredUsers = tab === 0 ? users : users.filter((user) => {
+    const role = ROLES[tab - 1]
+    return user.role === role
+  })
+
+  const tabCounts = [
+    users.length,
+    users.filter((u) => u.role === 'participant').length,
+    users.filter((u) => u.role === 'mentor').length,
+    users.filter((u) => u.role === 'admin').length,
+    users.filter((u) => u.role === 'super-admin').length,
+  ]
 
   const handleSave = () => {
     if (!editUser) return
@@ -65,7 +79,7 @@ const RoleManagementPage: NextPageWithLayout = () => {
         <h2 className="text-xl font-bold mb-4">RBAC Matrix</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {rbacRoles.map((role) => (
-            <div key={role.name} className="flex flex-col p-4 rounded-xl border border-slate-200/18">
+            <div key={role.name} className="flex flex-col p-4 rounded-2xl border border-slate-100 bg-white shadow-sm">
               <div className="flex items-center justify-between mb-3">
                 <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', role.color)}>{role.name}</span>
               </div>
@@ -80,28 +94,64 @@ const RoleManagementPage: NextPageWithLayout = () => {
       </div>
 
       <div className={CARD} style={CARD_STYLE}>
-        <h2 className="text-xl font-bold mb-4">User Role Assignments</h2>
+        <div className="flex flex-wrap gap-2 mb-5">
+          {ROLE_TABS.map((label, i) => (
+            <button
+              key={label}
+              onClick={() => setTab(i)}
+              className={cn(
+                'px-4 py-2 rounded-lg text-sm font-semibold border transition-colors whitespace-nowrap',
+                tab === i
+                  ? 'bg-primary text-white border-primary'
+                  : 'bg-background text-foreground border-input hover:bg-muted'
+              )}
+            >
+              {label} ({tabCounts[i]})
+            </button>
+          ))}
+        </div>
         {isLoading ? (
           <div className="flex items-center justify-center py-10"><Loader2 size={20} className="animate-spin text-primary" /></div>
         ) : (
-          <div className="flex flex-col gap-3">
-            {users.map((user) => (
-              <div key={user._id} className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/18 flex-wrap">
-                <div>
-                  <p className="font-bold text-sm">{user.firstName} {user.lastName}</p>
-                  <p className="text-xs text-muted-foreground">{user.email}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', roleBadge[user.role] ?? 'bg-muted text-muted-foreground')}>
-                    {roleLabel[user.role] ?? user.role}
-                  </span>
-                  <button onClick={() => { setEditUser(user); setNewRole(user.role); setRoleOpen(false) }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors">
-                    <Pencil size={13} /> Change role
-                  </button>
-                </div>
-              </div>
-            ))}
-            {users.length === 0 && <p className="text-sm text-muted-foreground py-6 text-center">No users found.</p>}
+          <div className="w-full overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">User</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Email</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">Role</th>
+                  <th className="px-4 py-3 text-right font-semibold text-slate-600 whitespace-nowrap">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-16 text-center text-muted-foreground">No users found.</td>
+                  </tr>
+                ) : (
+                  filteredUsers.map((user) => (
+                    <tr key={user._id} className="transition-colors hover:bg-slate-50/60">
+                      <td className="px-4 py-3.5">
+                        <p className="font-semibold text-foreground">{user.firstName} {user.lastName}</p>
+                      </td>
+                      <td className="px-4 py-3.5 text-muted-foreground">{user.email}</td>
+                      <td className="px-4 py-3.5">
+                        <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', roleBadge[user.role] ?? 'bg-muted text-muted-foreground')}>
+                          {roleLabel[user.role] ?? user.role}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <div className="flex items-center justify-end">
+                          <button onClick={() => { setEditUser(user); setNewRole(user.role); setRoleOpen(false) }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-sm font-semibold hover:bg-muted transition-colors">
+                            <Pencil size={13} /> Change role
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

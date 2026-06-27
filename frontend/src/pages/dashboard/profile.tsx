@@ -148,10 +148,13 @@ const ProfilePage: NextPageWithLayout = () => {
             </div>
           </div>
 
-          <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, rgba(6,30,53,0.97) 0%, rgba(8,47,73,0.97) 100%)', boxShadow: '0 12px 30px rgba(15,23,42,0.06)' }}>
-            <div className="flex items-center gap-2 mb-3"><CreditCard size={18} /><p className="font-bold">Identity Verification</p></div>
+          <div className="p-5 md:p-6 rounded-2xl text-white" style={{ background: 'linear-gradient(135deg, #127C71 0%, #0d5c54 100%)', boxShadow: '0 12px 30px rgba(18,124,113,0.22)' }}>
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-8 h-8 rounded-xl bg-white/15 grid place-items-center"><CreditCard size={15} /></div>
+              <p className="font-bold">Identity Verification</p>
+            </div>
             <p className="text-sm text-white/80 mb-3">Your NIN has been verified. Your identity reference is securely encrypted.</p>
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border border-white/20 text-white" style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/15 border border-white/20 text-white">
               <ShieldCheck size={11} /> {user?.ninVerified ? 'Verified' : 'Not verified'}
             </span>
           </div>
@@ -300,7 +303,7 @@ const ProfilePage: NextPageWithLayout = () => {
             <div className="flex items-center justify-between mb-5"><h3 className="font-bold text-lg">Active Sessions</h3><button onClick={closeModal} className="p-1.5 rounded-lg hover:bg-muted"><X size={18} /></button></div>
             <div className="flex flex-col gap-3 mb-5">
               {[{ device: 'Current browser session', location: 'Your device', time: 'Active now', icon: <Monitor size={20} />, current: true }].map((s, i) => (
-                <div key={i} className="flex items-center justify-between gap-4 p-4 rounded-xl border border-slate-200/18">
+                <div key={i} className="flex items-center justify-between gap-4 p-4 rounded-2xl border border-slate-100 bg-slate-50/60">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-muted grid place-items-center text-muted-foreground flex-shrink-0">{s.icon}</div>
                     <div><p className="font-semibold text-sm">{s.device}</p><p className="text-xs text-muted-foreground">{s.location} Â· {s.time}</p></div>

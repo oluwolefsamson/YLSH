@@ -83,7 +83,7 @@ const MentorSessionsPage: NextPageWithLayout = () => {
       <PageHeader eyebrow="Sessions" title="My Sessions" subtitle="View, join, and record outcomes for all your mentorship sessions." icon={<Calendar size={14} />} />
 
       <div className={CARD} style={CARD_STYLE}>
-        <div className="flex gap-1 border-b border-slate-200/18 mb-5 overflow-x-auto">
+        <div className="flex gap-1 border-b border-slate-200 mb-5 overflow-x-auto">
           {TABS.map((label, i) => (
             <button key={label} onClick={() => setTab(i)} className={cn('px-3 py-2 text-sm font-medium -mb-px border-b-2 transition-colors whitespace-nowrap', tab === i ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground')}>
               {label} ({tabCounts[i]})
@@ -101,7 +101,7 @@ const MentorSessionsPage: NextPageWithLayout = () => {
               const mentee = session.mentee as User
               const menteeName = mentee ? `${mentee.firstName} ${mentee.lastName}` : 'Mentee'
               return (
-                <div key={session._id} className={cn('p-4 rounded-xl border border-slate-200/18', session.status === 'cancelled' ? 'opacity-60' : '')}>
+                <div key={session._id} className={cn('p-4 rounded-2xl border border-slate-100 bg-white shadow-sm', session.status === 'cancelled' ? 'opacity-60' : '')}>
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -124,7 +124,7 @@ const MentorSessionsPage: NextPageWithLayout = () => {
                         </div>
                       </div>
                       {session.outcome && (
-                        <div className="mt-3 p-3 rounded-xl" style={{ backgroundColor: 'rgba(8,47,73,0.06)', border: '1px solid rgba(8,47,73,0.15)' }}>
+                        <div className="mt-3 p-3 rounded-xl bg-brand-teal/8 border border-brand-teal/15">
                           <p className="text-sm font-semibold text-primary mb-0.5">Outcome:</p>
                           <p className="text-sm text-muted-foreground">{session.outcome}</p>
                         </div>
