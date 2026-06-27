@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   listOpportunities, getOpportunityById, createOpportunity, updateOpportunity,
-  deleteOpportunity, applyForOpportunity, getMyApplications, updateApplicationStatus,
-  type CreateOpportunityPayload, type ApplicationStatus,
+  deleteOpportunity, applyForOpportunity, getMyApplications, getApplicationsForOpportunity,
+  updateApplicationStatus,
+  type CreateOpportunityPayload, type ApplicationStatus, type PaginatedApplications,
 } from '@/services/endpoints/opportunities/opportunities'
 
 export const useOpportunities = (params?: { type?: string; page?: number; limit?: number }) =>
@@ -48,11 +49,21 @@ export const useDeleteOpportunity = () => {
   })
 }
 
+export const useApplicationsForOpportunity = (id: string) =>
+  useQuery<PaginatedApplications, Error>({
+    queryKey: ['opp-applications', id],
+    queryFn: () => getApplicationsForOpportunity(id),
+    enabled: Boolean(id),
+  })
+
 export const useUpdateApplicationStatus = () => {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: ApplicationStatus }) =>
       updateApplicationStatus(id, status),
-    onSuccess: () => { void qc.invalidateQueries({ queryKey: ['applications-me'] }) },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['applications-me'] })
+      void qc.invalidateQueries({ queryKey: ['opp-applications'] })
+    },
   })
 }

@@ -16,6 +16,9 @@ import {
   Search,
   Bell,
   ChevronDown,
+  GraduationCap,
+  Trophy,
+  Award,
 } from 'lucide-react'
 import { cn } from '@/utils'
 import { useAuth } from '@/contexts/AuthContext'
@@ -34,6 +37,9 @@ const adminNavItems: NavItem[] = [
   { label: 'Users', href: '/admin/users', icon: Users },
   { label: 'Events', href: '/admin/events', icon: CalendarCheck },
   { label: 'Check-in', href: '/admin/checkin', icon: ScanLine },
+  { label: 'Learning', href: '/admin/learning', icon: GraduationCap },
+  { label: 'Opportunities', href: '/admin/opportunities', icon: Trophy },
+  { label: 'Certificates', href: '/admin/certificates', icon: Award },
   { label: 'Verifications', href: '/admin/verifications', icon: ShieldCheck },
   { label: 'Analytics', href: '/admin/analytics', icon: BarChart2 },
   { label: 'Profile', href: '/admin/profile', icon: UserCircle },
@@ -43,6 +49,9 @@ const superAdminNavItems: NavItem[] = [
   { label: 'Overview', href: '/super-admin', icon: LayoutDashboard },
   { label: 'Users', href: '/super-admin/users', icon: Users },
   { label: 'Events', href: '/super-admin/events', icon: CalendarCheck },
+  { label: 'Learning', href: '/super-admin/learning', icon: GraduationCap },
+  { label: 'Opportunities', href: '/super-admin/opportunities', icon: Trophy },
+  { label: 'Certificates', href: '/super-admin/certificates', icon: Award },
   { label: 'Verifications', href: '/super-admin/verifications', icon: ShieldCheck },
   { label: 'Role Management', href: '/super-admin/roles', icon: Shield },
   { label: 'Analytics', href: '/super-admin/analytics', icon: BarChart2 },

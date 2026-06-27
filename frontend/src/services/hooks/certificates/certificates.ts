@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getMyCertificates, verifyCertificate, generateCertificate, batchGenerateCertificates,
-  type Certificate, type VerifyResult,
+  listAllCertificates,
+  type Certificate, type VerifyResult, type PaginatedCertificates,
 } from '@/services/endpoints/certificates/certificates'
 
 export const useMyCertificates = () =>
@@ -29,6 +30,15 @@ export const useBatchGenerateCertificates = () => {
   const qc = useQueryClient()
   return useMutation<{ issued: number; skipped: number }, Error, { eventId: string; type?: string }>({
     mutationFn: ({ eventId, type }) => batchGenerateCertificates(eventId, type),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['certificates-me'] }),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['certificates-me'] })
+      void qc.invalidateQueries({ queryKey: ['certificates-all'] })
+    },
   })
 }
+
+export const useAllCertificates = (params?: { status?: string; page?: number; limit?: number }) =>
+  useQuery<PaginatedCertificates, Error>({
+    queryKey: ['certificates-all', params],
+    queryFn: () => listAllCertificates(params),
+  })

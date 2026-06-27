@@ -1,6 +1,6 @@
 ﻿import React, { useState } from "react"
 import { toast } from "sonner"
-import { Award, Download, ShieldCheck, QrCode, Clock, X } from "lucide-react"
+import { Award, Download, ShieldCheck, QrCode, Clock, X, Loader2 } from "lucide-react"
 import { DashboardLayout } from "@/components/layout"
 import { PageHeader, StatCard } from "@/components/dashboard"
 import { NextPageWithLayout } from "@/interfaces/layout"
@@ -9,38 +9,43 @@ import { useMyCertificates } from "@/services/hooks/certificates/certificates"
 import { useAuth } from "@/contexts/AuthContext"
 import type { Certificate } from "@/services/endpoints/certificates/certificates"
 import { CARD, CARD_STYLE } from '@/utils/card-styles'
+import { downloadCertificateAsPDF } from '@/utils/download-certificate'
 
 
 const CertificatesPage: NextPageWithLayout = () => {
   const { user } = useAuth()
   const { data: certificates = [], isLoading } = useMyCertificates()
   const [verifyModal, setVerifyModal] = useState<Certificate | null>(null)
+  const [downloadingId, setDownloadingId] = useState<string | null>(null)
 
   const issuedCount = certificates.filter((c) => c.status === "issued").length
   const pendingCount = certificates.filter((c) => c.status === "pending").length
 
-  const handleDownload = (cert: Certificate) => {
-    const recipientName = user ? `${user.firstName} ${user.lastName}` : "Participant"
-    const issuedStr = cert.issuedDate ? new Date(cert.issuedDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "Pending"
-    const content = [
-      "YLSH — YOUTH LEADERSHIP & SKILLS HUB",
-      `CERTIFICATE OF ${cert.type.toUpperCase()}`,
-      "",
-      `Event: ${cert.event?.title ?? ""}`,
-      `Recipient: ${recipientName}`,
-      `Issued: ${issuedStr}`,
-      `Verification Code: ${cert.verifyCode ?? "N/A"}`,
-      "",
-      "This certificate is digitally signed and verifiable at ylsh.ng/verify",
-    ].join("\n")
-    const blob = new Blob([content], { type: "text/plain" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `${(cert.event?.title ?? "Certificate").replace(/\s+/g, "_")}_YLSH_Certificate.txt`
-    a.click()
-    URL.revokeObjectURL(url)
-    toast.success("Certificate downloaded")
+  const handleDownload = async (cert: Certificate) => {
+    if (downloadingId) return
+    setDownloadingId(cert._id)
+    try {
+      const recipientName = user ? `${user.firstName} ${user.lastName}` : 'Participant'
+      const eventDate = cert.event?.date
+        ? new Date(cert.event.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+        : undefined
+      await downloadCertificateAsPDF(
+        {
+          recipientName,
+          eventTitle: cert.event?.title ?? 'YLSH Event',
+          eventDate,
+          certType: cert.type,
+          verifyCode: cert.verifyCode,
+          issuedDate: cert.issuedDate,
+        },
+        `YLSH_Certificate_${recipientName.replace(/\s+/g, '_')}.pdf`
+      )
+      toast.success('Certificate downloaded as PDF')
+    } catch {
+      toast.error('Failed to generate PDF')
+    } finally {
+      setDownloadingId(null)
+    }
   }
 
   return (
@@ -82,8 +87,13 @@ const CertificatesPage: NextPageWithLayout = () => {
                 </div>
               )}
               <div className="flex gap-3 mt-auto">
-                <button disabled={cert.status === "pending"} onClick={() => handleDownload(cert)} className="flex-1 flex items-center justify-center gap-2 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 disabled:cursor-default transition-colors">
-                  <Download size={15} /> Download PDF
+                <button
+                  disabled={cert.status === "pending" || !!downloadingId}
+                  onClick={() => handleDownload(cert)}
+                  className="flex-1 flex items-center justify-center gap-2 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 disabled:cursor-default transition-colors"
+                >
+                  {downloadingId === cert._id ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />}
+                  {downloadingId === cert._id ? 'Generating...' : 'Download PDF'}
                 </button>
                 <button disabled={cert.status === "pending"} onClick={() => setVerifyModal(cert)} className="flex items-center gap-2 h-10 px-4 rounded-full border border-primary text-primary font-semibold text-sm hover:bg-primary/5 disabled:opacity-50 disabled:cursor-default transition-colors">
                   <ShieldCheck size={15} /> Verify

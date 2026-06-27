@@ -27,6 +27,22 @@ export interface Application {
   createdAt: string
 }
 
+export interface AdminApplication {
+  _id: string
+  opportunity: Opportunity
+  applicant: { _id: string; firstName: string; lastName: string; email: string; organization?: string; state?: string }
+  coverLetter: string
+  status: ApplicationStatus
+  createdAt: string
+}
+
+export interface PaginatedApplications {
+  data: AdminApplication[]
+  total: number
+  page: number
+  limit: number
+}
+
 export interface PaginatedOpportunities {
   data: Opportunity[]
   total: number
@@ -63,6 +79,9 @@ export const applyForOpportunity = (id: string, coverLetter: string) =>
   post<Application>(`/api/opportunities/${id}/apply`, { coverLetter })
 
 export const getMyApplications = () => get<Application[]>('/api/opportunities/applications/me')
+
+export const getApplicationsForOpportunity = (id: string) =>
+  get<PaginatedApplications>(`/api/opportunities/${id}/applications`)
 
 export const updateApplicationStatus = (id: string, status: ApplicationStatus) =>
   patch<Application>(`/api/opportunities/applications/${id}/status`, { status })

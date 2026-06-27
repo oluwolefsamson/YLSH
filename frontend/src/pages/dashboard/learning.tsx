@@ -18,6 +18,34 @@ const typeColor: Record<ResourceType, string> = { video: '#EF4444', pdf: '#F59E0
 const TABS = ['All', 'In Progress', 'Completed', 'Not Started']
 const TAB_VALUES = ['all', 'in-progress', 'completed', 'not-started']
 
+function extractYouTubeId(input: string): string | null {
+  if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input
+  const m = input.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+  return m ? m[1] : null
+}
+
+function isDirectVideoUrl(url: string): boolean {
+  return /\.(mp4|webm|ogg|mov|avi|mkv)(\?|#|$)/i.test(url)
+}
+
+function resolveVideo(videoId?: string, url?: string) {
+  // Try YouTube from videoId field first
+  if (videoId) {
+    const ytId = extractYouTubeId(videoId)
+    if (ytId) return { kind: 'youtube' as const, id: ytId }
+  }
+  if (url) {
+    // YouTube URL in the url field
+    const ytId = extractYouTubeId(url)
+    if (ytId) return { kind: 'youtube' as const, id: ytId }
+    // Direct video file
+    if (isDirectVideoUrl(url)) return { kind: 'direct' as const, url }
+    // Generic external link
+    return { kind: 'link' as const, url }
+  }
+  return null
+}
+
 const LearningPage: NextPageWithLayout = () => {
   const [tabValue, setTabValue] = useState('all')
   const [activeResource, setActiveResource] = useState<LearningResource | null>(null)
@@ -52,7 +80,15 @@ const LearningPage: NextPageWithLayout = () => {
         a.click()
         URL.revokeObjectURL(url)
       }
-      // mark 100% when they download
+      if (!resource.completed) {
+        updateProgress.mutate({ id: resource._id, progress: 100 })
+      }
+    } else if (resource.type === 'video') {
+      const video = resolveVideo(resource.videoId, resource.url)
+      let target: string | null = null
+      if (video?.kind === 'youtube') target = `https://youtu.be/${video.id}`
+      else if (video?.kind === 'direct' || video?.kind === 'link') target = video.url
+      if (target) window.open(target, '_blank', 'noopener,noreferrer')
       if (!resource.completed) {
         updateProgress.mutate({ id: resource._id, progress: 100 })
       }
@@ -148,33 +184,6 @@ const LearningPage: NextPageWithLayout = () => {
               <button onClick={() => setActiveResource(null)} className="p-1.5 rounded-lg hover:bg-muted flex-shrink-0"><X size={18} /></button>
             </div>
 
-            {activeResource.type === 'video' && (
-              <div>
-                {activeResource.videoId ? (
-                  <div className="relative bg-black" style={{ paddingBottom: '56.25%' }}>
-                    <iframe src={`https://www.youtube.com/embed/${activeResource.videoId}?autoplay=1`} className="absolute inset-0 w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
-                  </div>
-                ) : activeResource.url ? (
-                  <div className="p-5 text-center">
-                    <a href={activeResource.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">
-                      <ExternalLink size={16} /> Watch Video
-                    </a>
-                  </div>
-                ) : null}
-                <div className="p-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    {activeResource.duration && <><span className="text-xs font-medium text-muted-foreground">{activeResource.duration}</span><span className="text-muted-foreground">Â·</span></>}
-                    <span className="text-xs font-medium text-muted-foreground">{activeResource.progress}% watched</span>
-                  </div>
-                  <div className="h-[6px] rounded-full overflow-hidden mb-4" style={{ backgroundColor: 'rgba(148,163,184,0.18)' }}>
-                    <div className="h-full rounded-full bg-primary" style={{ width: `${activeResource.progress}%` }} />
-                  </div>
-                  <button onClick={() => handleMarkRead(activeResource)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">
-                    Mark as completed
-                  </button>
-                </div>
-              </div>
-            )}
 
             {activeResource.type === 'article' && (
               <div className="p-6">

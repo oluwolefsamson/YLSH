@@ -11,6 +11,17 @@ export interface Certificate {
   createdAt: string
 }
 
+export interface CertificateAdmin extends Omit<Certificate, 'user'> {
+  user: { _id: string; firstName: string; lastName: string; email: string }
+}
+
+export interface PaginatedCertificates {
+  data: CertificateAdmin[]
+  total: number
+  page: number
+  limit: number
+}
+
 export interface VerifyResult {
   verified: boolean
   certificate?: Certificate & { user: { firstName: string; lastName: string } }
@@ -27,3 +38,6 @@ export const generateCertificate = (registrationId: string, type?: string) =>
 
 export const batchGenerateCertificates = (eventId: string, type?: string) =>
   post<{ issued: number; skipped: number }>(`/api/certificates/batch/${eventId}`, { type })
+
+export const listAllCertificates = (params?: { status?: string; page?: number; limit?: number }) =>
+  get<PaginatedCertificates>('/api/certificates', params)

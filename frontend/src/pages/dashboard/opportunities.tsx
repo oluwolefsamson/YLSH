@@ -1,16 +1,13 @@
-﻿import React, { useState } from 'react'
-import { Trophy, Briefcase, Clock, DollarSign, GraduationCap, Calendar, Building, Send, CheckCircle, Hourglass, MapPin, X, FileText, Loader2 } from 'lucide-react'
+import React, { useState } from 'react'
+import { Trophy, Briefcase, Clock, DollarSign, GraduationCap, Calendar, Building, ExternalLink, CheckCircle, Hourglass, MapPin, Mail, Link2, Loader2 } from 'lucide-react'
 import { DashboardLayout } from '@/components/layout'
 import { PageHeader } from '@/components/dashboard'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { NextPageWithLayout } from '@/interfaces/layout'
 import { cn } from '@/utils'
-import { useOpportunities, useMyApplications, useApplyForOpportunity } from '@/services/hooks/opportunities/opportunities'
+import { useOpportunities, useMyApplications } from '@/services/hooks/opportunities/opportunities'
 import type { Opportunity, OppType, ApplicationStatus } from '@/services/endpoints/opportunities/opportunities'
-import { toast } from 'sonner'
 import { CARD, CARD_STYLE } from '@/utils/card-styles'
-
-const INPUT = 'w-full h-10 px-3 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors'
 
 const typeIcon: Record<OppType, React.ReactNode> = {
   job: <Briefcase size={20} />, internship: <Clock size={20} />,
@@ -33,48 +30,53 @@ const statusLabel: Record<ApplicationStatus, string> = {
   rejected: 'Rejected', accepted: 'Accepted',
 }
 
+const amountLabel: Record<OppType, string> = {
+  job: 'Salary', internship: 'Stipend', grant: 'Grant Amount', scholarship: 'Award Value',
+}
+
 const TABS = ['All', 'Jobs', 'Internships', 'Grants', 'Scholarships']
 const TAB_VALUES: Array<OppType | 'all'> = ['all', 'job', 'internship', 'grant', 'scholarship']
 
+function isEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+}
+
 const OpportunitiesPage: NextPageWithLayout = () => {
   const [tabValue, setTabValue] = useState<OppType | 'all'>('all')
-  const [applyModal, setApplyModal] = useState<Opportunity | null>(null)
-  const [coverLetter, setCoverLetter] = useState('')
-  const [applyDone, setApplyDone] = useState(false)
 
   const selectedType = tabValue !== 'all' ? tabValue : undefined
   const { data: oppData, isLoading: loadingOpps } = useOpportunities({ type: selectedType as string | undefined })
   const { data: applications = [], isLoading: loadingApps } = useMyApplications()
-  const applyMutation = useApplyForOpportunity()
 
   const opportunities = oppData?.data ?? []
-  const appliedIds = new Set(applications.map((a) => a.opportunity?._id))
 
-  const openApply = (opp: Opportunity) => {
-    setCoverLetter('')
-    setApplyDone(false)
-    setApplyModal(opp)
+  const openGmail = (opp: Opportunity, toEmail?: string) => {
+    const to = toEmail ? encodeURIComponent(toEmail) : ''
+    const subject = encodeURIComponent(`Application for ${opp.title} at ${opp.organization}`)
+    const body = encodeURIComponent(
+      `Dear ${opp.organization} Team,\n\nI am writing to apply for the ${opp.title} position.\n\nPlease find attached:\n- My CV / Resume\n- Cover letter\n\n[Add any additional information here]\n\nThank you for your consideration.`
+    )
+    const url = `https://mail.google.com/mail/?view=cm&fs=1${to ? `&to=${to}` : ''}&su=${subject}&body=${body}`
+    window.open(url, '_blank', 'noopener,noreferrer')
   }
 
-  const handleSubmit = () => {
-    if (!applyModal || !coverLetter.trim()) return
-    applyMutation.mutate(
-      { id: applyModal._id, coverLetter },
-      {
-        onSuccess: () => setApplyDone(true),
-        onError: (err: unknown) => {
-          const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'Failed to submit application'
-          toast.error(msg)
-        },
-      }
-    )
+  const handleApply = (opp: Opportunity) => {
+    if (!opp.link) {
+      openGmail(opp)
+      return
+    }
+    if (isEmail(opp.link)) {
+      openGmail(opp, opp.link)
+    } else {
+      window.open(opp.link, '_blank', 'noopener,noreferrer')
+    }
   }
 
   return (
     <div>
-      <PageHeader eyebrow="Opportunities" title="Opportunities" subtitle="Discover jobs, internships, grants, and scholarships. Apply directly and track your application status." icon={<Trophy size={14} />} />
+      <PageHeader eyebrow="Opportunities" title="Opportunities" subtitle="Discover jobs, internships, grants, and scholarships. Click Apply Now to go directly to the application." icon={<Trophy size={14} />} />
 
-      {/* My Applications */}
+      {/* My Applications — only shows for internal tracked applications */}
       {(loadingApps || applications.length > 0) && (
         <div className={cn(CARD, 'mb-5')} style={CARD_STYLE}>
           <h2 className="text-xl font-bold mb-4">My Applications</h2>
@@ -88,8 +90,8 @@ const OpportunitiesPage: NextPageWithLayout = () => {
                 return (
                   <div key={app._id} className="flex items-center justify-between gap-4 py-3.5 border-b border-slate-100 last:border-0 flex-wrap">
                     <div>
-                      <p className="font-bold">{opp?.title ?? 'â€”'}</p>
-                      <p className="text-sm text-muted-foreground">{opp?.organization ?? 'â€”'} Â· Applied {new Date(app.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                      <p className="font-bold">{opp?.title ?? '—'}</p>
+                      <p className="text-sm text-muted-foreground">{opp?.organization ?? '—'} · Applied {new Date(app.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                     </div>
                     <span className={cn('inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold', statusBadge[status])}>
                       {status === 'shortlisted' || status === 'accepted' ? <CheckCircle size={11} /> : <Hourglass size={11} />}
@@ -124,83 +126,50 @@ const OpportunitiesPage: NextPageWithLayout = () => {
           <p className="text-sm text-muted-foreground py-10 text-center">No opportunities available in this category yet.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {opportunities.map((opp) => {
-              const alreadyApplied = appliedIds.has(opp._id)
-              return (
-                <div key={opp._id} className="flex flex-col p-5 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${['#127C71','#8b5cf6','#3b82f6','#f59e0b'][['job','internship','grant','scholarship'].indexOf(opp.type)] ?? '#127C71'}15`, color: ['#127C71','#8b5cf6','#3b82f6','#f59e0b'][['job','internship','grant','scholarship'].indexOf(opp.type)] ?? '#127C71' }}>{typeIcon[opp.type]}</div>
-                    <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', typeBadge[opp.type])}>
-                      {opp.type.charAt(0).toUpperCase() + opp.type.slice(1)}
-                    </span>
+            {opportunities.map((opp) => (
+              <div key={opp._id} className="flex flex-col p-5 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${['#127C71','#8b5cf6','#3b82f6','#f59e0b'][['job','internship','grant','scholarship'].indexOf(opp.type)] ?? '#127C71'}15`, color: ['#127C71','#8b5cf6','#3b82f6','#f59e0b'][['job','internship','grant','scholarship'].indexOf(opp.type)] ?? '#127C71' }}>{typeIcon[opp.type]}</div>
+                  <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold', typeBadge[opp.type])}>
+                    {opp.type.charAt(0).toUpperCase() + opp.type.slice(1)}
+                  </span>
+                </div>
+                <h3 className="font-bold mb-1">{opp.title}</h3>
+                <div className="flex items-center gap-1.5 mb-2"><Building size={14} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{opp.organization}</span></div>
+                <p className="text-sm text-muted-foreground mb-3 flex-1 line-clamp-3">{opp.description}</p>
+                {opp.amount && (
+                  <div className="p-3 rounded-xl mb-3 bg-brand-teal/8 border border-brand-teal/15">
+                    <p className="text-sm font-bold text-primary">{amountLabel[opp.type]}: {opp.amount}</p>
                   </div>
-                  <h3 className="font-bold mb-1">{opp.title}</h3>
-                  <div className="flex items-center gap-1.5 mb-2"><Building size={14} className="text-muted-foreground" /><span className="text-sm text-muted-foreground">{opp.organization}</span></div>
-                  <p className="text-sm text-muted-foreground mb-3 flex-1 line-clamp-3">{opp.description}</p>
-                  {opp.amount && (
-                    <div className="p-3 rounded-xl mb-3 bg-brand-teal/8 border border-brand-teal/15">
-                      <p className="text-sm font-bold text-primary">Award: {opp.amount}</p>
+                )}
+                <div className="flex flex-col gap-1 mb-3">
+                  <div className="flex items-center gap-1.5"><Calendar size={13} className="text-muted-foreground" /><span className="text-xs text-muted-foreground">Deadline: {new Date(opp.deadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
+                  <div className="flex items-center gap-1.5"><MapPin size={13} className="text-muted-foreground" /><span className="text-xs text-muted-foreground">{opp.location}</span></div>
+                  {opp.link && isEmail(opp.link) && (
+                    <div className="flex items-center gap-1.5">
+                      <Mail size={13} className="text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">Send to: <span className="font-medium text-foreground">{opp.link}</span></span>
                     </div>
                   )}
-                  <div className="flex flex-col gap-1 mb-3">
-                    <div className="flex items-center gap-1.5"><Calendar size={13} className="text-muted-foreground" /><span className="text-xs text-muted-foreground">Deadline: {new Date(opp.deadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
-                    <div className="flex items-center gap-1.5"><MapPin size={13} className="text-muted-foreground" /><span className="text-xs text-muted-foreground">{opp.location}</span></div>
-                  </div>
-                  <button
-                    disabled={alreadyApplied}
-                    onClick={() => openApply(opp)}
-                    className={cn('w-full h-10 rounded-full font-bold text-sm transition-colors flex items-center justify-center gap-2', alreadyApplied ? 'border border-border text-muted-foreground cursor-default' : 'bg-primary text-white hover:bg-[#061e35]')}
-                  >
-                    {!alreadyApplied && <Send size={14} />}
-                    {alreadyApplied ? 'Applied' : 'Apply Now'}
-                  </button>
+                  {opp.link && !isEmail(opp.link) && (
+                    <div className="flex items-center gap-1.5">
+                      <Link2 size={13} className="text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">Apply via external link</span>
+                    </div>
+                  )}
                 </div>
-              )
-            })}
+                <button
+                  onClick={() => handleApply(opp)}
+                  className="w-full h-10 rounded-full font-bold text-sm transition-colors flex items-center justify-center gap-2 bg-primary text-white hover:bg-[#061e35]"
+                >
+                  {opp.link && !isEmail(opp.link) ? <ExternalLink size={14} /> : <Mail size={14} />}
+                  {opp.link && !isEmail(opp.link) ? 'Apply Now' : 'Apply via Gmail'}
+                </button>
+              </div>
+            ))}
           </div>
         )}
       </div>
-
-      {/* Apply Modal */}
-      {applyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setApplyModal(null)} />
-          <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            {!applyDone ? (
-              <>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-lg">Apply for Opportunity</h3>
-                  <button onClick={() => setApplyModal(null)} className="p-1.5 rounded-lg hover:bg-muted transition-colors"><X size={18} /></button>
-                </div>
-                <div className="p-4 rounded-xl bg-muted mb-5">
-                  <p className="font-bold">{applyModal.title}</p>
-                  <p className="text-sm text-muted-foreground">{applyModal.organization} Â· {applyModal.location}</p>
-                </div>
-                <div className="mb-5">
-                  <label className="block text-xs font-medium text-muted-foreground mb-1">Cover letter <span className="text-red-500">*</span></label>
-                  <div className="relative">
-                    <FileText size={15} className="absolute left-3 top-3 text-muted-foreground" />
-                    <textarea value={coverLetter} onChange={(e) => setCoverLetter(e.target.value)} placeholder="Briefly describe why you're a great fit for this opportunity..." rows={5} className="w-full pl-9 pr-3 py-2 rounded-xl border border-input bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none" />
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <button onClick={() => setApplyModal(null)} className="flex-1 h-10 rounded-full border-2 border-slate-300 text-foreground font-semibold text-sm hover:bg-muted transition-colors">Cancel</button>
-                  <button onClick={handleSubmit} disabled={!coverLetter.trim() || applyMutation.isPending} className="flex-1 h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
-                    {applyMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <><Send size={14} /> Submit Application</>}
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="flex flex-col items-center text-center py-6">
-                <div className="w-16 h-16 rounded-full bg-blue-100 grid place-items-center mb-4"><CheckCircle size={32} className="text-[#082F49]" /></div>
-                <h3 className="font-bold text-lg mb-1">Application Submitted!</h3>
-                <p className="text-sm text-muted-foreground mb-5">Your application to <strong>{applyModal.title}</strong> at {applyModal.organization} has been submitted.</p>
-                <button onClick={() => setApplyModal(null)} className="w-full h-10 rounded-full bg-primary text-white font-bold text-sm hover:bg-[#061e35] transition-colors">Done</button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   )
 }
